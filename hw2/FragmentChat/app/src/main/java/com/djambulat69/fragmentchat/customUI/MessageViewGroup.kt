@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.view.marginBottom
 import androidx.core.view.marginEnd
 import androidx.core.view.marginStart
 import androidx.core.view.marginTop
 import com.djambulat69.fragmentchat.R
+import com.google.android.material.imageview.ShapeableImageView
 
 class MessageViewGroup @JvmOverloads constructor(
     context: Context,
@@ -21,7 +21,7 @@ class MessageViewGroup @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttrs, defStyleRes) {
 
-    private val avatarView: ImageView
+    private val avatarView: ShapeableImageView
     private var avatarSize = 0
 
     private val messageLayout: LinearLayout

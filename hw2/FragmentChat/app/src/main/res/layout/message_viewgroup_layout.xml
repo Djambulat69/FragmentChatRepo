@@ -4,17 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="@dimen/padding_medium"
-    android:paddingTop="@dimen/padding_small"
-    android:paddingEnd="@dimen/padding_medium"
-    android:paddingBottom="@dimen/padding_small"
     tools:parentTag="com.djambulat69.fragmentchat.customUI.MessageViewGroup">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/avatar_view"
         android:layout_width="@dimen/avatar_size"
         android:layout_height="@dimen/avatar_size"
         android:layout_margin="@dimen/margin_medium"
+        app:shapeAppearance="@style/circleImageViewShape"
         app:srcCompat="@drawable/ic_launcher_background" />
 
     <LinearLayout
@@ -31,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name Surname"
-            android:textColor="@color/white" />
+            android:textColor="@color/teal_200" />
 
         <TextView
             android:id="@+id/message_text_view"

@@ -1,8 +1,7 @@
 package com.djambulat69.fragmentchat
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.djambulat69.fragmentchat.customUI.EmojiView
 
 class MainActivity : AppCompatActivity() {
@@ -21,8 +20,8 @@ class MainActivity : AppCompatActivity() {
             R.id.emoji_view_8,
             R.id.emoji_view_9
         )
-        emojiViewIds.forEach{ id ->
-            findViewById<EmojiView>(id).setOnClickListener {  }
+        emojiViewIds.forEach { id ->
+            findViewById<EmojiView>(id).setOnClickListener { }
         }
     }
 }

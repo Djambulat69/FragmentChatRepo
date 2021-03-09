@@ -1,7 +1,6 @@
 package com.djambulat69.fragmentchat.customUI
 
 import android.content.Context
-import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -45,12 +44,15 @@ class FlexBoxLayout @JvmOverloads constructor(
             widthUsed +=
                 childWidth
         }
-        if(isOneLine)
+        if (isOneLine)
             maxWidthUsed = widthUsed
 
         setMeasuredDimension(
             resolveSize(maxWidthUsed + paddingStart + paddingEnd, widthMeasureSpec),
-            resolveSize(maxHeightInLine + heightUsed + paddingTop + paddingBottom, heightMeasureSpec)
+            resolveSize(
+                maxHeightInLine + heightUsed + paddingTop + paddingBottom,
+                heightMeasureSpec
+            )
         )
     }
 
