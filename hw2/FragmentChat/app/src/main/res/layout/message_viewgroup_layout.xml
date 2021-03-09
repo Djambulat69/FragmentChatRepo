@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/padding_medium"
+    android:paddingTop="@dimen/padding_small"
+    android:paddingEnd="@dimen/padding_medium"
+    android:paddingBottom="@dimen/padding_small"
+    tools:parentTag="com.djambulat69.fragmentchat.customUI.MessageViewGroup">
+
+    <ImageView
+        android:id="@+id/avatar_view"
+        android:layout_width="@dimen/avatar_size"
+        android:layout_height="@dimen/avatar_size"
+        android:layout_margin="@dimen/margin_medium"
+        app:srcCompat="@drawable/ic_launcher_background" />
+
+    <LinearLayout
+        android:id="@+id/message_linear_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:background="@drawable/message_text_view_bg"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_large">
+
+        <TextView
+            android:id="@+id/profile_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name Surname"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/message_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Message Text"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+    <com.djambulat69.fragmentchat.customUI.FlexBoxLayout
+        android:id="@+id/flex_box"
+        android:layout_width="@dimen/message_flexbox_width"
+        android:layout_height="wrap_content">
+
+        <com.djambulat69.fragmentchat.customUI.EmojiView
+            android:id="@+id/emoji_view_1"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            app:content_size="16sp"
+            app:reaction_count="8" />
+
+        <com.djambulat69.fragmentchat.customUI.EmojiView
+            android:id="@+id/emoji_view_2"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_small"
+            app:content_size="16sp"
+            app:reaction_count="22" />
+
+        <com.djambulat69.fragmentchat.customUI.EmojiView
+            android:id="@+id/emoji_view_3"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_small"
+            app:content_size="16sp"
+            app:reaction_count="12" />
+
+        <com.djambulat69.fragmentchat.customUI.EmojiView
+            android:id="@+id/emoji_view_4"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_small"
+            app:content_size="16sp"
+            app:reaction_count="333" />
+
+        <com.djambulat69.fragmentchat.customUI.EmojiView
+            android:id="@+id/emoji_view_5"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_small"
+            app:content_size="16sp"
+            app:reaction_count="66" />
+
+        <com.djambulat69.fragmentchat.customUI.EmojiView
+            android:id="@+id/emoji_view_6"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_small"
+            app:content_size="16sp" />
+
+        <com.djambulat69.fragmentchat.customUI.EmojiView
+            android:id="@+id/emoji_view_7"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_small"
+            app:content_size="16sp" />
+
+        <com.djambulat69.fragmentchat.customUI.EmojiView
+            android:id="@+id/emoji_view_8"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_small"
+            app:content_size="16sp" />
+
+        <com.djambulat69.fragmentchat.customUI.EmojiView
+            android:id="@+id/emoji_view_9"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_small"
+            app:content_size="16sp" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="@dimen/emoji_add_button_width"
+            android:layout_height="@dimen/emoji_view_height"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/emoji_view_bg"
+            app:srcCompat="@drawable/ic_baseline_add_24" />
+
+
+    </com.djambulat69.fragmentchat.customUI.FlexBoxLayout>
+
+</merge>
