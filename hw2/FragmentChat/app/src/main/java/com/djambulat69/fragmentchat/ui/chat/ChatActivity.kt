@@ -1,13 +1,14 @@
-package com.djambulat69.fragmentchat
+package com.djambulat69.fragmentchat.ui.chat
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.customUI.EmojiView
 
-class MainActivity : AppCompatActivity() {
+class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_chat)
 
         val emojiViewIds = listOf(
             R.id.emoji_view_1,

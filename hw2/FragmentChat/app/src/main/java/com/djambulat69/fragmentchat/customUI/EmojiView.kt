@@ -13,7 +13,7 @@ class EmojiView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttrs: Int = 0,
-    @StyleRes defStyleRes: Int = 0
+    @StyleRes defStyleRes: Int = R.style.Widget_FragmentChat_EmojiView
 ) : View(
     context, attrs, defStyleAttrs, defStyleRes
 ) {
@@ -34,14 +34,15 @@ class EmojiView @JvmOverloads constructor(
     }
 
     init {
-        context.obtainStyledAttributes(attrs, R.styleable.EmojiView).run {
-            reactionCount = getInt(R.styleable.EmojiView_reaction_count, DEF_REACTION_COUNT)
-            contentSize = getDimension(
-                R.styleable.EmojiView_content_size,
-                context.spToPx(DEF_CONTENT_SIZE).toFloat()
-            )
-            recycle()
-        }
+        context.obtainStyledAttributes(attrs, R.styleable.EmojiView, defStyleAttrs, defStyleRes)
+            .run {
+                reactionCount = getInt(R.styleable.EmojiView_reaction_count, DEF_REACTION_COUNT)
+                contentSize = getDimension(
+                    R.styleable.EmojiView_content_size,
+                    context.spToPx(DEF_CONTENT_SIZE).toFloat()
+                )
+                recycle()
+            }
     }
 
     private var viewRect = RectF()

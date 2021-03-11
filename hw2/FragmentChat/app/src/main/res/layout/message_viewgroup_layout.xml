@@ -11,12 +11,15 @@
         android:layout_width="@dimen/avatar_size"
         android:layout_height="@dimen/avatar_size"
         android:layout_margin="@dimen/margin_medium"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:shapeAppearance="@style/circleImageViewShape"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        app:srcCompat="@drawable/ic_launcher_background"
+        android:focusable="true" />
 
     <LinearLayout
         android:id="@+id/message_linear_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/message_text_width"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_small"
         android:background="@drawable/message_text_view_bg"
@@ -25,14 +28,15 @@
 
         <TextView
             android:id="@+id/profile_name_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Name Surname"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="@color/teal_200" />
 
         <TextView
             android:id="@+id/message_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Message Text"
             android:textColor="@color/white" />
@@ -49,10 +53,8 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/emoji_view_height"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
-            app:content_size="16sp"
             app:reaction_count="8" />
 
         <com.djambulat69.fragmentchat.customUI.EmojiView
@@ -60,11 +62,9 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/emoji_view_height"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
             android:paddingBottom="@dimen/padding_small"
-            app:content_size="16sp"
             app:reaction_count="22" />
 
         <com.djambulat69.fragmentchat.customUI.EmojiView
@@ -72,11 +72,9 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/emoji_view_height"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
             android:paddingBottom="@dimen/padding_small"
-            app:content_size="16sp"
             app:reaction_count="12" />
 
         <com.djambulat69.fragmentchat.customUI.EmojiView
@@ -84,11 +82,9 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/emoji_view_height"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
             android:paddingBottom="@dimen/padding_small"
-            app:content_size="16sp"
             app:reaction_count="333" />
 
         <com.djambulat69.fragmentchat.customUI.EmojiView
@@ -96,11 +92,9 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/emoji_view_height"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
             android:paddingBottom="@dimen/padding_small"
-            app:content_size="16sp"
             app:reaction_count="66" />
 
         <com.djambulat69.fragmentchat.customUI.EmojiView
@@ -108,44 +102,36 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/emoji_view_height"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
-            android:paddingBottom="@dimen/padding_small"
-            app:content_size="16sp" />
+            android:paddingBottom="@dimen/padding_small" />
 
         <com.djambulat69.fragmentchat.customUI.EmojiView
             android:id="@+id/emoji_view_7"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/emoji_view_height"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
-            android:paddingBottom="@dimen/padding_small"
-            app:content_size="16sp" />
+            android:paddingBottom="@dimen/padding_small" />
 
         <com.djambulat69.fragmentchat.customUI.EmojiView
             android:id="@+id/emoji_view_8"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/emoji_view_height"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
-            android:paddingBottom="@dimen/padding_small"
-            app:content_size="16sp" />
+            android:paddingBottom="@dimen/padding_small" />
 
         <com.djambulat69.fragmentchat.customUI.EmojiView
             android:id="@+id/emoji_view_9"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/emoji_view_height"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
-            android:paddingBottom="@dimen/padding_small"
-            app:content_size="16sp" />
+            android:paddingBottom="@dimen/padding_small" />
 
         <ImageButton
             android:id="@+id/imageButton"
