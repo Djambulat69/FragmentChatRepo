@@ -9,3 +9,8 @@ fun Context.spToPx(sp: Int): Int {
     return (sp * resources.displayMetrics.scaledDensity).roundToInt()
 }
 
+@Px
+fun Context.dpToPx(dp: Int): Int {
+    return (dp * resources.displayMetrics.density).roundToInt()
+}
+

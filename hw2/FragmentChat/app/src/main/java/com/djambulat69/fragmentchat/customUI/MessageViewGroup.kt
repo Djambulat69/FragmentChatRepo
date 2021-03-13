@@ -7,16 +7,16 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
-import androidx.core.view.marginBottom
-import androidx.core.view.marginEnd
-import androidx.core.view.marginStart
-import androidx.core.view.marginTop
+import android.widget.TextView
+import androidx.core.view.*
 import com.djambulat69.fragmentchat.R
+import com.djambulat69.fragmentchat.model.Reaction
 import com.google.android.material.imageview.ShapeableImageView
+import kotlin.math.roundToInt
 
 class MessageViewGroup @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?,
+    attrs: AttributeSet? = null,
     defStyleAttrs: Int = 0,
     defStyleRes: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttrs, defStyleRes) {
@@ -28,6 +28,9 @@ class MessageViewGroup @JvmOverloads constructor(
     private var messageWidth = 0
     private var messageHeight = 0
 
+    private val messageText: TextView
+    private val authorText: TextView
+
     private val flexBox: FlexBoxLayout
     private var flexBoxWidth = 0
     private var flexBoxHeight = 0
@@ -36,7 +39,37 @@ class MessageViewGroup @JvmOverloads constructor(
         LayoutInflater.from(context).inflate(R.layout.message_viewgroup_layout, this, true)
         avatarView = findViewById(R.id.avatar_view)
         messageLayout = findViewById(R.id.message_linear_layout)
+        authorText = findViewById(R.id.profile_name_text_view)
+        messageText = findViewById(R.id.message_text_view)
         flexBox = findViewById(R.id.flex_box)
+    }
+
+    fun setReactions(reactions: List<Reaction>) {
+        flexBox.removeAllViews()
+        reactions.forEach { reaction ->
+            flexBox.addView(EmojiView(context).apply {
+                val height = resources.getDimension(R.dimen.emoji_view_height).roundToInt()
+                val margin = resources.getDimension(R.dimen.margin_small).roundToInt()
+                val widthPadding = resources.getDimension(R.dimen.padding_medium).roundToInt()
+                layoutParams = MarginLayoutParams(
+                    WRAP_CONTENT,
+                    height
+                ).apply { setMargins(margin) }
+                setPadding(widthPadding, 0, widthPadding, 0)
+                setEmoji(reaction.emoji)
+                reactionCount = reaction.reactionCount
+                setOnClickListener {
+                    reactionCount -= 1
+                    reaction.isSet = !reaction.isSet
+                }
+                isSelected = reaction.isSet
+            }, flexBox.childCount - 1)
+        }
+    }
+
+    fun setMessage(author: String, text: String) {
+        messageText.text = text
+        authorText.text = author
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
