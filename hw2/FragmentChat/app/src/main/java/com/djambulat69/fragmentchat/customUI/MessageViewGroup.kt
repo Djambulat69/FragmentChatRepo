@@ -3,11 +3,14 @@ package com.djambulat69.fragmentchat.customUI
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.Px
 import androidx.core.view.*
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.Reaction
@@ -35,6 +38,9 @@ class MessageViewGroup @JvmOverloads constructor(
     private var flexBoxWidth = 0
     private var flexBoxHeight = 0
 
+    private val addReactionButton: ImageButton
+
+
     init {
         LayoutInflater.from(context).inflate(R.layout.message_viewgroup_layout, this, true)
         avatarView = findViewById(R.id.avatar_view)
@@ -42,15 +48,45 @@ class MessageViewGroup @JvmOverloads constructor(
         authorText = findViewById(R.id.profile_name_text_view)
         messageText = findViewById(R.id.message_text_view)
         flexBox = findViewById(R.id.flex_box)
+        addReactionButton = findViewById(R.id.add_reaction_button_outcoming)
+
+        context.obtainStyledAttributes(
+            attrs,
+            R.styleable.MessageViewGroup,
+            defStyleAttrs,
+            defStyleRes
+        ).run {
+            text = getString(R.styleable.MessageViewGroup_text) ?: ""
+            author = getString(R.styleable.MessageViewGroup_author) ?: ""
+            recycle()
+        }
     }
+
+    var text
+        get() = messageText.text.toString()
+        set(value) {
+            messageText.text = value
+            requestLayout()
+        }
+    var author
+        get() = authorText.text.toString()
+        set(value) {
+            authorText.text = value
+            requestLayout()
+        }
 
     fun setReactions(reactions: List<Reaction>) {
         flexBox.removeAllViews()
+        addReactionButton.visibility =
+            if (reactions.isEmpty())
+                View.GONE
+            else
+                View.VISIBLE
         reactions.forEach { reaction ->
             flexBox.addView(EmojiView(context).apply {
-                val height = resources.getDimension(R.dimen.emoji_view_height).roundToInt()
-                val margin = resources.getDimension(R.dimen.margin_small).roundToInt()
-                val widthPadding = resources.getDimension(R.dimen.padding_medium).roundToInt()
+                @Px val height = resources.getDimension(R.dimen.emoji_view_height).roundToInt()
+                @Px val margin = resources.getDimension(R.dimen.margin_small).roundToInt()
+                @Px val widthPadding = resources.getDimension(R.dimen.padding_medium).roundToInt()
                 layoutParams = MarginLayoutParams(
                     WRAP_CONTENT,
                     height

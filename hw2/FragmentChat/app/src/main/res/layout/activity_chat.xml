@@ -6,44 +6,55 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_recycler_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        app:reverseLayout="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:reverseLayout="true">
 
     </androidx.recyclerview.widget.RecyclerView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimaryVariant"
+        android:layout_height="@dimen/message_input_bar_height"
+        android:background="?attr/colorPrimary"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <EditText
             android:id="@+id/message_edit_text"
             android:layout_width="0dp"
-            android:layout_height="32dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="fill_horizontal"
             android:layout_margin="@dimen/margin_medium"
             android:background="@null"
-            android:hint="Message"
+            android:hint="@string/message_hint"
+            android:maxLines="5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/send_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <ImageButton
             android:id="@+id/send_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:text="Send"
+            style="@style/Widget.FragmentChat.SendButton"
+            android:layout_width="@dimen/send_button_size"
+            android:layout_height="@dimen/send_button_size"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:cropToPadding="true"
+            android:focusable="true"
+            android:paddingStart="@dimen/send_button_start_offset"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_send" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 

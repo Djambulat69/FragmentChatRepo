@@ -16,9 +16,9 @@ class ChatPresenter : MvpPresenter<ChatView>() {
     private val compositeDisposable = CompositeDisposable()
     private val messages = DataBase.messages
 
-    override fun detachView(view: ChatView?) {
-        compositeDisposable.clear()
-        super.detachView(view)
+    fun dispose() {
+        if (!compositeDisposable.isDisposed)
+            compositeDisposable.clear()
     }
 
     fun observeSending(observable: Observable<Message>) {

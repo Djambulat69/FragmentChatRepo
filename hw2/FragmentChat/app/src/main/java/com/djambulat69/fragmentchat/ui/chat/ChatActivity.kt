@@ -9,17 +9,18 @@ import moxy.ktx.moxyPresenter
 
 class ChatActivity : MvpAppCompatActivity(), ChatView {
 
-    private lateinit var binding: ActivityChatBinding
+    private val binding: ActivityChatBinding by lazy { ActivityChatBinding.inflate(layoutInflater) }
     private var id: Long = 1
-
     private val presenter: ChatPresenter by moxyPresenter { ChatPresenter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.chatRecyclerView.adapter = ChatRecyclerAdapter(emptyList())
-        val buttonObservable = Observable.create<Message> { emitter ->
+        binding.chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory())
+    }
+
+    private fun getSendButtonObservable(): Observable<Message> {
+        return Observable.create { emitter ->
             binding.sendButton.setOnClickListener {
                 id += 1
                 val message = Message(
@@ -28,15 +29,25 @@ class ChatActivity : MvpAppCompatActivity(), ChatView {
                     "Edit Author",
                     emptyList()
                 )
-                binding.messageEditText.setText("")
                 emitter.onNext(message)
+                binding.messageEditText.setText("")
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
         presenter.observeMessages()
-        presenter.observeSending(buttonObservable)
+        presenter.observeSending(getSendButtonObservable())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.dispose()
     }
 
     override fun showMessages(messages: List<Message>) {
-        (binding.chatRecyclerView.adapter as ChatRecyclerAdapter).setMessages(messages)
+        (binding.chatRecyclerView.adapter as ChatAdapter).items =
+            messages.map { MessageUI(it, "Edit Author") }
     }
 }
