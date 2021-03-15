@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EmojiView">
+        <attr name="reaction_count" format="integer" />
+        <attr name="content_size" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="MessageViewGroup">
+        <attr name="text" format="string" />
+        <attr name="author" format="string" />
+    </declare-styleable>
+</resources>
