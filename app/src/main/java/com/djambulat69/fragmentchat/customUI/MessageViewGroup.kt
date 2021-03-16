@@ -3,19 +3,19 @@ package com.djambulat69.fragmentchat.customUI
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.Px
-import androidx.core.view.*
+import androidx.core.view.marginBottom
+import androidx.core.view.marginEnd
+import androidx.core.view.marginStart
+import androidx.core.view.marginTop
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.Reaction
 import com.google.android.material.imageview.ShapeableImageView
-import kotlin.math.roundToInt
 
 class MessageViewGroup @JvmOverloads constructor(
     context: Context,
@@ -75,38 +75,16 @@ class MessageViewGroup @JvmOverloads constructor(
             requestLayout()
         }
 
-    fun setReactions(reactions: List<Reaction>) {
-        flexBox.removeAllViews()
-        addReactionButton.visibility =
-            if (reactions.isEmpty())
-                View.GONE
-            else
-                View.VISIBLE
-        reactions.forEach { reaction ->
-            flexBox.addView(EmojiView(context).apply {
-                @Px val height = resources.getDimension(R.dimen.emoji_view_height).roundToInt()
-                @Px val margin = resources.getDimension(R.dimen.margin_small).roundToInt()
-                @Px val widthPadding = resources.getDimension(R.dimen.padding_medium).roundToInt()
-                layoutParams = MarginLayoutParams(
-                    WRAP_CONTENT,
-                    height
-                ).apply { setMargins(margin) }
-                setPadding(widthPadding, 0, widthPadding, 0)
-                setEmoji(reaction.emoji)
-                reactionCount = reaction.reactionCount
-                setOnClickListener {
-                    reactionCount -= 1
-                    reaction.isSet = !reaction.isSet
-                }
-                isSelected = reaction.isSet
-            }, flexBox.childCount - 1)
-        }
+    fun setReactions(
+        messageId: Long,
+        reactions: MutableList<Reaction>,
+        reactionsUpdate: (MutableList<Reaction>, Long) -> Unit
+    ) {
+        flexBox.setReactions(messageId, reactions, addReactionButton, reactionsUpdate)
     }
 
-    fun setMessage(author: String, text: String) {
-        messageText.text = text
-        authorText.text = author
-    }
+    fun setOnMessageClickListener(clickListener: OnClickListener) =
+        messageLayout.setOnClickListener(clickListener)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         measureChildren(widthMeasureSpec, heightMeasureSpec)

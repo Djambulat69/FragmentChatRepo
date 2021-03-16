@@ -22,11 +22,12 @@
         tools:text="Hello world!" />
 
     <com.djambulat69.fragmentchat.customUI.FlexBoxLayout
-        android:layout_width="@dimen/message_text_width"
+        android:id="@+id/flexbox_reactions_outcoming"
+        android:layout_width="@dimen/message_flexbox_width"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:visibility="gone"
         android:layout_marginTop="@dimen/margin_small"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/message_text_outcoming">
 

@@ -3,6 +3,7 @@ package com.djambulat69.fragmentchat.ui.chat
 import android.util.Log
 import com.djambulat69.fragmentchat.db.DataBase
 import com.djambulat69.fragmentchat.model.Message
+import com.djambulat69.fragmentchat.model.Reaction
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -14,7 +15,7 @@ private const val TAG = "ChatPresenter"
 
 class ChatPresenter : MvpPresenter<ChatView>() {
     private val compositeDisposable = CompositeDisposable()
-    private val messages = DataBase.messages
+    private val messagesSubject = DataBase.messages
 
     fun dispose() {
         if (!compositeDisposable.isDisposed)
@@ -42,13 +43,16 @@ class ChatPresenter : MvpPresenter<ChatView>() {
         compositeDisposable.add(sendingDisposable)
     }
 
+    fun updateReactionsInMessage(msgId: Long, reactions: MutableList<Reaction>) =
+        DataBase.updateReactionsInMessage(msgId, reactions)
+
     fun observeMessages() {
-        val messagesDisposable = messages
+        val messagesDisposable = messagesSubject
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribeWith(object : DisposableObserver<List<Message>>() {
                 override fun onNext(messages: List<Message>?) {
-                    viewState.showMessages(messages ?: emptyList())
+                    viewState.showMessages(messages.orEmpty())
                     Log.i(TAG, messages.toString())
                 }
 
@@ -63,4 +67,7 @@ class ChatPresenter : MvpPresenter<ChatView>() {
             })
         compositeDisposable.add(messagesDisposable)
     }
+
+    fun addReactionToMessage(message: Message, emojiCode: Int) =
+        DataBase.addReactionToMessage(message, emojiCode)
 }

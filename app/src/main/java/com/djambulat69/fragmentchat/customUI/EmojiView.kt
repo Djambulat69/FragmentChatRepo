@@ -8,6 +8,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.utils.spToPx
+import com.djambulat69.fragmentchat.utils.toEmoji
 
 class EmojiView @JvmOverloads constructor(
     context: Context,
@@ -26,10 +27,10 @@ class EmojiView @JvmOverloads constructor(
             }
         }
     private var contentSize: Float
-    private var emoji = String(Character.toChars(0x1F600))
+    private var emoji = 0x1F600.toEmoji()
 
     fun setEmoji(code: Int) {
-        emoji = String(Character.toChars(code))
+        emoji = code.toEmoji()
         invalidate()
     }
 

@@ -2,10 +2,16 @@ package com.djambulat69.fragmentchat.customUI
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.ImageButton
+import androidx.annotation.Px
 import androidx.core.view.*
+import com.djambulat69.fragmentchat.R
+import com.djambulat69.fragmentchat.model.Reaction
+import kotlin.math.roundToInt
 
 class FlexBoxLayout @JvmOverloads constructor(
     context: Context,
@@ -88,5 +94,54 @@ class FlexBoxLayout @JvmOverloads constructor(
 
     override fun generateLayoutParams(params: LayoutParams?): LayoutParams =
         MarginLayoutParams(params)
+}
+
+
+fun FlexBoxLayout.setReactions(
+    messageId: Long,
+    reactions: MutableList<Reaction>,
+    addReactionButton: ImageButton,
+    reactionsUpdate: (MutableList<Reaction>, Long) -> Unit
+) {
+    removeViews(0, childCount - 1)
+    val reactionsVisibility = if (reactions.isEmpty())
+        View.GONE
+    else
+        View.VISIBLE
+    addReactionButton.visibility = reactionsVisibility
+    visibility = reactionsVisibility
+
+    reactions.forEach { reaction ->
+        addView(EmojiView(context).apply {
+            @Px val height = resources.getDimension(R.dimen.emoji_view_height).roundToInt()
+            @Px val margin = resources.getDimension(R.dimen.margin_small).roundToInt()
+            @Px val widthPadding = resources.getDimension(R.dimen.padding_medium).roundToInt()
+            layoutParams = ViewGroup.MarginLayoutParams(
+                WRAP_CONTENT,
+                height
+            ).apply { setMargins(margin) }
+            setPadding(widthPadding, 0, widthPadding, 0)
+            setEmoji(reaction.emoji)
+            reactionCount = reaction.reactionCount
+            setOnClickListener {
+                reaction.isSet = !reaction.isSet
+                if (reaction.isSet)
+                    reactionCount += 1
+                else
+                    reactionCount -= 1
+                if (reactionCount == 0) {
+                    removeView(it)
+                    reactions.remove(reaction)
+                    addReactionButton.visibility =
+                        if (reactions.isEmpty())
+                            View.GONE
+                        else
+                            View.VISIBLE
+                }
+                reactionsUpdate(reactions, messageId)
+            }
+            isSelected = reaction.isSet
+        }, childCount - 1)
+    }
 }
 

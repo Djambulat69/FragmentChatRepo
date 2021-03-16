@@ -11,7 +11,10 @@ import com.djambulat69.fragmentchat.utils.recyclerView.HolderFactory
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
 class ChatHolderFactory : HolderFactory() {
-    override fun createHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewTyped> {
+    override fun createHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): BaseViewHolder<ViewTyped> {
         val view = parent.inflate<View>(viewType)
         return when (viewType) {
             R.layout.incoming_message_layout -> {

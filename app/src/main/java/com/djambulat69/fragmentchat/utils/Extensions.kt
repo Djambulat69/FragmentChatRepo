@@ -18,6 +18,8 @@ fun Context.dpToPx(dp: Int): Int {
     return (dp * resources.displayMetrics.density).roundToInt()
 }
 
+fun Int.toEmoji() = String(Character.toChars(this))
+
 @Suppress("unchecked_cast")
 fun <T : View> View.inflate(
     @LayoutRes
@@ -25,3 +27,5 @@ fun <T : View> View.inflate(
     root: ViewGroup? = this as? ViewGroup,
     attachToRoot: Boolean = false
 ): T = LayoutInflater.from(context).inflate(layout, root, attachToRoot) as T
+
+
