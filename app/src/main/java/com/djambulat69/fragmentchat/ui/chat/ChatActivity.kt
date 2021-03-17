@@ -81,13 +81,12 @@ class ChatActivity : MvpAppCompatActivity(), ChatView {
     }
 
     private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message ->
-        val longMessageClickCallback = { _: View ->
+        val clickCallback = {
             EmojiBottomSheetDialog(this) { emojiCode ->
                 presenter.addReactionToMessage(message.copy().apply {
                     reactions = reactions.toMutableList()
                 }, emojiCode)
             }.show()
-            true
         }
         val reactionUpdateCallback = { reactions: MutableList<Reaction> ->
             presenter.updateReactionsInMessage(message.copy().apply {
@@ -98,7 +97,7 @@ class ChatActivity : MvpAppCompatActivity(), ChatView {
         MessageUI(
             message,
             "Edit Author",
-            longMessageClickCallback,
+            clickCallback,
             reactionUpdateCallback
         )
     }

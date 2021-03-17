@@ -82,8 +82,17 @@ class MessageViewGroup @JvmOverloads constructor(
         flexBox.setReactions(reactions, addReactionButton, reactionUpdate)
     }
 
-    fun setOnMessageClickListener(clickListener: OnLongClickListener) =
-        messageLayout.setOnLongClickListener(clickListener)
+    fun setOnMessageClickListener(clickListener: () -> Unit) =
+        messageLayout.setOnLongClickListener {
+            clickListener()
+            true
+        }
+
+    fun setAddReactionLister(click: () -> Unit) {
+        addReactionButton.setOnClickListener {
+            click()
+        }
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         measureChildren(widthMeasureSpec, heightMeasureSpec)

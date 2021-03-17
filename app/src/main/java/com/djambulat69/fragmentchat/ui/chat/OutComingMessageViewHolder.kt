@@ -12,7 +12,13 @@ class OutComingMessageViewHolder(
     override fun bind(item: MessageUI) {
         with(binding) {
             messageTextOutcoming.text = item.message.text
-            messageTextOutcoming.setOnLongClickListener(item.click)
+            messageTextOutcoming.setOnLongClickListener {
+                item.click()
+                true
+            }
+            addReactionButtonOutcoming.setOnClickListener {
+                item.click()
+            }
             flexboxReactionsOutcoming.setReactions(
                 item.message.reactions,
                 addReactionButtonOutcoming,
