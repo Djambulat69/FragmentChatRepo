@@ -49,7 +49,6 @@ class ChatActivity : MvpAppCompatActivity(), ChatView {
     private fun getSendButtonObservable(): Observable<Message> {
         return Observable.create { emitter ->
             binding.sendButton.setOnClickListener {
-                presenter.id += 1
                 val message = Message(
                     UUID.randomUUID().toString(),
                     binding.messageEditText.text.toString().trim(),
@@ -76,33 +75,35 @@ class ChatActivity : MvpAppCompatActivity(), ChatView {
 
     override fun showMessages(messages: List<Message>) {
         (binding.chatRecyclerView.adapter as ChatAdapter).items =
-            messages.groupBy { it.date }.flatMap { (date: String, messages1: List<Message>) ->
-                messages1.map { message ->
-                    val longMessageClickCallback = { _: View ->
-                        EmojiBottomSheetDialog(this) { emojiCode ->
-                            presenter.addReactionToMessage(message.copy().apply {
-                                reactions = reactions.toMutableList()
-                            }, emojiCode)
-                        }.show()
-                        true
-                    }
-                    val reactionUpdateCallback = { reactions: MutableList<Reaction> ->
-                        presenter.updateReactionInMessage(message.copy().apply {
-                            this.reactions = this.reactions.toMutableList()
-                        }, reactions)
-                    }
-
-                    MessageUI(
-                        message,
-                        "Edit Author",
-                        longMessageClickCallback,
-                        reactionUpdateCallback
-                    )
-                } + DateSeparatorUI(date)
+            messages.groupBy { it.date }.flatMap { (date: String, messagesbyDate: List<Message>) ->
+                messagesToMessageUIs(messagesbyDate) + DateSeparatorUI(date)
             }
     }
 
-    fun getCurrentTime(): String {
+    private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message ->
+        val longMessageClickCallback = { _: View ->
+            EmojiBottomSheetDialog(this) { emojiCode ->
+                presenter.addReactionToMessage(message.copy().apply {
+                    reactions = reactions.toMutableList()
+                }, emojiCode)
+            }.show()
+            true
+        }
+        val reactionUpdateCallback = { reactions: MutableList<Reaction> ->
+            presenter.updateReactionsInMessage(message.copy().apply {
+                this.reactions = this.reactions.toMutableList()
+            }, reactions)
+        }
+
+        MessageUI(
+            message,
+            "Edit Author",
+            longMessageClickCallback,
+            reactionUpdateCallback
+        )
+    }
+
+    private fun getCurrentTime(): String {
         val currentTimeMillis = GregorianCalendar.getInstance().timeInMillis
         return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(currentTimeMillis))
     }

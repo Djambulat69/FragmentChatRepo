@@ -39,7 +39,7 @@ object DataBase {
         messages.onNext(_messages)
     }
 
-    fun updateReactionInMessage(message: Message, reactions: MutableList<Reaction>) {
+    fun updateReactionsInMessage(message: Message, reactions: MutableList<Reaction>) {
         message.reactions = reactions
 
         _messages = _messages.map {
