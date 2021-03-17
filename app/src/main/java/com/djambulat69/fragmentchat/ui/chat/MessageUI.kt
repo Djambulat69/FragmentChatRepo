@@ -9,8 +9,8 @@ import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 class MessageUI(
     val message: Message,
     sender: String,
-    override val click: View.OnClickListener,
-    val reactionsUpdate: (MutableList<Reaction>, Long) -> Unit
+    override val click: View.OnLongClickListener,
+    val reactionUpdate: (MutableList<Reaction>) -> Unit
 ) :
     ViewTyped {
     override val viewType: Int =
@@ -18,5 +18,5 @@ class MessageUI(
             R.layout.outcoming_message_layout
         else
             R.layout.incoming_message_layout
-    override val id: Long = message.id
+    override val id: String = message.id
 }

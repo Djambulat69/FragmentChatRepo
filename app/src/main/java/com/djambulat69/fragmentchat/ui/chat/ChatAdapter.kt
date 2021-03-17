@@ -20,10 +20,8 @@ class ChatAdapter(holderFactory: ChatHolderFactory) : BaseAdapter(holderFactory)
 
         override fun areContentsTheSame(oldItem: ViewTyped, newItem: ViewTyped): Boolean {
             return if (oldItem is MessageUI && newItem is MessageUI) {
-                val a = oldItem.message == newItem.message
                 oldItem.message == newItem.message && oldItem.viewType == newItem.viewType
             } else false
         }
-
     }
 }

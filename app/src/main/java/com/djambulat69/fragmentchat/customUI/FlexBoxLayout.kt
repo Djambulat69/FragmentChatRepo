@@ -98,10 +98,9 @@ class FlexBoxLayout @JvmOverloads constructor(
 
 
 fun FlexBoxLayout.setReactions(
-    messageId: Long,
     reactions: MutableList<Reaction>,
     addReactionButton: ImageButton,
-    reactionsUpdate: (MutableList<Reaction>, Long) -> Unit
+    reactionUpdate: (MutableList<Reaction>) -> Unit
 ) {
     removeViews(0, childCount - 1)
     val reactionsVisibility = if (reactions.isEmpty())
@@ -111,7 +110,7 @@ fun FlexBoxLayout.setReactions(
     addReactionButton.visibility = reactionsVisibility
     visibility = reactionsVisibility
 
-    reactions.forEach { reaction ->
+    reactions.forEachIndexed { i, reaction ->
         addView(EmojiView(context).apply {
             @Px val height = resources.getDimension(R.dimen.emoji_view_height).roundToInt()
             @Px val margin = resources.getDimension(R.dimen.margin_small).roundToInt()
@@ -125,20 +124,23 @@ fun FlexBoxLayout.setReactions(
             reactionCount = reaction.reactionCount
             setOnClickListener {
                 reaction.isSet = !reaction.isSet
-                if (reaction.isSet)
+                if (reaction.isSet) {
+                    reaction.reactionCount += 1
                     reactionCount += 1
-                else
+                } else {
+                    reaction.reactionCount -= 1
                     reactionCount -= 1
-                if (reactionCount == 0) {
+                }
+                if (reaction.reactionCount == 0) {
                     removeView(it)
                     reactions.remove(reaction)
-                    addReactionButton.visibility =
+                    this@setReactions.visibility =
                         if (reactions.isEmpty())
                             View.GONE
                         else
                             View.VISIBLE
                 }
-                reactionsUpdate(reactions, messageId)
+                reactionUpdate(reactions)
             }
             isSelected = reaction.isSet
         }, childCount - 1)

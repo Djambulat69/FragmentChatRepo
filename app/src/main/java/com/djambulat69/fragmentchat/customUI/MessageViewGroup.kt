@@ -76,15 +76,14 @@ class MessageViewGroup @JvmOverloads constructor(
         }
 
     fun setReactions(
-        messageId: Long,
         reactions: MutableList<Reaction>,
-        reactionsUpdate: (MutableList<Reaction>, Long) -> Unit
+        reactionUpdate: (MutableList<Reaction>) -> Unit
     ) {
-        flexBox.setReactions(messageId, reactions, addReactionButton, reactionsUpdate)
+        flexBox.setReactions(reactions, addReactionButton, reactionUpdate)
     }
 
-    fun setOnMessageClickListener(clickListener: OnClickListener) =
-        messageLayout.setOnClickListener(clickListener)
+    fun setOnMessageClickListener(clickListener: OnLongClickListener) =
+        messageLayout.setOnLongClickListener(clickListener)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         measureChildren(widthMeasureSpec, heightMeasureSpec)

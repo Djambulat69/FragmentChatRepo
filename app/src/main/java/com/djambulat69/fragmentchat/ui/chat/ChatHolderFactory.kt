@@ -25,6 +25,7 @@ class ChatHolderFactory : HolderFactory() {
                 val binding = OutcomingMessageLayoutBinding.bind(view)
                 OutComingMessageViewHolder(binding)
             }
+            R.layout.date_separator -> DateSeparatorViewHolder(view)
             else ->
                 throw Exception("Unknown ViewType ${parent.resources.getResourceName(viewType)}")
         } as BaseViewHolder<ViewTyped>

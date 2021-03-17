@@ -16,6 +16,7 @@ private const val TAG = "ChatPresenter"
 class ChatPresenter : MvpPresenter<ChatView>() {
     private val compositeDisposable = CompositeDisposable()
     private val messagesSubject = DataBase.messages
+    var id: Long = 0
 
     fun dispose() {
         if (!compositeDisposable.isDisposed)
@@ -43,8 +44,8 @@ class ChatPresenter : MvpPresenter<ChatView>() {
         compositeDisposable.add(sendingDisposable)
     }
 
-    fun updateReactionsInMessage(msgId: Long, reactions: MutableList<Reaction>) =
-        DataBase.updateReactionsInMessage(msgId, reactions)
+    fun updateReactionInMessage(message: Message, reactions: MutableList<Reaction>) =
+        DataBase.updateReactionInMessage(message, reactions)
 
     fun observeMessages() {
         val messagesDisposable = messagesSubject

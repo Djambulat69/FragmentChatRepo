@@ -3,16 +3,19 @@ package com.djambulat69.fragmentchat.db
 import com.djambulat69.fragmentchat.model.Message
 import com.djambulat69.fragmentchat.model.Reaction
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 object DataBase {
     private var _messages = listOf(
         Message(
-            0, "Message text", "Author Author", mutableListOf(
+            UUID.randomUUID().toString(), "Message text", "Author Author", mutableListOf(
                 Reaction(0x1F600, 5, false)
-            )
+            ),
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(2000000000))
         )
     )
-        get() = field.toMutableList()
     val messages: BehaviorSubject<List<Message>> = BehaviorSubject.create()
 
     init {
@@ -20,28 +23,30 @@ object DataBase {
     }
 
     fun sendMessage(msg: Message) {
-        _messages = listOf(msg) + _messages
+        _messages = (listOf(msg) + _messages)
         messages.onNext(_messages)
     }
 
     fun addReactionToMessage(message: Message, emojiCode: Int) {
-        val msgUpdated = message.apply {
-            reactions.add(Reaction(emojiCode, 1, true))
-        }
+        message.reactions.add(Reaction(emojiCode, 1, true))
+
         _messages = _messages.map {
-            if (it.id == msgUpdated.id)
-                msgUpdated
+            if (it.id == message.id)
+                message
             else
                 it
         }
         messages.onNext(_messages)
     }
 
-    fun updateReactionsInMessage(messageId: Long, updatedReactions: MutableList<Reaction>) {
-        _messages.map {
-            if (it.id == messageId)
-                it.reactions = updatedReactions
-            it
+    fun updateReactionInMessage(message: Message, reactions: MutableList<Reaction>) {
+        message.reactions = reactions
+
+        _messages = _messages.map {
+            if (it.id == message.id)
+                message
+            else
+                it
         }
         messages.onNext(_messages)
     }
