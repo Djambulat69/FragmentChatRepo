@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat
+package com.djambulat69.fragmentchat.ui.chat.recyclerview
 
 import android.view.ViewGroup
 import android.widget.TextView

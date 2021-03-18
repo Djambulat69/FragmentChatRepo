@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat
+package com.djambulat69.fragmentchat.ui.chat.recyclerview
 
 import com.djambulat69.fragmentchat.customUI.setReactions
 import com.djambulat69.fragmentchat.databinding.OutcomingMessageLayoutBinding

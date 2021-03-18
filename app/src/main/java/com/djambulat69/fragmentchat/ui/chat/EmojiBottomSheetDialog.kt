@@ -3,6 +3,7 @@ package com.djambulat69.fragmentchat.ui.chat
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.R
+import com.djambulat69.fragmentchat.ui.chat.recyclerview.EmojiBottomRecyclerAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class EmojiBottomSheetDialog(context: Context, private val callBack: (Int) -> Unit) :

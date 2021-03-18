@@ -3,25 +3,38 @@ package com.djambulat69.fragmentchat.ui.chat
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
-import com.djambulat69.fragmentchat.databinding.ActivityChatBinding
+import android.view.ViewGroup
+import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
 import com.djambulat69.fragmentchat.model.Message
 import com.djambulat69.fragmentchat.model.Reaction
+import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatAdapter
+import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatHolderFactory
+import com.djambulat69.fragmentchat.ui.chat.recyclerview.DateSeparatorUI
+import com.djambulat69.fragmentchat.ui.chat.recyclerview.MessageUI
 import io.reactivex.rxjava3.core.Observable
-import moxy.MvpAppCompatActivity
+import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatActivity : MvpAppCompatActivity(), ChatView {
+class ChatFragment : MvpAppCompatFragment(), ChatView {
 
-    private val binding: ActivityChatBinding by lazy { ActivityChatBinding.inflate(layoutInflater) }
+    private lateinit var binding: FragmentChatBinding
     private val presenter: ChatPresenter by moxyPresenter { ChatPresenter() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentChatBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
 
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         binding.chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory())
         binding.messageEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
@@ -46,6 +59,18 @@ class ChatActivity : MvpAppCompatActivity(), ChatView {
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+        presenter.observeMessages()
+        presenter.observeSending(getSendButtonObservable())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.dispose()
+    }
+
+
     private fun getSendButtonObservable(): Observable<Message> {
         return Observable.create { emitter ->
             binding.sendButton.setOnClickListener {
@@ -62,17 +87,6 @@ class ChatActivity : MvpAppCompatActivity(), ChatView {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.observeMessages()
-        presenter.observeSending(getSendButtonObservable())
-    }
-
-    override fun onStop() {
-        super.onStop()
-        presenter.dispose()
-    }
-
     override fun showMessages(messages: List<Message>) {
         (binding.chatRecyclerView.adapter as ChatAdapter).items =
             messages.groupBy { it.date }.flatMap { (date: String, messagesbyDate: List<Message>) ->
@@ -82,7 +96,7 @@ class ChatActivity : MvpAppCompatActivity(), ChatView {
 
     private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message ->
         val clickCallback = {
-            EmojiBottomSheetDialog(this) { emojiCode ->
+            EmojiBottomSheetDialog(requireContext()) { emojiCode ->
                 presenter.addReactionToMessage(message.copy().apply {
                     reactions = reactions.toMutableList()
                 }, emojiCode)
@@ -105,5 +119,10 @@ class ChatActivity : MvpAppCompatActivity(), ChatView {
     private fun getCurrentTime(): String {
         val currentTimeMillis = GregorianCalendar.getInstance().timeInMillis
         return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(currentTimeMillis))
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = ChatFragment()
     }
 }
