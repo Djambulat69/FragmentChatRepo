@@ -20,8 +20,20 @@ object DataBase {
     val messages: BehaviorSubject<List<Message>> = BehaviorSubject.create()
 
     val streams = listOf(
-        Stream("general", listOf(Topic("Testing", 332))),
-        Stream("memes", listOf(Topic("Hello", 23)))
+        Stream(
+            "general",
+            listOf(
+                Topic("Testing", 332),
+                Topic("Testing", 332),
+                Topic("Testing", 332)
+            )
+        ),
+        Stream(
+            "memes", listOf(
+                Topic("Hello", 23),
+                Topic("Hello", 23)
+            )
+        )
     )
 
     init {
