@@ -1,11 +1,12 @@
-package com.djambulat69.fragmentchat.db
+package com.djambulat69.fragmentchat.model.db
 
 import com.djambulat69.fragmentchat.model.Message
 import com.djambulat69.fragmentchat.model.Reaction
+import com.djambulat69.fragmentchat.model.Stream
+import com.djambulat69.fragmentchat.model.Topic
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 object DataBase {
     private var _messages = listOf(
@@ -13,10 +14,15 @@ object DataBase {
             UUID.randomUUID().toString(), "Message text", "Author Author", mutableListOf(
                 Reaction(0x1F600, 5, false)
             ),
-            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(2000000000))
+            SimpleDateFormat("MMM dd", Locale.getDefault()).format(Date(2000000000))
         )
     )
     val messages: BehaviorSubject<List<Message>> = BehaviorSubject.create()
+
+    val streams = listOf(
+        Stream("general", listOf(Topic("Testing", 332))),
+        Stream("memes", listOf(Topic("Hello", 23)))
+    )
 
     init {
         messages.onNext(_messages)

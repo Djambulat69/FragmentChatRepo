@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">FragmentChat</string>
     <string name="message_hint">Message</string>
+
+    <string name="channels_menu_title">Channels</string>
+    <string name="people_menu_title">People</string>
+    <string name="profile_menu_title">Profile</string>
+
+    <string name="subscribed_streams_tab_title">Subscribed</string>
+    <string name="all_streams_tab_title">All Streams</string>
 </resources>

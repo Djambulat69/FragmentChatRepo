@@ -1,9 +1,9 @@
 package com.djambulat69.fragmentchat.ui.chat
 
 import android.util.Log
-import com.djambulat69.fragmentchat.db.DataBase
 import com.djambulat69.fragmentchat.model.Message
 import com.djambulat69.fragmentchat.model.Reaction
+import com.djambulat69.fragmentchat.model.db.DataBase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable

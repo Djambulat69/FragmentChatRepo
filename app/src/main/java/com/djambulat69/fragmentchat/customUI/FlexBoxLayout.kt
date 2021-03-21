@@ -26,7 +26,6 @@ class FlexBoxLayout @JvmOverloads constructor(
 
     private var layoutWidth = 0
 
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         layoutWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingEnd - paddingStart
         var heightUsed = 0

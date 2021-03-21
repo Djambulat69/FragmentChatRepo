@@ -24,6 +24,8 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
     private lateinit var binding: FragmentChatBinding
     private val presenter: ChatPresenter by moxyPresenter { ChatPresenter() }
 
+    private var watcher: TextWatcher? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,8 +37,11 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory())
-        binding.messageEditText.addTextChangedListener(object : TextWatcher {
+        binding.chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory()) {
+            binding.chatRecyclerView.smoothScrollToPosition(0)
+        }
+
+        watcher = object : TextWatcher {
             override fun beforeTextChanged(
                 text: CharSequence?,
                 start: Int,
@@ -56,7 +61,9 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             }
 
             override fun afterTextChanged(editable: Editable?) {}
-        })
+        }
+        binding.messageEditText.addTextChangedListener(watcher)
+
     }
 
     override fun onStart() {
@@ -70,6 +77,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         presenter.dispose()
     }
 
+    override fun onDestroy() {
+        binding.messageEditText.removeTextChangedListener(watcher)
+        super.onDestroy()
+    }
 
     private fun getSendButtonObservable(): Observable<Message> {
         return Observable.create { emitter ->
@@ -118,7 +129,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
 
     private fun getCurrentTime(): String {
         val currentTimeMillis = GregorianCalendar.getInstance().timeInMillis
-        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(currentTimeMillis))
+        return SimpleDateFormat("MMM dd", Locale.getDefault()).format(Date(currentTimeMillis))
     }
 
     companion object {
