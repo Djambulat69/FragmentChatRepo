@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.streams
+package com.djambulat69.fragmentchat.ui.streams.recyclerview
 
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.Stream

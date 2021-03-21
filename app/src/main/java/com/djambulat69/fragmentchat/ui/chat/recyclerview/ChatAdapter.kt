@@ -8,6 +8,7 @@ import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
 class ChatAdapter(holderFactory: ChatHolderFactory, private val commitCallback: Runnable?) :
     BaseAdapter(holderFactory) {
+
     private val differ = AsyncListDiffer(this, ChatDiffCallback)
     override var items: List<ViewTyped>
         get() = differ.currentList

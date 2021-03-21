@@ -4,17 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.model.Stream
-import com.djambulat69.fragmentchat.model.Topic
+import com.djambulat69.fragmentchat.ui.streams.recyclerview.StreamsAdapter
+import com.djambulat69.fragmentchat.ui.streams.recyclerview.StreamsHolderFactory
+import com.djambulat69.fragmentchat.ui.streams.recyclerview.TopicUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
+import moxy.MvpAppCompatFragment
+import moxy.ktx.moxyPresenter
 
 private const val ARG_TAB_POSITION = "tab_position"
 
-class StreamsFragment : Fragment() {
+class StreamsFragment : MvpAppCompatFragment(), StreamsView {
+
     private var tabPosition: Int? = null
+    private lateinit var streamsRecyclerView: RecyclerView
+    private val presenter: StreamsPresenter by moxyPresenter { StreamsPresenter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,23 +38,8 @@ class StreamsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val streamsRecyclerView = view.findViewById<RecyclerView>(R.id.streams_recycler_view)
-        var streams = listOf<ViewTyped>()
-        streams = listOf(
-            Stream("general", listOf(Topic("Testing", 332))),
-            Stream("memes", listOf(Topic("Hello", 23)))
-        ).flatMap {
-            listOf(StreamUI(it) { isChecked, topicUIs, position ->
-                streams = if (isChecked) {
-                    streams.toMutableList().apply { addAll(position + 1, topicUIs) }
-                } else {
-                    streams.toMutableList().apply { removeAll(topicUIs) }
-                }
-                (streamsRecyclerView.adapter as StreamsAdapter).submitList(streams)
-            })
-        }
-        streamsRecyclerView.adapter = StreamsAdapter()
-        (streamsRecyclerView.adapter as StreamsAdapter).submitList(streams)
+        streamsRecyclerView = view.findViewById(R.id.streams_recycler_view)
+        streamsRecyclerView.adapter = StreamsAdapter(StreamsHolderFactory())
     }
 
     companion object {
@@ -62,5 +52,20 @@ class StreamsFragment : Fragment() {
                     )
                 }
             }
+    }
+
+    override fun showStreams(streamUIs: List<ViewTyped>) {
+        (streamsRecyclerView.adapter as StreamsAdapter).items = streamUIs
+    }
+
+    override fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
+        presenter.streamUIs = presenter.streamUIs.toMutableList().apply {
+            if (isChecked) {
+                addAll(position + 1, topicUIs)
+            } else {
+                removeAll(topicUIs)
+            }
+        }
+        presenter.showStreams()
     }
 }

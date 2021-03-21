@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.streams
+package com.djambulat69.fragmentchat.ui.streams.recyclerview
 
 import android.view.View
 import android.widget.TextView

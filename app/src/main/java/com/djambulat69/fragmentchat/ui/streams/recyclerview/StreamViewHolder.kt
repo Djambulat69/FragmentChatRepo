@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.streams
+package com.djambulat69.fragmentchat.ui.streams.recyclerview
 
 import android.view.View
 import android.widget.ImageView
@@ -13,6 +13,12 @@ class StreamViewHolder(val streamView: View) : BaseViewHolder<StreamUI>(streamVi
 
     override fun bind(item: StreamUI) {
         streamTitleTextView.text = item.stream.title
+        streamExpandImageView.setImageResource(
+            if (item.isChecked)
+                R.drawable.ic_baseline_keyboard_arrow_up_24
+            else
+                R.drawable.ic_baseline_keyboard_arrow_down_24
+        )
         streamView.setOnClickListener {
             item.clickWithPosition(adapterPosition)
             streamExpandImageView.setImageResource(
