@@ -1,11 +1,13 @@
 package com.djambulat69.fragmentchat.ui.streams
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.djambulat69.fragmentchat.R
+import com.djambulat69.fragmentchat.databinding.FragmentStreamsBinding
+import com.djambulat69.fragmentchat.model.Topic
+import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.streams.recyclerview.StreamsAdapter
 import com.djambulat69.fragmentchat.ui.streams.recyclerview.StreamsHolderFactory
 import com.djambulat69.fragmentchat.ui.streams.recyclerview.TopicUI
@@ -17,9 +19,20 @@ private const val ARG_TAB_POSITION = "tab_position"
 
 class StreamsFragment : MvpAppCompatFragment(), StreamsView {
 
+    private var fragmentInteractor: FragmentInteractor? = null
     private var tabPosition: Int? = null
-    private lateinit var streamsRecyclerView: RecyclerView
     private val presenter: StreamsPresenter by moxyPresenter { StreamsPresenter() }
+
+    private var _binding: FragmentStreamsBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is FragmentInteractor) {
+            fragmentInteractor = context
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,15 +44,15 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_streams, container, false)
+    ): View {
+        _binding = FragmentStreamsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        streamsRecyclerView = view.findViewById(R.id.streams_recycler_view)
-        streamsRecyclerView.adapter = StreamsAdapter(StreamsHolderFactory())
+        binding.streamsRecyclerView.adapter = StreamsAdapter(StreamsHolderFactory())
     }
 
     companion object {
@@ -54,8 +67,13 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
             }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun showStreams(streamUIs: List<ViewTyped>) {
-        (streamsRecyclerView.adapter as StreamsAdapter).items = streamUIs
+        (binding.streamsRecyclerView.adapter as StreamsAdapter).items = streamUIs
     }
 
     override fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
@@ -67,5 +85,9 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
             }
         }
         presenter.showStreams()
+    }
+
+    override fun openTopicFragment(topic: Topic) {
+        fragmentInteractor?.openTopic(topic)
     }
 }

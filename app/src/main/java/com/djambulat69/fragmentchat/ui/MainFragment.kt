@@ -1,5 +1,6 @@
 package com.djambulat69.fragmentchat.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,11 +8,30 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
+import com.djambulat69.fragmentchat.model.Topic
 import com.djambulat69.fragmentchat.ui.channels.ChannelsFragment
 import com.djambulat69.fragmentchat.ui.chat.ChatFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), FragmentInteractor {
+
+    private var fragmentInteractor: FragmentInteractor? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is FragmentInteractor) {
+            fragmentInteractor = context
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            childFragmentManager.commit {
+                add(R.id.main_fragment_container, ChannelsFragment.newInstance())
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,11 +43,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (savedInstanceState == null) {
-            childFragmentManager.commit {
-                add(R.id.main_fragment_container, ChannelsFragment.newInstance())
-            }
-        }
+
 
         val bottomNavigation = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
@@ -40,7 +56,10 @@ class MainFragment : Fragment() {
                 }
                 R.id.people_menu_item -> {
                     childFragmentManager.commit {
-                        replace(R.id.main_fragment_container, ChatFragment.newInstance())
+                        replace(
+                            R.id.main_fragment_container,
+                            ChatFragment.newInstance(Topic("Chat", 55))
+                        )
                     }
                     true
                 }
@@ -57,5 +76,9 @@ class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
+    }
+
+    override fun openTopic(topic: Topic) {
+        fragmentInteractor?.openTopic(topic)
     }
 }

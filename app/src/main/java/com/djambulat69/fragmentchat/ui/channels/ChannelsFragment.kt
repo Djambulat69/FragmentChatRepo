@@ -11,13 +11,14 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class ChannelsFragment : Fragment() {
 
-    private lateinit var binding: FragmentChannelsBinding
+    private var _binding: FragmentChannelsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentChannelsBinding.inflate(inflater, container, false)
+        _binding = FragmentChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -25,7 +26,7 @@ class ChannelsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.channelsViewPager.adapter =
-            ChannelsViewPagerAdapter(childFragmentManager, lifecycle)
+            ChannelsViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
         TabLayoutMediator(binding.channelsTabLayout, binding.channelsViewPager) { tab, position ->
             tab.text = getString(
                 when (position) {
@@ -35,6 +36,11 @@ class ChannelsFragment : Fragment() {
                 }
             )
         }.attach()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

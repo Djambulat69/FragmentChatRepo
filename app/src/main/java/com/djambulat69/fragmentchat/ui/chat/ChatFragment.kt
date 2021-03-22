@@ -6,9 +6,11 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
 import com.djambulat69.fragmentchat.model.Message
 import com.djambulat69.fragmentchat.model.Reaction
+import com.djambulat69.fragmentchat.model.Topic
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatAdapter
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatHolderFactory
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.DateSeparatorUI
@@ -19,12 +21,23 @@ import moxy.ktx.moxyPresenter
 import java.text.SimpleDateFormat
 import java.util.*
 
+private const val ARG_TOPIC = "topic"
+
 class ChatFragment : MvpAppCompatFragment(), ChatView {
+
+    private var topic: Topic? = null
 
     private lateinit var binding: FragmentChatBinding
     private val presenter: ChatPresenter by moxyPresenter { ChatPresenter() }
 
     private var watcher: TextWatcher? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            topic = it.getSerializable(ARG_TOPIC) as Topic
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +53,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         binding.chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory()) {
             binding.chatRecyclerView.smoothScrollToPosition(0)
         }
+        binding.chatTopicTitle.text = getString(R.string.sharp_placeholder, topic?.title)
 
         watcher = object : TextWatcher {
             override fun beforeTextChanged(
@@ -77,9 +91,9 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         presenter.dispose()
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
+        super.onDestroyView()
         binding.messageEditText.removeTextChangedListener(watcher)
-        super.onDestroy()
     }
 
     private fun getSendButtonObservable(): Observable<Message> {
@@ -134,6 +148,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
 
     companion object {
         @JvmStatic
-        fun newInstance() = ChatFragment()
+        fun newInstance(topic: Topic) = ChatFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(ARG_TOPIC, topic)
+            }
+        }
     }
 }

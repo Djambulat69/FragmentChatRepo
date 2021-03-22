@@ -1,5 +1,6 @@
 package com.djambulat69.fragmentchat.ui.streams
 
+import com.djambulat69.fragmentchat.model.Topic
 import com.djambulat69.fragmentchat.ui.streams.recyclerview.TopicUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import moxy.MvpView
@@ -12,4 +13,7 @@ interface StreamsView : MvpView {
 
     @Skip
     fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int)
+
+    @Skip
+    fun openTopicFragment(topic: Topic)
 }

@@ -24,15 +24,30 @@ object DataBase {
             "general",
             listOf(
                 Topic("Testing", 332),
-                Topic("Testing", 332),
-                Topic("Testing", 332)
-            )
+                Topic("Developers", 52),
+                Topic("Tinkoff", 3)
+            ),
+            true
         ),
         Stream(
-            "memes", listOf(
-                Topic("Hello", 23),
-                Topic("Hello", 23)
-            )
+            "Design", listOf(
+                Topic("Main", 23),
+                Topic("Prod", 92)
+            ),
+            true
+        ),
+        Stream(
+            "Genders", listOf(
+                Topic("Male", 23),
+                Topic("Female", 92)
+            ),
+            false
+        ),
+        Stream(
+            "PR", listOf(
+                Topic("prStrategy", 92)
+            ),
+            false
         )
     )
 
