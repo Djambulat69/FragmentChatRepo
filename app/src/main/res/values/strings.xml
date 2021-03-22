@@ -2,6 +2,7 @@
     <string name="app_name">FragmentChat</string>
     <string name="message_hint">Message</string>
     <string name="search_hint">Search…</string>
+    <string name="search_menu_item_title">Search</string>
 
     <string name="channels_menu_title">Channels</string>
     <string name="people_menu_title">People</string>
@@ -9,6 +10,8 @@
 
     <string name="subscribed_streams_tab_title">Subscribed</string>
     <string name="all_streams_tab_title">All Streams</string>
+    <string name="people_toolbar_title">Users</string>
 
     <string name="sharp_placeholder">#%1$s</string>
+    <string name="topic_title">Topic: #%1$s</string>
 </resources>

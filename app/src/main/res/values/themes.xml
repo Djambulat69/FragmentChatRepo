@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.FragmentChat" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/blue_grey_800</item>
+        <item name="colorPrimary">@color/grey_800</item>
         <item name="colorPrimaryVariant">@color/blue_grey_600</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -17,7 +17,7 @@
         </item>
         <item name="tabStyle">@style/Widget.MaterialComponents.TabLayout.Colored</item>
         <item name="toolbarStyle">
-            @style/Widget.MaterialComponents.Toolbar.PrimarySurface
+            @style/Widget.MaterialComponents.Toolbar.Primary
         </item>
     </style>
 </resources>

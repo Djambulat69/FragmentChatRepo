@@ -87,7 +87,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
         presenter.showStreams()
     }
 
-    override fun openTopicFragment(topic: Topic) {
-        fragmentInteractor?.openTopic(topic)
+    override fun openTopicFragment(topic: Topic, streamTitle: String) {
+        fragmentInteractor?.openTopic(topic, streamTitle)
     }
 }

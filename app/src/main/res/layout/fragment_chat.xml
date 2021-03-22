@@ -5,6 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSecondary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_baseline_arrow_back_24" />
+
     <TextView
         android:id="@+id/chat_topic_title"
         android:layout_width="match_parent"
@@ -12,9 +20,9 @@
         android:background="?attr/colorPrimary"
         android:padding="@dimen/padding_small"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:textColor="?attr/colorOnPrimary"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        tools:layout_editor_absoluteX="0dp"
         tools:text="Topic: #general" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -41,17 +49,17 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <EditText
-            android:layout_marginTop="@dimen/margin_medium"
-            android:layout_marginBottom="@dimen/margin_medium"
             android:id="@+id/message_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="fill_horizontal"
             android:layout_margin="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginBottom="@dimen/margin_medium"
             android:background="@null"
             android:hint="@string/message_hint"
-            android:maxLines="5"
             android:imeOptions="flagNoExtractUi"
+            android:maxLines="5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/send_button"
             app:layout_constraintStart_toStartOf="parent"

@@ -20,10 +20,14 @@ class MainActivity : AppCompatActivity(), FragmentInteractor {
         }
     }
 
-    override fun openTopic(topic: Topic) {
+    override fun back() {
+        supportFragmentManager.popBackStack()
+    }
+
+    override fun openTopic(topic: Topic, streamTitle: String) {
         supportFragmentManager.commit {
             addToBackStack(null)
-            replace(R.id.fragment_container, ChatFragment.newInstance(topic))
+            replace(R.id.fragment_container, ChatFragment.newInstance(topic, streamTitle))
         }
     }
 }

@@ -10,7 +10,7 @@ import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.Topic
 import com.djambulat69.fragmentchat.ui.channels.ChannelsFragment
-import com.djambulat69.fragmentchat.ui.chat.ChatFragment
+import com.djambulat69.fragmentchat.ui.people.PeopleFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainFragment : Fragment(), FragmentInteractor {
@@ -58,7 +58,7 @@ class MainFragment : Fragment(), FragmentInteractor {
                     childFragmentManager.commit {
                         replace(
                             R.id.main_fragment_container,
-                            ChatFragment.newInstance(Topic("Chat", 55))
+                            PeopleFragment.newInstance()
                         )
                     }
                     true
@@ -78,7 +78,11 @@ class MainFragment : Fragment(), FragmentInteractor {
         fun newInstance() = MainFragment()
     }
 
-    override fun openTopic(topic: Topic) {
-        fragmentInteractor?.openTopic(topic)
+    override fun back() {
+        fragmentInteractor?.back()
+    }
+
+    override fun openTopic(topic: Topic, streamTitle: String) {
+        fragmentInteractor?.openTopic(topic, streamTitle)
     }
 }

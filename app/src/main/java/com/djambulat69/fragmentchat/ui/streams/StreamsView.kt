@@ -15,5 +15,5 @@ interface StreamsView : MvpView {
     fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int)
 
     @Skip
-    fun openTopicFragment(topic: Topic)
+    fun openTopicFragment(topic: Topic, streamTitle: String)
 }

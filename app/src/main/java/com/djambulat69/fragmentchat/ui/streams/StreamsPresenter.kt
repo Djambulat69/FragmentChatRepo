@@ -14,8 +14,8 @@ class StreamsPresenter : MvpPresenter<StreamsView>() {
     var streamUIs: List<ViewTyped> = streams.map {
         StreamUI(it, { isChecked, topicUIs, position ->
             toggleStreamItem(isChecked, topicUIs, position)
-        }) { topic ->
-            openTopicFragment(topic)
+        }) { topic, streamTitle ->
+            openTopicFragment(topic, streamTitle)
         }
     }
 
@@ -24,8 +24,8 @@ class StreamsPresenter : MvpPresenter<StreamsView>() {
         showStreams()
     }
 
-    fun openTopicFragment(topic: Topic) {
-        viewState.openTopicFragment(topic)
+    fun openTopicFragment(topic: Topic, streamTitle: String) {
+        viewState.openTopicFragment(topic, streamTitle)
     }
 
     fun showStreams() {

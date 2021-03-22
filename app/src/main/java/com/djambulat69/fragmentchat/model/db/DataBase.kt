@@ -1,14 +1,18 @@
 package com.djambulat69.fragmentchat.model.db
 
-import com.djambulat69.fragmentchat.model.Message
-import com.djambulat69.fragmentchat.model.Reaction
-import com.djambulat69.fragmentchat.model.Stream
-import com.djambulat69.fragmentchat.model.Topic
+import com.djambulat69.fragmentchat.model.*
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.text.SimpleDateFormat
 import java.util.*
 
 object DataBase {
+    val users = listOf<User>(
+        User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
+        User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
+        User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
+        User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
+    )
+
     private var _messages = listOf(
         Message(
             UUID.randomUUID().toString(), "Message text", "Author Author", mutableListOf(
