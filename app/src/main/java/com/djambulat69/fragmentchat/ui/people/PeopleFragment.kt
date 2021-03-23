@@ -34,6 +34,11 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
         binding.usersRecyclerView.adapter = UsersAdapter(UsersHolderFactory())
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun showUsers(users: List<User>) {
         (binding.usersRecyclerView.adapter as UsersAdapter).items = users.map { user ->
             UserUI(user)

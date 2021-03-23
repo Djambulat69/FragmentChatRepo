@@ -19,7 +19,7 @@
         android:id="@+id/bottom_navigation"
         android:layout_width="0dp"
         android:layout_height="@dimen/bottom_navigation_height"
-        app:itemIconSize="24dp"
+        app:itemIconSize="@dimen/bottom_navigation_item_icon_size"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

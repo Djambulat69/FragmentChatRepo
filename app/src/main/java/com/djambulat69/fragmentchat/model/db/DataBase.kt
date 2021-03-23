@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object DataBase {
+    val profile = Profile("Name Surname", "In a meeting", "OOAAA@gmail.com")
+
     val users = listOf<User>(
         User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
         User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),

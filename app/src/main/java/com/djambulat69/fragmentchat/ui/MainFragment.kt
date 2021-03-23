@@ -11,6 +11,7 @@ import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.Topic
 import com.djambulat69.fragmentchat.ui.channels.ChannelsFragment
 import com.djambulat69.fragmentchat.ui.people.PeopleFragment
+import com.djambulat69.fragmentchat.ui.profile.ProfileFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainFragment : Fragment(), FragmentInteractor {
@@ -65,7 +66,7 @@ class MainFragment : Fragment(), FragmentInteractor {
                 }
                 R.id.profile_menu_item -> {
                     childFragmentManager.commit {
-                        replace(R.id.main_fragment_container, ChannelsFragment.newInstance())
+                        replace(R.id.main_fragment_container, ProfileFragment.newInstance())
                     }
                     true
                 }
