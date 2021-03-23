@@ -25,16 +25,16 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun showProfile(profile: Profile) {
         with(binding) {
             profileName.text = profile.name
             profileStatus.text = profile.status
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {

@@ -55,18 +55,6 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
         binding.streamsRecyclerView.adapter = StreamsAdapter(StreamsHolderFactory())
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(tabPosition: Int) =
-            StreamsFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(
-                        ARG_TAB_POSITION, tabPosition
-                    )
-                }
-            }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -89,5 +77,17 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
 
     override fun openTopicFragment(topic: Topic, streamTitle: String) {
         fragmentInteractor?.openTopic(topic, streamTitle)
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(tabPosition: Int) =
+            StreamsFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(
+                        ARG_TAB_POSITION, tabPosition
+                    )
+                }
+            }
     }
 }

@@ -27,5 +27,3 @@ fun <T : View> View.inflate(
     root: ViewGroup? = this as? ViewGroup,
     attachToRoot: Boolean = false
 ): T = LayoutInflater.from(context).inflate(layout, root, attachToRoot) as T
-
-

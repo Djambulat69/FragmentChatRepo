@@ -5,7 +5,7 @@ import android.widget.TextView
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.utils.recyclerView.BaseViewHolder
 
-class DateSeparatorViewHolder(private val dateView: View) :
+class DateSeparatorViewHolder(dateView: View) :
     BaseViewHolder<DateSeparatorUI>(dateView) {
     private val dateTextView: TextView = dateView.findViewById(R.id.date_separator_text)
 

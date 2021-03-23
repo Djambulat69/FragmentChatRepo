@@ -3,10 +3,10 @@ package com.djambulat69.fragmentchat.customUI
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.marginBottom
@@ -38,7 +38,7 @@ class MessageViewGroup @JvmOverloads constructor(
     private var flexBoxWidth = 0
     private var flexBoxHeight = 0
 
-    private val addReactionButton: ImageButton
+    private val addReactionButton: View
 
 
     init {
@@ -82,16 +82,10 @@ class MessageViewGroup @JvmOverloads constructor(
         flexBox.setReactions(reactions, addReactionButton, reactionUpdate)
     }
 
-    fun setOnMessageClickListener(clickListener: () -> Unit) =
-        messageLayout.setOnLongClickListener {
-            clickListener()
-            true
-        }
+    fun setOnMessageClickListener(clickListener: () -> Unit) = messageLayout.setOnLongClickListener { clickListener(); true }
 
-    fun setAddReactionLister(click: () -> Unit) {
-        addReactionButton.setOnClickListener {
-            click()
-        }
+    fun setAddReactionListener(click: () -> Unit) {
+        addReactionButton.setOnClickListener { click() }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
 import com.djambulat69.fragmentchat.model.Message
@@ -33,7 +34,8 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
     private var topic: Topic? = null
     private var streamTitle: String? = null
 
-    private lateinit var binding: FragmentChatBinding
+    private var _binding: FragmentChatBinding? = null
+    private val binding get() = _binding!!
     private val presenter: ChatPresenter by moxyPresenter { ChatPresenter() }
 
     private var watcher: TextWatcher? = null
@@ -57,7 +59,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentChatBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentChatBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -74,30 +76,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
                 fragmentInteractor?.back()
             }
         }
-
-        watcher = object : TextWatcher {
-            override fun beforeTextChanged(
-                text: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
-
-            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
-                if (text?.isNotBlank() == true) {
-                    binding.sendButton.visibility = View.VISIBLE
-                    binding.addFileButton.visibility = View.INVISIBLE
-                } else {
-                    binding.sendButton.visibility = View.INVISIBLE
-                    binding.addFileButton.visibility = View.VISIBLE
-                }
-            }
-
-            override fun afterTextChanged(editable: Editable?) {}
-        }
-        binding.messageEditText.addTextChangedListener(watcher)
-
+        setupTextWatcher()
     }
 
     override fun onStart() {
@@ -114,22 +93,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.messageEditText.removeTextChangedListener(watcher)
-    }
-
-    private fun getSendButtonObservable(): Observable<Message> {
-        return Observable.create { emitter ->
-            binding.sendButton.setOnClickListener {
-                val message = Message(
-                    UUID.randomUUID().toString(),
-                    binding.messageEditText.text.toString().trim(),
-                    "Edit Author",
-                    mutableListOf(),
-                    getCurrentTime()
-                )
-                emitter.onNext(message)
-                binding.messageEditText.setText("")
-            }
-        }
+        _binding = null
     }
 
     override fun showMessages(messages: List<Message>) {
@@ -137,6 +101,40 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             messages.groupBy { it.date }.flatMap { (date: String, messagesbyDate: List<Message>) ->
                 messagesToMessageUIs(messagesbyDate) + DateSeparatorUI(date)
             }
+    }
+
+    private fun getSendButtonObservable(): Observable<Message> = Observable.create { emitter ->
+        binding.sendButton.setOnClickListener {
+            val message = Message(
+                UUID.randomUUID().toString(),
+                binding.messageEditText.text.toString().trim(),
+                "Edit Author",
+                mutableListOf(),
+                getCurrentTime()
+            )
+            emitter.onNext(message)
+            binding.messageEditText.setText("")
+        }
+    }
+
+    private fun setupTextWatcher() {
+        watcher = object : TextWatcher {
+            override fun beforeTextChanged(
+                text: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
+
+            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
+                binding.sendButton.isVisible = text?.isBlank() == false
+                binding.addFileButton.isVisible = text?.isBlank() == true
+            }
+
+            override fun afterTextChanged(editable: Editable?) {}
+        }
+        binding.messageEditText.addTextChangedListener(watcher)
     }
 
     private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message ->
@@ -148,9 +146,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             }.show()
         }
         val reactionUpdateCallback = { reactions: MutableList<Reaction> ->
-            presenter.updateReactionsInMessage(message.copy().apply {
-                this.reactions = this.reactions.toMutableList()
-            }, reactions)
+            presenter.updateReactionsInMessage(message, reactions)
         }
 
         MessageUI(

@@ -13,7 +13,7 @@ class IncomingMessageViewHolder(
             text = item.message.text
             author = item.message.author
             setOnMessageClickListener(item.click)
-            setAddReactionLister(item.click)
+            setAddReactionListener(item.click)
             setReactions(item.message.reactions, item.reactionUpdate)
         }
     }

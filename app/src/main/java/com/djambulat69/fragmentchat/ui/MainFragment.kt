@@ -45,7 +45,6 @@ class MainFragment : Fragment(), FragmentInteractor {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val bottomNavigation = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -75,15 +74,15 @@ class MainFragment : Fragment(), FragmentInteractor {
         }
     }
 
-    companion object {
-        fun newInstance() = MainFragment()
-    }
-
     override fun back() {
         fragmentInteractor?.back()
     }
 
     override fun openTopic(topic: Topic, streamTitle: String) {
         fragmentInteractor?.openTopic(topic, streamTitle)
+    }
+
+    companion object {
+        fun newInstance() = MainFragment()
     }
 }

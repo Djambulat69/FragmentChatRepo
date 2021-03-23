@@ -13,9 +13,6 @@ class MessageUI(
 ) :
     ViewTyped {
     override val viewType: Int =
-        if (sender == message.author)
-            R.layout.outcoming_message_layout
-        else
-            R.layout.incoming_message_layout
+        if (sender == message.author) R.layout.outcoming_message_layout else R.layout.incoming_message_layout
     override val id: String = message.id
 }
