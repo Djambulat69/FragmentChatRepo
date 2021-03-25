@@ -62,7 +62,7 @@ object DataBase {
     }
 
     fun sendMessage(msg: Message) {
-        _messages = (listOf(msg) + _messages)
+        _messages = _messages + msg
         messagesSubject.onNext(_messages)
     }
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
 import com.djambulat69.fragmentchat.model.Message
@@ -68,8 +69,13 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
 
         with(binding) {
             toolbar.title = getString(R.string.sharp_placeholder, streamTitle)
-            chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory()) {
-                chatRecyclerView.smoothScrollToPosition(0)
+            chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory()).apply {
+                registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                    override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                        super.onItemRangeInserted(positionStart, itemCount)
+                        chatRecyclerView.adapter?.let { chatRecyclerView.scrollToPosition(it.itemCount - 1) }
+                    }
+                })
             }
             chatTopicTitle.text = getString(R.string.topic_title, topic?.title)
             toolbar.setNavigationOnClickListener {
@@ -99,7 +105,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
     override fun showMessages(messages: List<Message>) {
         (binding.chatRecyclerView.adapter as ChatAdapter).items =
             messages.groupBy { it.date }.flatMap { (date: String, messagesbyDate: List<Message>) ->
-                messagesToMessageUIs(messagesbyDate) + DateSeparatorUI(date)
+                listOf(DateSeparatorUI(date)) + messagesToMessageUIs(messagesbyDate)
             }
     }
 

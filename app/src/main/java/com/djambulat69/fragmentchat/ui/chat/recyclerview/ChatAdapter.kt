@@ -6,13 +6,13 @@ import com.djambulat69.fragmentchat.utils.recyclerView.BaseAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
 
-class ChatAdapter(holderFactory: ChatHolderFactory, private val commitCallback: Runnable?) :
+class ChatAdapter(holderFactory: ChatHolderFactory) :
     BaseAdapter(holderFactory) {
 
     private val differ = AsyncListDiffer(this, ChatDiffCallback)
     override var items: List<ViewTyped>
         get() = differ.currentList
-        set(value) = differ.submitList(value, commitCallback)
+        set(value) = differ.submitList(value)
 
     object ChatDiffCallback : DiffUtil.ItemCallback<ViewTyped>() {
 
