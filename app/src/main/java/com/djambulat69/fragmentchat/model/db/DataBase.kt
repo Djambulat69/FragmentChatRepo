@@ -1,21 +1,26 @@
 package com.djambulat69.fragmentchat.model.db
 
 import com.djambulat69.fragmentchat.model.*
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.text.SimpleDateFormat
 import java.util.*
 
 object DataBase {
-    val profile = Profile("Name Surname", "In a meeting", "OOAAA@gmail.com")
 
-    val users = listOf<User>(
-        User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
-        User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
-        User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
-        User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
-    )
+    private val profile get() = Profile("Name Surname", "In a meeting", "OOAAA@gmail.com")
+    val profileSingle: Single<Profile> = Single.fromCallable { profile }
 
-    private var _messages = listOf(
+    private val users
+        get() = listOf(
+            User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
+            User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
+            User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
+            User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
+        )
+    val usersSingle: Single<List<User>> = Single.fromCallable { users }
+
+    private var messages = listOf(
         Message(
             UUID.randomUUID().toString(), "Message text", "Author Author", mutableListOf(
                 Reaction(0x1F600, 5, false)
@@ -25,58 +30,60 @@ object DataBase {
     )
     val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject.create()
 
-    val streams = listOf(
-        Stream(
-            "general",
-            listOf(
-                Topic("Testing", 332),
-                Topic("Developers", 52),
-                Topic("Tinkoff", 3)
+    private val streams
+        get() = listOf(
+            Stream(
+                "general",
+                listOf(
+                    Topic("Testing", 332),
+                    Topic("Developers", 52),
+                    Topic("Tinkoff", 3)
+                ),
+                true
             ),
-            true
-        ),
-        Stream(
-            "Design", listOf(
-                Topic("Main", 23),
-                Topic("Prod", 92)
+            Stream(
+                "Design", listOf(
+                    Topic("Main", 23),
+                    Topic("Prod", 92)
+                ),
+                true
             ),
-            true
-        ),
-        Stream(
-            "Genders", listOf(
-                Topic("Male", 23),
-                Topic("Female", 92)
+            Stream(
+                "Genders", listOf(
+                    Topic("Male", 23),
+                    Topic("Female", 92)
+                ),
+                false
             ),
-            false
-        ),
-        Stream(
-            "PR", listOf(
-                Topic("prStrategy", 92)
-            ),
-            false
+            Stream(
+                "PR", listOf(
+                    Topic("prStrategy", 92)
+                ),
+                false
+            )
         )
-    )
+    val streamsSingle: Single<List<Stream>> = Single.fromCallable { streams }
 
     init {
-        messagesSubject.onNext(_messages)
+        messagesSubject.onNext(messages)
     }
 
     fun sendMessage(msg: Message) {
-        _messages = _messages + msg
-        messagesSubject.onNext(_messages)
+        messages = messages + msg
+        messagesSubject.onNext(messages)
     }
 
     fun addReactionToMessage(message: Message, emojiCode: Int) {
         message.reactions.add(Reaction(emojiCode, 1, true))
 
-        _messages = _messages.map { if (it.id == message.id) message else it }
-        messagesSubject.onNext(_messages)
+        messages = messages.map { if (it.id == message.id) message else it }
+        messagesSubject.onNext(messages)
     }
 
     fun updateReactionsInMessage(message: Message, reactions: MutableList<Reaction>) {
         message.reactions = reactions
 
-        _messages = _messages.map { if (it.id == message.id) message else it }
-        messagesSubject.onNext(_messages)
+        messages = messages.map { if (it.id == message.id) message else it }
+        messagesSubject.onNext(messages)
     }
 }

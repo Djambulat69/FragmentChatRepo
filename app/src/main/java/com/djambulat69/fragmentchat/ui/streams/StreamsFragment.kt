@@ -60,6 +60,11 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
         _binding = null
     }
 
+    override fun onDestroy() {
+        presenter.dispose()
+        super.onDestroy()
+    }
+
     override fun showStreams(streamUIs: List<ViewTyped>) {
         (binding.streamsRecyclerView.adapter as StreamsAdapter).items = streamUIs
     }

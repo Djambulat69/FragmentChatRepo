@@ -14,12 +14,10 @@ private const val TAG = "ChatPresenter"
 
 class ChatPresenter : MvpPresenter<ChatView>() {
     private val compositeDisposable = CompositeDisposable()
-    private val messagesSubject = DataBase.messagesSubject
 
     fun observeSending(observable: Observable<Message>) {
         compositeDisposable.add(observable
             .observeOn(Schedulers.io())
-            .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { message -> DataBase.sendMessage(message) },
                 { exception -> Log.e(TAG, exception.stackTraceToString()) }
@@ -31,9 +29,8 @@ class ChatPresenter : MvpPresenter<ChatView>() {
         DataBase.updateReactionsInMessage(message, reactions)
 
     fun observeMessages() {
-        compositeDisposable.add(messagesSubject
+        compositeDisposable.add(DataBase.messagesSubject
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
             .subscribe(
                 { messages -> viewState.showMessages(messages.orEmpty()) },
                 { exception -> Log.e(TAG, exception.stackTraceToString()) }

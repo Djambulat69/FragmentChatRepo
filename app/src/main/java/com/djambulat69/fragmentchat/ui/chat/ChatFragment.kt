@@ -54,6 +54,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             topic = it.getSerializable(ARG_TOPIC) as Topic
             streamTitle = it.getString(ARG_STREAM_TITLE)
         }
+
     }
 
     override fun onCreateView(
@@ -73,7 +74,9 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
                 registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                         super.onItemRangeInserted(positionStart, itemCount)
-                        chatRecyclerView.adapter?.let { chatRecyclerView.scrollToPosition(it.itemCount - 1) }
+                        if (positionStart != 0) {
+                            chatRecyclerView.adapter?.let { chatRecyclerView.scrollToPosition(it.itemCount - 1) }
+                        }
                     }
                 })
             }
@@ -82,22 +85,16 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
                 fragmentInteractor?.back()
             }
         }
+
+        presenter.observeMessages()
+        presenter.observeSending(getSendButtonObservable())
         setupTextWatcher()
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.observeMessages()
-        presenter.observeSending(getSendButtonObservable())
-    }
-
-    override fun onStop() {
-        super.onStop()
-        presenter.dispose()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        presenter.dispose()
         binding.messageEditText.removeTextChangedListener(watcher)
         _binding = null
     }

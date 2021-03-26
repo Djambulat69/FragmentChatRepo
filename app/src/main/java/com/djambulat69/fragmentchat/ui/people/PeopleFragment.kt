@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.djambulat69.fragmentchat.databinding.FragmentPeopleBinding
-import com.djambulat69.fragmentchat.model.User
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UserUI
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UsersAdapter
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UsersHolderFactory
@@ -39,10 +38,13 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
         _binding = null
     }
 
-    override fun showUsers(users: List<User>) {
-        (binding.usersRecyclerView.adapter as UsersAdapter).items = users.map { user ->
-            UserUI(user)
-        }
+    override fun onDestroy() {
+        presenter.dispose()
+        super.onDestroy()
+    }
+
+    override fun showUsers(userUIs: List<UserUI>) {
+        (binding.usersRecyclerView.adapter as UsersAdapter).items = userUIs
     }
 
     companion object {
