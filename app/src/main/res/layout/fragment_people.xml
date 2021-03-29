@@ -7,21 +7,53 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/people_toolbar"
-        app:title="@string/people_toolbar_title"
-        app:menu="@menu/people_toolbar_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/people_toolbar_menu"
+        app:title="@string/people_toolbar_title" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/users_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/people_toolbar"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="3"
         tools:layout_editor_absoluteX="16dp"
         tools:listitem="@layout/user_list_item" />
 
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_user_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/people_toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/shimmer_user_list_item" />
+
+            <include layout="@layout/shimmer_user_list_item" />
+
+            <include layout="@layout/shimmer_user_list_item" />
+
+            <include layout="@layout/shimmer_user_list_item" />
+
+            <include layout="@layout/shimmer_user_list_item" />
+
+            <include layout="@layout/shimmer_user_list_item" />
+
+            <include layout="@layout/shimmer_user_list_item" />
+
+            <include layout="@layout/shimmer_user_list_item" />
+
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <include layout="@layout/error_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,7 +9,10 @@ import java.util.*
 object DataBase {
 
     private val profile get() = Profile("Name Surname", "In a meeting", "OOAAA@gmail.com")
-    val profileSingle: Single<Profile> = Single.fromCallable { profile }
+    val profileSingle: Single<Profile> = Single.fromCallable {
+        maybeError()
+        profile
+    }
 
     private val users
         get() = listOf(
@@ -18,7 +21,10 @@ object DataBase {
             User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
             User("Darrell Steward", "darrel@company.com", UUID.randomUUID()),
         )
-    val usersSingle: Single<List<User>> = Single.fromCallable { users }
+    val usersSingle: Single<List<User>> = Single.fromCallable {
+        maybeError()
+        users
+    }
 
     private var messages = listOf(
         Message(
@@ -62,7 +68,10 @@ object DataBase {
                 false
             )
         )
-    val streamsSingle: Single<List<Stream>> = Single.fromCallable { streams }
+    val streamsSingle: Single<List<Stream>> = Single.fromCallable {
+        maybeError()
+        streams
+    }
 
     init {
         messagesSubject.onNext(messages)
@@ -85,5 +94,10 @@ object DataBase {
 
         messages = messages.map { if (it.id == message.id) message else it }
         messagesSubject.onNext(messages)
+    }
+
+    private fun maybeError() {
+        val num = (0..2).shuffled().first()
+        if (num == 0) throw Exception("DataBase couldn't load files")
     }
 }

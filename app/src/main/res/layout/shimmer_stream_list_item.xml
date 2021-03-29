@@ -6,7 +6,8 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/stream_title"
+        android:background="@drawable/primary_round_rect_shape_bg"
+        android:id="@+id/shimmer_stream_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_large"
@@ -19,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/checked_image"
+        android:id="@+id/shimmer_checked_image"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginTop="@dimen/margin_medium"
@@ -31,7 +32,7 @@
         app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24" />
 
     <View
-        android:id="@+id/divider"
+        android:id="@+id/shimmer_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"

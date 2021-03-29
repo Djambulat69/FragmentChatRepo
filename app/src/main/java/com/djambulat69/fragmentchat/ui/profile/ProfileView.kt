@@ -7,4 +7,10 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 interface ProfileView : MvpView {
     @AddToEndSingle
     fun showProfile(profile: Profile)
+
+    @AddToEndSingle
+    fun showError()
+
+    @AddToEndSingle
+    fun showLoading()
 }

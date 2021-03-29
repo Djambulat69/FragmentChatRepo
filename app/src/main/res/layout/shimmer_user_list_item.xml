@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/user_avatar"
+        android:id="@+id/shimmer_user_avatar"
         android:layout_width="@dimen/user_list_avatar_size"
         android:layout_height="@dimen/user_list_avatar_size"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -15,34 +15,36 @@
         app:srcCompat="@mipmap/ic_launcher" />
 
     <View
-        android:id="@+id/online_icon"
+        android:id="@+id/shimmer_online_icon"
         android:layout_width="@dimen/online_icon_view_size"
         android:layout_height="@dimen/online_icon_view_size"
         android:layout_marginEnd="@dimen/margin_small"
         android:background="@drawable/online_icon_view_bg"
-        app:layout_constraintBottom_toBottomOf="@+id/user_avatar"
-        app:layout_constraintEnd_toEndOf="@+id/user_avatar" />
+        app:layout_constraintBottom_toBottomOf="@+id/shimmer_user_avatar"
+        app:layout_constraintEnd_toEndOf="@+id/shimmer_user_avatar" />
 
     <TextView
-        android:id="@+id/user_name"
+        android:id="@+id/shimmer_user_name"
         android:layout_width="wrap_content"
-        android:layout_height="32sp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_large"
         android:layout_marginTop="@dimen/margin_small"
         android:text="Name Surname"
+        android:background="@drawable/primary_round_rect_shape_bg"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        app:layout_constraintStart_toEndOf="@+id/user_avatar"
+        app:layout_constraintStart_toEndOf="@+id/shimmer_user_avatar"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/user_email"
+        android:id="@+id/shimmer_user_email"
         android:layout_width="wrap_content"
-        android:layout_height="24sp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="@dimen/margin_small"
+        android:background="@drawable/primary_round_rect_shape_bg"
         android:text="User Email"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintStart_toEndOf="@+id/user_avatar"
-        app:layout_constraintTop_toBottomOf="@+id/user_name" />
+        app:layout_constraintStart_toEndOf="@+id/shimmer_user_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/shimmer_user_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

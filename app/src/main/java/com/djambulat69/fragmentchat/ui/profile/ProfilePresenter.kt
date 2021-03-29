@@ -1,6 +1,5 @@
 package com.djambulat69.fragmentchat.ui.profile
 
-import android.util.Log
 import com.djambulat69.fragmentchat.model.db.DataBase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -22,11 +21,12 @@ class ProfilePresenter : MvpPresenter<ProfileView>() {
         compositeDisposable.add(
             DataBase.profileSingle
                 .subscribeOn(Schedulers.io())
-                .delay(1, TimeUnit.SECONDS)
+                .doOnSubscribe { viewState.showLoading() }
+                .delay(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { profile -> viewState.showProfile(profile) },
-                    { exception -> Log.e(TAG, exception.stackTraceToString()) }
+                    { viewState.showError() }
                 )
         )
     }

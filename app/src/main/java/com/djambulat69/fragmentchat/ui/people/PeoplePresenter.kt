@@ -17,10 +17,6 @@ class PeoplePresenter : MvpPresenter<PeopleView>() {
         getUsers()
     }
 
-    fun showUsers(userUIs: List<UserUI>) {
-        viewState.showUsers(userUIs)
-    }
-
     fun dispose() {
         if (!compositeDisposable.isDisposed) {
             compositeDisposable.clear()
@@ -31,10 +27,14 @@ class PeoplePresenter : MvpPresenter<PeopleView>() {
         compositeDisposable.add(
             DataBase.usersSingle
                 .subscribeOn(Schedulers.io())
-                .delay(1, TimeUnit.SECONDS)
+                .doOnSubscribe { viewState.showLoading() }
+                .delay(2, TimeUnit.SECONDS)
                 .map { users -> users.map { user -> UserUI(user) } }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { userUIs -> showUsers(userUIs) }
+                .subscribe(
+                    { userUIs -> viewState.showUsers(userUIs) },
+                    { viewState.showError() }
+                )
         )
     }
 }

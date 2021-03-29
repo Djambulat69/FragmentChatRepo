@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentStreamsBinding
 import com.djambulat69.fragmentchat.model.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
@@ -23,8 +25,10 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
     private var tabPosition: Int? = null
     private val presenter: StreamsPresenter by moxyPresenter { StreamsPresenter() }
 
-    private var _binding: FragmentStreamsBinding? = null
+    private var _binding: FragmentStreamsBinding? = null;
     private val binding get() = _binding!!
+    private var _errorBinding: ErrorLayoutBinding? = null
+    private val errorBinding get() = _errorBinding!!
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -46,6 +50,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentStreamsBinding.inflate(inflater, container, false)
+        _errorBinding = ErrorLayoutBinding.bind(binding.root)
         return binding.root
     }
 
@@ -58,6 +63,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        _errorBinding = null
     }
 
     override fun onDestroy() {
@@ -66,7 +72,21 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
     }
 
     override fun showStreams(streamUIs: List<ViewTyped>) {
+        setLoading(false)
+        setUiVisibility(true)
         (binding.streamsRecyclerView.adapter as StreamsAdapter).items = streamUIs
+    }
+
+    override fun showError() {
+        setLoading(false)
+        setUiVisibility(false)
+        errorBinding.checkConnectionTextView.isVisible = true
+        errorBinding.retryButton.isVisible = true
+    }
+
+    override fun showLoading() {
+        setUiVisibility(false)
+        setLoading(true)
     }
 
     override fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
@@ -82,6 +102,14 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
 
     override fun openTopicFragment(topic: Topic, streamTitle: String) {
         fragmentInteractor?.openTopic(topic, streamTitle)
+    }
+
+    private fun setUiVisibility(isVisible: Boolean) {
+        binding.streamsRecyclerView.isVisible = isVisible
+    }
+
+    private fun setLoading(isLoadingVisible: Boolean) {
+        binding.shimmerStreamList.isVisible = isLoadingVisible
     }
 
     companion object {

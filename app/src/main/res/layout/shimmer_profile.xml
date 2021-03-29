@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -30,6 +29,7 @@
             android:layout_margin="@dimen/margin_large"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
             android:textColor="?attr/colorOnSurface"
+            android:background="@drawable/primary_round_rect_shape_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_avatar"
@@ -41,12 +41,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:background="@drawable/primary_round_rect_shape_bg"
             app:layout_constraintEnd_toStartOf="@+id/profile_online_status"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_name"
-            tools:text="In a meeting" />
+            android:text="Status" />
 
         <TextView
             android:id="@+id/profile_online_status"
@@ -55,6 +56,7 @@
             android:layout_marginStart="@dimen/margin_large"
             android:text="@string/online_status"
             android:textColor="@color/lime_green"
+            android:background="@drawable/primary_round_rect_shape_bg"
             app:layout_constraintBottom_toBottomOf="@+id/profile_status"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -77,18 +79,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_status" />
-
-        <include layout="@layout/error_layout" />
-
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/shimmer_profile"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <include layout="@layout/shimmer_profile" />
-
-        </com.facebook.shimmer.ShimmerFrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

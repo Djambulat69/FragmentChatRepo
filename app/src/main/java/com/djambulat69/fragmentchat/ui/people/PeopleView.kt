@@ -7,4 +7,10 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 interface PeopleView : MvpView {
     @AddToEndSingle
     fun showUsers(userUIs: List<UserUI>)
+
+    @AddToEndSingle
+    fun showError()
+
+    @AddToEndSingle
+    fun showLoading()
 }
