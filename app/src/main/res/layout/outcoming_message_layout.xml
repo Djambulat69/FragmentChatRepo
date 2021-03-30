@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:padding="@dimen/padding_small"
     android:orientation="vertical"
     android:id="@+id/outcoming_message_layout"
@@ -17,9 +16,9 @@
         android:maxWidth="@dimen/message_text_width"
         android:padding="@dimen/padding_medium"
         android:textColor="@color/white"
+        android:minWidth="80dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Hello world!" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.djambulat69.fragmentchat.customUI.FlexBoxLayout
         android:id="@+id/flexbox_reactions_outcoming"

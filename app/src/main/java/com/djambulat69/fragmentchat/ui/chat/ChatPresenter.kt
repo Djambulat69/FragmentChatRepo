@@ -1,6 +1,5 @@
 package com.djambulat69.fragmentchat.ui.chat
 
-import android.util.Log
 import com.djambulat69.fragmentchat.model.Message
 import com.djambulat69.fragmentchat.model.Reaction
 import com.djambulat69.fragmentchat.model.db.DataBase
@@ -9,19 +8,32 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "ChatPresenter"
 
 class ChatPresenter : MvpPresenter<ChatView>() {
     private val compositeDisposable = CompositeDisposable()
 
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+        getMessages()
+    }
+
     fun observeSending(observable: Observable<Message>) {
-        compositeDisposable.add(observable
-            .observeOn(Schedulers.io())
-            .subscribe(
-                { message -> DataBase.sendMessage(message) },
-                { exception -> Log.e(TAG, exception.stackTraceToString()) }
-            )
+        compositeDisposable.add(
+            observable
+                .observeOn(Schedulers.io())
+                .subscribe { message ->
+                    compositeDisposable.add(
+                        DataBase.sendMessage(message)
+                            .subscribeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                { },
+                                { viewState.showError() }
+                            )
+                    )
+                }
         )
     }
 
@@ -33,7 +45,19 @@ class ChatPresenter : MvpPresenter<ChatView>() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { messages -> viewState.showMessages(messages.orEmpty()) },
-                { exception -> Log.e(TAG, exception.stackTraceToString()) }
+                { viewState.showError() }
+            ))
+    }
+
+    private fun getMessages() {
+        compositeDisposable.add(DataBase.messagesSingle
+            .subscribeOn(Schedulers.io())
+            .doOnSubscribe { viewState.showLoading() }
+            .delay(2, TimeUnit.SECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { messages -> viewState.showMessages(messages.orEmpty()) },
+                { viewState.showError() }
             ))
     }
 

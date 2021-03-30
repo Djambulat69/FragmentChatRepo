@@ -40,6 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxWidth="@dimen/message_text_width"
+            android:minWidth="80dp"
             android:textColor="@color/white"
             tools:text="Hello world! This is my message.Hello world! This is my message." />
 

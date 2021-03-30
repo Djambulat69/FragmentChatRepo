@@ -19,6 +19,7 @@ import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatAdapter
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatHolderFactory
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.DateSeparatorUI
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.MessageUI
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.core.Observable
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -37,9 +38,8 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
-    private val presenter: ChatPresenter by moxyPresenter { ChatPresenter() }
 
-    private var watcher: TextWatcher? = null
+    private val presenter: ChatPresenter by moxyPresenter { ChatPresenter() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -91,11 +91,9 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         setupTextWatcher()
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         presenter.dispose()
-        binding.messageEditText.removeTextChangedListener(watcher)
         _binding = null
     }
 
@@ -104,6 +102,27 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             messages.groupBy { it.date }.flatMap { (date: String, messagesbyDate: List<Message>) ->
                 listOf(DateSeparatorUI(date)) + messagesToMessageUIs(messagesbyDate)
             }
+        setLoading(false)
+        setChatVisibility(true)
+    }
+
+    override fun showError() {
+        setLoading(false)
+        Snackbar.make(requireContext(), binding.root, getString(R.string.check_connection_text), Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun showLoading() {
+        setLoading(true)
+        setChatVisibility(false)
+    }
+
+    private fun setLoading(isVisible: Boolean) {
+        binding.messagesShimmer.isVisible = isVisible
+    }
+
+    private fun setChatVisibility(isVisible: Boolean) {
+        binding.chatRecyclerView.isVisible = isVisible
+        binding.sendButton.isEnabled = isVisible
     }
 
     private fun getSendButtonObservable(): Observable<Message> = Observable.create { emitter ->
@@ -121,7 +140,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
     }
 
     private fun setupTextWatcher() {
-        watcher = object : TextWatcher {
+        binding.messageEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
                 text: CharSequence?,
                 start: Int,
@@ -136,8 +155,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
             }
 
             override fun afterTextChanged(editable: Editable?) {}
-        }
-        binding.messageEditText.addTextChangedListener(watcher)
+        })
     }
 
     private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message ->
@@ -166,7 +184,6 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
     }
 
     companion object {
-        @JvmStatic
         fun newInstance(topic: Topic, streamTitle: String) = ChatFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(ARG_TOPIC, topic)

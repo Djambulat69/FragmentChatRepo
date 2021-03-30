@@ -18,5 +18,5 @@
         app:layout_constraintTop_toTopOf="parent"
         android:paddingStart="@dimen/padding_medium"
         android:paddingEnd="@dimen/padding_medium"
-        tools:text="2012-12-15" />
+        tools:text="jan. 15" />
 </androidx.constraintlayout.widget.ConstraintLayout>

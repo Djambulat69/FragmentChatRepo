@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/people_toolbar_menu"
+        app:menu="@menu/search_menu"
         app:title="@string/people_toolbar_title" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -21,7 +21,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/people_toolbar"
         tools:itemCount="3"
-        tools:layout_editor_absoluteX="16dp"
         tools:listitem="@layout/user_list_item" />
 
     <com.facebook.shimmer.ShimmerFrameLayout

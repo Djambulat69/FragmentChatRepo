@@ -58,18 +58,18 @@
         android:hint="@string/message_hint"
         android:imeOptions="flagNoExtractUi"
         android:maxLines="5"
+        android:paddingHorizontal="@dimen/padding_medium"
         android:paddingVertical="@dimen/padding_medium"
-        android:paddingStart="@dimen/padding_medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/send_button"
-        android:background="@null"
         android:layout_width="@dimen/send_button_size"
         android:layout_height="@dimen/send_button_size"
         android:layout_marginEnd="@dimen/margin_medium"
+        android:background="@null"
         android:cropToPadding="true"
         android:focusable="true"
         android:paddingStart="@dimen/send_button_start_offset"
@@ -82,10 +82,10 @@
 
     <ImageButton
         android:id="@+id/add_file_button"
-        android:background="@null"
         android:layout_width="@dimen/send_button_size"
         android:layout_height="@dimen/send_button_size"
         android:layout_marginEnd="@dimen/margin_medium"
+        android:background="@null"
         android:cropToPadding="true"
         android:focusable="true"
         android:visibility="visible"
@@ -94,6 +94,39 @@
         app:layout_constraintTop_toTopOf="@+id/message_edit_text"
         app:srcCompat="@drawable/ic_baseline_add_24"
         tools:visibility="gone" />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/messages_shimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/chat_topic_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/incoming_message_layout" />
+
+            <include layout="@layout/outcoming_message_layout" />
+
+            <include layout="@layout/incoming_message_layout" />
+
+            <include layout="@layout/outcoming_message_layout" />
+
+            <include layout="@layout/incoming_message_layout" />
+
+            <include layout="@layout/outcoming_message_layout" />
+
+            <include layout="@layout/incoming_message_layout" />
+
+            <include layout="@layout/outcoming_message_layout" />
+
+            <include layout="@layout/incoming_message_layout" />
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

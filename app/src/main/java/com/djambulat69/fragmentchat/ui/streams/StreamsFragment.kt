@@ -10,6 +10,7 @@ import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentStreamsBinding
 import com.djambulat69.fragmentchat.model.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
+import com.djambulat69.fragmentchat.ui.SearchQueryListener
 import com.djambulat69.fragmentchat.ui.streams.recyclerview.StreamsAdapter
 import com.djambulat69.fragmentchat.ui.streams.recyclerview.StreamsHolderFactory
 import com.djambulat69.fragmentchat.ui.streams.recyclerview.TopicUI
@@ -19,10 +20,11 @@ import moxy.ktx.moxyPresenter
 
 private const val ARG_TAB_POSITION = "tab_position"
 
-class StreamsFragment : MvpAppCompatFragment(), StreamsView {
+class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener {
 
     private var fragmentInteractor: FragmentInteractor? = null
     private var tabPosition: Int? = null
+
     private val presenter: StreamsPresenter by moxyPresenter { StreamsPresenter() }
 
     private var _binding: FragmentStreamsBinding? = null;
@@ -72,9 +74,9 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
     }
 
     override fun showStreams(streamUIs: List<ViewTyped>) {
+        (binding.streamsRecyclerView.adapter as StreamsAdapter).items = streamUIs
         setLoading(false)
         setUiVisibility(true)
-        (binding.streamsRecyclerView.adapter as StreamsAdapter).items = streamUIs
     }
 
     override fun showError() {
@@ -85,6 +87,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
     }
 
     override fun showLoading() {
+        hideError()
         setUiVisibility(false)
         setLoading(true)
     }
@@ -104,12 +107,21 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView {
         fragmentInteractor?.openTopic(topic, streamTitle)
     }
 
+    override fun makeSearch(query: String) {
+        presenter.searchStreams(query)
+    }
+
     private fun setUiVisibility(isVisible: Boolean) {
         binding.streamsRecyclerView.isVisible = isVisible
     }
 
     private fun setLoading(isLoadingVisible: Boolean) {
         binding.shimmerStreamList.isVisible = isLoadingVisible
+    }
+
+    private fun hideError() {
+        errorBinding.checkConnectionTextView.isVisible = false
+        errorBinding.retryButton.isVisible = false
     }
 
     companion object {

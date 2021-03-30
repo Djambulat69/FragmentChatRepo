@@ -1,8 +1,9 @@
 package com.djambulat69.fragmentchat.model.db
 
 import com.djambulat69.fragmentchat.model.*
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.subjects.BehaviorSubject
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,7 +35,8 @@ object DataBase {
             SimpleDateFormat("MMM dd", Locale.getDefault()).format(Date(2000000000))
         )
     )
-    val messagesSubject: BehaviorSubject<List<Message>> = BehaviorSubject.create()
+    val messagesSubject: PublishSubject<List<Message>> = PublishSubject.create()
+    val messagesSingle: Single<List<Message>> = Single.fromCallable { messages }
 
     private val streams
         get() = listOf(
@@ -73,13 +75,11 @@ object DataBase {
         streams
     }
 
-    init {
-        messagesSubject.onNext(messages)
-    }
-
-    fun sendMessage(msg: Message) {
+    fun sendMessage(msg: Message): Maybe<Boolean> = Maybe.create { emitter ->
+        maybeError()
         messages = messages + msg
         messagesSubject.onNext(messages)
+        emitter.onSuccess(true)
     }
 
     fun addReactionToMessage(message: Message, emojiCode: Int) {
@@ -94,6 +94,11 @@ object DataBase {
 
         messages = messages.map { if (it.id == message.id) message else it }
         messagesSubject.onNext(messages)
+    }
+
+    fun searchStreams(query: String): Single<List<Stream>> = Single.fromCallable {
+        maybeError()
+        streams.filter { it.title.startsWith(query, ignoreCase = true) }
     }
 
     private fun maybeError() {

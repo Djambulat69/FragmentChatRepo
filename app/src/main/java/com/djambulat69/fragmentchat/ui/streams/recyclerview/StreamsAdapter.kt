@@ -1,5 +1,6 @@
 package com.djambulat69.fragmentchat.ui.streams.recyclerview
 
+import android.annotation.SuppressLint
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import com.djambulat69.fragmentchat.utils.recyclerView.BaseAdapter
@@ -18,9 +19,10 @@ class StreamsAdapter(holderFactory: StreamsHolderFactory) : BaseAdapter(holderFa
             return oldItem.id == newItem.id
         }
 
+        @SuppressLint("DiffUtilEquals") // Почему-то итемы в первом условии не кастуются
         override fun areContentsTheSame(oldItem: ViewTyped, newItem: ViewTyped): Boolean {
             return when {
-                oldItem is StreamUI && newItem is StreamUI -> oldItem.stream == newItem.stream
+                oldItem is StreamUI && newItem is StreamUI -> oldItem == newItem
                 oldItem is TopicUI && newItem is TopicUI -> oldItem.topic == newItem.topic
                 else -> true
             }

@@ -27,6 +27,27 @@ class StreamsPresenter : MvpPresenter<StreamsView>() {
         viewState.showStreams(streamUIs)
     }
 
+    fun searchStreams(query: String) {
+        compositeDisposable.add(
+            DataBase.searchStreams(query)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe { viewState.showLoading() }
+                .delay(500, TimeUnit.MILLISECONDS)
+                .map { searchedStreams ->
+                    streamUIs = streamsToStreamUIs(searchedStreams)
+                    streamUIs
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { streamUIs ->
+                        this.streamUIs = streamUIs
+                        showStreams()
+                    },
+                    { viewState.showError() }
+                )
+        )
+    }
+
     fun dispose() {
         if (!compositeDisposable.isDisposed) {
             compositeDisposable.clear()
