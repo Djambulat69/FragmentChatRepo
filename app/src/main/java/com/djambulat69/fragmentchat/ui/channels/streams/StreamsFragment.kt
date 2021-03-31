@@ -69,12 +69,11 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     override fun showError() {
         setLoading(false)
         setUiVisibility(false)
-        errorBinding.checkConnectionTextView.isVisible = true
-        errorBinding.retryButton.isVisible = true
+        setError(true)
     }
 
     override fun showLoading() {
-        hideError()
+        setError(false)
         setUiVisibility(false)
         setLoading(true)
     }
@@ -95,9 +94,9 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
         binding.shimmerStreamList.isVisible = isLoadingVisible
     }
 
-    private fun hideError() {
-        errorBinding.checkConnectionTextView.isVisible = false
-        errorBinding.retryButton.isVisible = false
+    private fun setError(isVisible: Boolean) {
+        errorBinding.checkConnectionTextView.isVisible = isVisible
+        errorBinding.retryButton.isVisible = isVisible
     }
 
     companion object {

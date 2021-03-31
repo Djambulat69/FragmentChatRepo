@@ -82,10 +82,11 @@ object DataBase {
         emitter.onSuccess(true)
     }
 
-    fun addReactionToMessage(message: Message, emojiCode: Int) {
-        message.reactions.add(Reaction(emojiCode, 1, true))
+    fun addReactionToMessage(messageId: String, emojiCode: Int) {
+        val newMessage = messages.find { it.id == messageId }?.copy()?.apply { reactions = reactions.toMutableList() }
+        newMessage?.reactions?.add(Reaction(emojiCode, 1, true))
 
-        messages = messages.map { if (it.id == message.id) message else it }
+        messages = messages.map { if (it.id == newMessage?.id) newMessage else it }
         messagesSubject.onNext(messages)
     }
 

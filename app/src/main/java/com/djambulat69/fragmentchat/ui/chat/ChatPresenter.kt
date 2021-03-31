@@ -39,7 +39,8 @@ class ChatPresenter : MvpPresenter<ChatView>() {
     fun updateReactionsInMessage(message: Message, reactions: MutableList<Reaction>) =
         DataBase.updateReactionsInMessage(message, reactions)
 
-    fun addReactionToMessage(message: Message, emojiCode: Int) = DataBase.addReactionToMessage(message, emojiCode)
+    fun addReactionToMessage(messageId: String, emojiCode: Int) =
+        DataBase.addReactionToMessage(messageId, emojiCode)
 
     private fun observeMessages() {
         compositeDisposable.add(DataBase.messagesSubject

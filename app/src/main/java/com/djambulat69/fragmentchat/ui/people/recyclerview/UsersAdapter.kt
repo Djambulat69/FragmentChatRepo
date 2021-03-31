@@ -7,6 +7,7 @@ import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
 class UsersAdapter(holderFactory: UsersHolderFactory) :
     BaseAdapter(holderFactory) {
+
     private val differ = AsyncListDiffer(this, UserDiffItemCallback)
 
     override var items: List<ViewTyped>

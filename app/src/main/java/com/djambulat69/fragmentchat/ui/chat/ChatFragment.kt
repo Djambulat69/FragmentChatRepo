@@ -32,7 +32,7 @@ import java.util.*
 private const val ARG_TOPIC = "topic"
 private const val ARG_STREAM_TITLE = "stream_title"
 
-class ChatFragment : MvpAppCompatFragment(), ChatView {
+class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener {
 
     private var fragmentInteractor: FragmentInteractor? = null
 
@@ -111,6 +111,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
         setChatVisibility(false)
     }
 
+    override fun emojiClicked(messageId: String, emojiCode: Int) {
+        presenter.addReactionToMessage(messageId, emojiCode)
+    }
+
     private fun setLoading(isVisible: Boolean) {
         binding.messagesShimmer.isVisible = isVisible
     }
@@ -163,13 +167,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView {
 
     private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message ->
         val clickCallback = {
-            EmojiBottomSheetDialog(requireContext()) { emojiCode ->
-                presenter.addReactionToMessage(
-                    message/*.copy().apply {
-                    reactions = reactions.toMutableList()
-                }*/, emojiCode
-                )
-            }.show()
+            EmojiBottomSheetDialog.newInstance(message.id).show(childFragmentManager, null)
         }
         val reactionUpdateCallback = { reactions: MutableList<Reaction> ->
             presenter.updateReactionsInMessage(message, reactions)
