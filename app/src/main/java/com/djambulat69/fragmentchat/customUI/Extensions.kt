@@ -19,20 +19,14 @@ fun FlexBoxLayout.setReactions(
     isVisible = reactions.isNotEmpty()
 
     reactions.forEach { reaction ->
-        addEmojiViewByReaction(reaction) {
-            if (reaction.reactionCount == 0) {
-                removeView(it)
-                reactions.remove(reaction)
-                this@setReactions.isVisible = reactions.isNotEmpty()
-            }
-            updateReactions(reactions)
-        }
+        addEmojiViewByReaction(reactions, reaction, updateReactions)
     }
 }
 
 private fun FlexBoxLayout.addEmojiViewByReaction(
+    allReactions: MutableList<Reaction>,
     reaction: Reaction,
-    click: (EmojiView) -> Unit
+    updateReactions: (MutableList<Reaction>) -> Unit
 ) {
     addView(EmojiView(context).apply {
         @Px val height = resources.getDimension(R.dimen.emoji_view_height).roundToInt()
@@ -47,7 +41,12 @@ private fun FlexBoxLayout.addEmojiViewByReaction(
         reactionCount = reaction.reactionCount
         setOnClickListener {
             updateReactionOnClick(reaction)
-            click(this)
+            if (reaction.reactionCount == 0) {
+                removeView(it)
+                allReactions.remove(reaction)
+                this.isVisible = allReactions.isNotEmpty()
+            }
+            updateReactions(allReactions)
         }
         isSelected = reaction.isSet
     }, childCount - 1)

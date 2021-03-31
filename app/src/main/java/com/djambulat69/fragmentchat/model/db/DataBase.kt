@@ -97,12 +97,12 @@ object DataBase {
     }
 
     fun searchStreams(query: String): Single<List<Stream>> = Single.fromCallable {
-        maybeError()
+        //maybeError()
         streams.filter { it.title.startsWith(query, ignoreCase = true) }
     }
 
     private fun maybeError() {
-        val num = (0..2).shuffled().first()
+        val num = (0..5).shuffled().first()
         if (num == 0) throw Exception("DataBase couldn't load files")
     }
 }

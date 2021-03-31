@@ -44,11 +44,6 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
         _binding = null
     }
 
-    override fun onDestroy() {
-        presenter.dispose()
-        super.onDestroy()
-    }
-
     override fun showUsers(userUIs: List<UserUI>) {
         setUiVisibility(true)
         setLoading(false)

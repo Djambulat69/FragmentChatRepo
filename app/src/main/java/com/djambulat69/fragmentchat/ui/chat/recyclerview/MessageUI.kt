@@ -5,9 +5,9 @@ import com.djambulat69.fragmentchat.model.Message
 import com.djambulat69.fragmentchat.model.Reaction
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
-class MessageUI(
+data class MessageUI(
     val message: Message,
-    sender: String,
+    val sender: String,
     override val click: () -> Unit,
     val reactionUpdate: (MutableList<Reaction>) -> Unit
 ) :

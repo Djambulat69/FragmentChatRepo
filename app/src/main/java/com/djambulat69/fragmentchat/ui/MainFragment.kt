@@ -48,27 +48,9 @@ class MainFragment : Fragment(), FragmentInteractor {
         val bottomNavigation = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.channels_menu_item -> {
-                    childFragmentManager.commit {
-                        replace(R.id.main_fragment_container, ChannelsFragment.newInstance())
-                    }
-                    true
-                }
-                R.id.people_menu_item -> {
-                    childFragmentManager.commit {
-                        replace(
-                            R.id.main_fragment_container,
-                            PeopleFragment.newInstance()
-                        )
-                    }
-                    true
-                }
-                R.id.profile_menu_item -> {
-                    childFragmentManager.commit {
-                        replace(R.id.main_fragment_container, ProfileFragment.newInstance())
-                    }
-                    true
-                }
+                R.id.channels_menu_item -> openFragment(ChannelsFragment.newInstance())
+                R.id.people_menu_item -> openFragment(PeopleFragment.newInstance())
+                R.id.profile_menu_item -> openFragment(ProfileFragment.newInstance())
                 else -> false
             }
         }
@@ -80,6 +62,13 @@ class MainFragment : Fragment(), FragmentInteractor {
 
     override fun openTopic(topic: Topic, streamTitle: String) {
         fragmentInteractor?.openTopic(topic, streamTitle)
+    }
+
+    private fun openFragment(fragment: Fragment): Boolean {
+        childFragmentManager.commit {
+            replace(R.id.main_fragment_container, fragment)
+        }
+        return true
     }
 
     companion object {

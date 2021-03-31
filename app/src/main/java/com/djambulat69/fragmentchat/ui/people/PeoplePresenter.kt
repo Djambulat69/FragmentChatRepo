@@ -17,10 +17,9 @@ class PeoplePresenter : MvpPresenter<PeopleView>() {
         getUsers()
     }
 
-    fun dispose() {
-        if (!compositeDisposable.isDisposed) {
-            compositeDisposable.clear()
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 
     private fun getUsers() {

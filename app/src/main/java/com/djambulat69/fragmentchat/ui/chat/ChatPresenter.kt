@@ -4,7 +4,6 @@ import com.djambulat69.fragmentchat.model.Message
 import com.djambulat69.fragmentchat.model.Reaction
 import com.djambulat69.fragmentchat.model.db.DataBase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
@@ -18,29 +17,31 @@ class ChatPresenter : MvpPresenter<ChatView>() {
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         getMessages()
+        observeMessages()
     }
 
-    fun observeSending(observable: Observable<Message>) {
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
+    }
+
+    fun sendMessage(message: Message) {
         compositeDisposable.add(
-            observable
-                .observeOn(Schedulers.io())
-                .subscribe { message ->
-                    compositeDisposable.add(
-                        DataBase.sendMessage(message)
-                            .subscribeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                { },
-                                { viewState.showError() }
-                            )
-                    )
-                }
+            DataBase.sendMessage(message)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { },
+                    { viewState.showError() }
+                )
         )
     }
 
     fun updateReactionsInMessage(message: Message, reactions: MutableList<Reaction>) =
         DataBase.updateReactionsInMessage(message, reactions)
 
-    fun observeMessages() {
+    fun addReactionToMessage(message: Message, emojiCode: Int) = DataBase.addReactionToMessage(message, emojiCode)
+
+    private fun observeMessages() {
         compositeDisposable.add(DataBase.messagesSubject
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -50,21 +51,15 @@ class ChatPresenter : MvpPresenter<ChatView>() {
     }
 
     private fun getMessages() {
-        compositeDisposable.add(DataBase.messagesSingle
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe { viewState.showLoading() }
-            .delay(2, TimeUnit.SECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { messages -> viewState.showMessages(messages.orEmpty()) },
-                { viewState.showError() }
-            ))
-    }
-
-    fun addReactionToMessage(message: Message, emojiCode: Int) = DataBase.addReactionToMessage(message, emojiCode)
-
-    fun dispose() {
-        if (!compositeDisposable.isDisposed)
-            compositeDisposable.clear()
+        compositeDisposable.add(
+            DataBase.messagesSingle
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe { viewState.showLoading() }
+                .delay(2, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { messages -> viewState.showMessages(messages.orEmpty()) },
+                    { viewState.showError() }
+                ))
     }
 }

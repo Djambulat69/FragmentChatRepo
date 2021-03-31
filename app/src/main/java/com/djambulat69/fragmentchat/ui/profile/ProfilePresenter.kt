@@ -10,14 +10,20 @@ import java.util.concurrent.TimeUnit
 private const val TAG = "ProfilePresenter"
 
 class ProfilePresenter : MvpPresenter<ProfileView>() {
+
     private val compositeDisposable = CompositeDisposable()
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
+    }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         showProfile()
     }
 
-    fun showProfile() {
+    private fun showProfile() {
         compositeDisposable.add(
             DataBase.profileSingle
                 .subscribeOn(Schedulers.io())
