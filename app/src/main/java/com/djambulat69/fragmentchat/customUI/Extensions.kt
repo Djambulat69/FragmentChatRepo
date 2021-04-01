@@ -44,7 +44,7 @@ private fun FlexBoxLayout.addEmojiViewByReaction(
             if (reaction.reactionCount == 0) {
                 removeView(it)
                 allReactions.remove(reaction)
-                this.isVisible = allReactions.isNotEmpty()
+                this@addEmojiViewByReaction.isVisible = allReactions.isNotEmpty()
             }
             updateReactions(allReactions)
         }
