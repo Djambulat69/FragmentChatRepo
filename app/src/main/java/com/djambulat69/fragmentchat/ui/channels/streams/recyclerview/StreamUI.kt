@@ -5,10 +5,10 @@ import com.djambulat69.fragmentchat.model.Stream
 import com.djambulat69.fragmentchat.model.Topic
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
-data class StreamUI(
+class StreamUI(
     val stream: Stream,
-    private val expand: (Boolean, List<TopicUI>, Int) -> Unit,
-    private val openTopic: (Topic, String) -> Unit
+    expand: (Boolean, List<TopicUI>, Int) -> Unit,
+    openTopic: (Topic, String) -> Unit
 ) : ViewTyped {
 
     override val viewType: Int = R.layout.stream_list_item
