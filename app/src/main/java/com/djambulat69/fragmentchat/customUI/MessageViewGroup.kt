@@ -13,8 +13,9 @@ import androidx.core.view.marginBottom
 import androidx.core.view.marginEnd
 import androidx.core.view.marginStart
 import androidx.core.view.marginTop
+import com.bumptech.glide.RequestManager
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.model.Reaction
+import com.djambulat69.fragmentchat.model.Reaction1
 import com.google.android.material.imageview.ShapeableImageView
 
 class MessageViewGroup @JvmOverloads constructor(
@@ -76,8 +77,8 @@ class MessageViewGroup @JvmOverloads constructor(
         }
 
     fun setReactions(
-        reactions: MutableList<Reaction>,
-        reactionUpdate: (MutableList<Reaction>) -> Unit
+        reactions: MutableList<Reaction1>,
+        reactionUpdate: (MutableList<Reaction1>) -> Unit
     ) {
         flexBox.setReactions(reactions, addReactionButton, reactionUpdate)
     }
@@ -86,6 +87,10 @@ class MessageViewGroup @JvmOverloads constructor(
 
     fun setAddReactionListener(click: () -> Unit) {
         addReactionButton.setOnClickListener { click() }
+    }
+
+    fun setAvatar(glide: RequestManager, avatarUrl: String) {
+        glide.load(avatarUrl).into(avatarView)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

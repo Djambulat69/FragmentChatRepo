@@ -10,15 +10,16 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
-import com.djambulat69.fragmentchat.model.Message
-import com.djambulat69.fragmentchat.model.Reaction
-import com.djambulat69.fragmentchat.model.Topic
+import com.djambulat69.fragmentchat.model.Message1
+import com.djambulat69.fragmentchat.model.Reaction1
+import com.djambulat69.fragmentchat.model.network.Message
+import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatAdapter
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatHolderFactory
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.DateSeparatorUI
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.MessageUI
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.core.Observable
@@ -39,7 +40,12 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
-    private val presenter: ChatPresenter by moxyPresenter { ChatPresenter() }
+    private val presenter: ChatPresenter by moxyPresenter {
+        ChatPresenter(
+            requireArguments().getSerializable(ARG_TOPIC) as Topic,
+            requireArguments().getString(ARG_STREAM_TITLE) as String
+        )
+    }
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -61,12 +67,12 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val topic = requireArguments().getSerializable(ARG_TOPIC) as Topic
+        val topic: Topic = requireArguments().getSerializable(ARG_TOPIC) as Topic
         val streamTitle = requireArguments().getString(ARG_STREAM_TITLE)
 
         with(binding) {
             toolbar.title = getString(R.string.sharp_placeholder, streamTitle)
-            chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory()).apply {
+            chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory(Glide.with(this@ChatFragment))).apply {
                 registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                         super.onItemRangeInserted(positionStart, itemCount)
@@ -76,7 +82,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                     }
                 })
             }
-            chatTopicTitle.text = getString(R.string.topic_title, topic.title)
+            chatTopicTitle.text = getString(R.string.topic_title, topic.name)
             toolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
             }
@@ -93,13 +99,19 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     override fun showMessages(messages: List<Message>) {
+        (binding.chatRecyclerView.adapter as ChatAdapter).items = messagesToMessageUIs(messages)
+        setLoading(false)
+        setChatVisibility(true)
+    }
+
+    /*override fun showMessages(messages: List<Message>) {
         (binding.chatRecyclerView.adapter as ChatAdapter).items =
-            messages.groupBy { it.date }.flatMap { (date: String, messagesbyDate: List<Message>) ->
+            messages.groupBy { it.date }.flatMap { (date: String, messagesbyDate: List<Message1>) ->
                 listOf(DateSeparatorUI(date)) + messagesToMessageUIs(messagesbyDate)
             }
         setLoading(false)
         setChatVisibility(true)
-    }
+    }*/
 
     override fun showError() {
         setLoading(false)
@@ -111,8 +123,8 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         setChatVisibility(false)
     }
 
-    override fun emojiClicked(messageId: String, emojiCode: Int) {
-        presenter.addReactionToMessage(messageId, emojiCode)
+    override fun emojiClicked(messageId: Int, emojiCode: Int) {
+//        presenter.addReactionToMessage(messageId, emojiCode)
     }
 
     private fun setLoading(isVisible: Boolean) {
@@ -124,9 +136,9 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         binding.sendButton.isEnabled = isVisible
     }
 
-    private fun getSendButtonObservable(): Observable<Message> = Observable.create { emitter ->
+    private fun getSendButtonObservable(): Observable<Message1> = Observable.create { emitter ->
         binding.sendButton.setOnClickListener {
-            val message = Message(
+            val message = Message1(
                 UUID.randomUUID().toString(),
                 binding.messageEditText.text.toString().trim(),
                 "Edit Author",
@@ -169,8 +181,8 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         val clickCallback = {
             EmojiBottomSheetDialog.newInstance(message.id).show(childFragmentManager, null)
         }
-        val reactionUpdateCallback = { reactions: MutableList<Reaction> ->
-            presenter.updateReactionsInMessage(message, reactions)
+        val reactionUpdateCallback = { reactions: MutableList<Reaction1> ->
+//            presenter.updateReactionsInMessage(message, reactions)
         }
 
         MessageUI(

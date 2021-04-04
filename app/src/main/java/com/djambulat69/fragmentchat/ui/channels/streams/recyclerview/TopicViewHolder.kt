@@ -10,8 +10,8 @@ class TopicViewHolder(private val topicView: View) : BaseViewHolder<TopicUI>(top
     private val messagesCount: TextView = topicView.findViewById(R.id.topic_messages_count)
 
     override fun bind(item: TopicUI) {
-        topicTitleTextView.text = item.topic.title
-        messagesCount.text = item.topic.messagesCount.toString()
+        topicTitleTextView.text = item.topic.name
+        messagesCount.text = item.topic.maxId.toString()
         topicView.setOnClickListener {
             item.click()
         }

@@ -42,7 +42,7 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
         var code = 0x1F600
         for (i in 0..59) {
             add(EmojiUI(code) { clickedEmojiCode ->
-                listener!!.emojiClicked(requireArguments().getString(ARG_MESSAGE_ID)!!, clickedEmojiCode)
+                listener!!.emojiClicked(requireArguments().getInt(ARG_MESSAGE_ID), clickedEmojiCode)
                 dismiss()
             })
             code += 0x00001
@@ -50,11 +50,11 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
     }
 
     interface EmojiBottomDialogListener {
-        fun emojiClicked(messageId: String, emojiCode: Int)
+        fun emojiClicked(messageId: Int, emojiCode: Int)
     }
 
     companion object {
-        fun newInstance(messageId: String) = EmojiBottomSheetDialog().apply {
+        fun newInstance(messageId: Int) = EmojiBottomSheetDialog().apply {
             arguments = bundleOf(ARG_MESSAGE_ID to messageId)
         }
     }

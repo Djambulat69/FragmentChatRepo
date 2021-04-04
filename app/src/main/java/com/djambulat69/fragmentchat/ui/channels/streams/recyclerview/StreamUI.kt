@@ -1,8 +1,8 @@
 package com.djambulat69.fragmentchat.ui.channels.streams.recyclerview
 
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.model.Stream
-import com.djambulat69.fragmentchat.model.Topic
+import com.djambulat69.fragmentchat.model.network.Stream
+import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
 class StreamUI(
@@ -12,17 +12,15 @@ class StreamUI(
 ) : ViewTyped {
 
     override val viewType: Int = R.layout.stream_list_item
-    override val id: String = stream.title
-    override val click: () -> Unit = {
-        isExpanded = !isExpanded
-    }
+    override val id: String = stream.name
+    override val click: () -> Unit = { isExpanded = !isExpanded }
 
-    private val childTopics = stream.topics.map { topic -> TopicUI(topic, stream.title, openTopic) }
+    val childTopicUIs: List<TopicUI> = stream.topics.map { topic -> TopicUI(topic, stream.name, openTopic) }
+
     var isExpanded = false
 
     val clickWithPosition: (Int) -> Unit = { position ->
         click()
-        expand(isExpanded, childTopics, position)
+        expand(isExpanded, childTopicUIs, position)
     }
-
 }

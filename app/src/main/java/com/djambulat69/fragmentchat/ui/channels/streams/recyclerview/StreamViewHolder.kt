@@ -13,7 +13,7 @@ class StreamViewHolder(private val streamView: View) : BaseViewHolder<StreamUI>(
 
     override fun bind(item: StreamUI) {
         streamTitleTextView.text =
-            streamView.context.getString(R.string.sharp_placeholder, item.stream.title)
+            streamView.context.getString(R.string.sharp_placeholder, item.stream.name)
         setExpandImage(item.isExpanded)
         streamView.setOnClickListener {
             item.clickWithPosition(adapterPosition)

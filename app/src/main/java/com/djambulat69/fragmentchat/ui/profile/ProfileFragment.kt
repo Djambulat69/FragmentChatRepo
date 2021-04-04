@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentProfileBinding
-import com.djambulat69.fragmentchat.model.Profile
+import com.djambulat69.fragmentchat.model.network.OwnUser
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -33,6 +34,7 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUIVisibility(false)
+
     }
 
     override fun onDestroyView() {
@@ -41,10 +43,10 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
         _binding = null
     }
 
-    override fun showProfile(profile: Profile) {
+    override fun showProfile(user: OwnUser) {
         with(binding) {
-            profileName.text = profile.name
-            profileStatus.text = profile.status
+            Glide.with(this@ProfileFragment).load(user.avatarUrl).into(profileAvatar)
+            profileName.text = user.fullName
         }
         setLoading(false)
         setUIVisibility(true)
@@ -63,7 +65,6 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
 
     private fun setUIVisibility(isVisible: Boolean) {
         with(binding) {
-            profileStatus.isVisible = isVisible
             profileName.isVisible = isVisible
             profileOnlineStatus.isVisible = isVisible
             logoutButton.isVisible = isVisible

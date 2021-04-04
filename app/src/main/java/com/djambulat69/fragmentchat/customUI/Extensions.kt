@@ -6,13 +6,13 @@ import androidx.annotation.Px
 import androidx.core.view.isVisible
 import androidx.core.view.setMargins
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.model.Reaction
+import com.djambulat69.fragmentchat.model.Reaction1
 import kotlin.math.roundToInt
 
 fun FlexBoxLayout.setReactions(
-    reactions: MutableList<Reaction>,
+    reactions: MutableList<Reaction1>,
     addReactionButton: View,
-    updateReactions: (MutableList<Reaction>) -> Unit
+    updateReactions: (MutableList<Reaction1>) -> Unit
 ) {
     removeViews(0, childCount - 1)
     addReactionButton.isVisible = reactions.isNotEmpty()
@@ -24,9 +24,9 @@ fun FlexBoxLayout.setReactions(
 }
 
 private fun FlexBoxLayout.addEmojiViewByReaction(
-    allReactions: MutableList<Reaction>,
-    reaction: Reaction,
-    updateReactions: (MutableList<Reaction>) -> Unit
+    allReactions: MutableList<Reaction1>,
+    reaction: Reaction1,
+    updateReactions: (MutableList<Reaction1>) -> Unit
 ) {
     addView(EmojiView(context).apply {
         @Px val height = resources.getDimension(R.dimen.emoji_view_height).roundToInt()
@@ -52,7 +52,7 @@ private fun FlexBoxLayout.addEmojiViewByReaction(
     }, childCount - 1)
 }
 
-private fun EmojiView.updateReactionOnClick(reaction: Reaction) {
+private fun EmojiView.updateReactionOnClick(reaction: Reaction1) {
     reaction.isSet = !reaction.isSet
     if (reaction.isSet) {
         reaction.reactionCount += 1

@@ -1,7 +1,6 @@
 package com.djambulat69.fragmentchat.ui.chat
 
-
-import com.djambulat69.fragmentchat.model.Message
+import com.djambulat69.fragmentchat.model.network.Message
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.OneExecution

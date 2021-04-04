@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentPeopleBinding
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UserUI
@@ -35,7 +36,7 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.usersRecyclerView.adapter = UsersAdapter(UsersHolderFactory())
+        binding.usersRecyclerView.adapter = UsersAdapter(UsersHolderFactory(Glide.with(this)))
     }
 
     override fun onDestroyView() {

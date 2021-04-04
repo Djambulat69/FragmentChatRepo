@@ -1,17 +1,17 @@
 package com.djambulat69.fragmentchat.ui.profile
 
-import com.djambulat69.fragmentchat.model.db.DataBase
+import com.djambulat69.fragmentchat.model.network.ZulipRemote
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
-import java.util.concurrent.TimeUnit
 
 private const val TAG = "ProfilePresenter"
 
 class ProfilePresenter : MvpPresenter<ProfileView>() {
 
     private val compositeDisposable = CompositeDisposable()
+    private val zulipRemote = ZulipRemote
 
     override fun onDestroy() {
         super.onDestroy()
@@ -25,13 +25,12 @@ class ProfilePresenter : MvpPresenter<ProfileView>() {
 
     private fun showProfile() {
         compositeDisposable.add(
-            DataBase.profileSingle
+            zulipRemote.getOwnUser()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { viewState.showLoading() }
-                .delay(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { profile -> viewState.showProfile(profile) },
+                    { user -> viewState.showProfile(user) },
                     { viewState.showError() }
                 )
         )

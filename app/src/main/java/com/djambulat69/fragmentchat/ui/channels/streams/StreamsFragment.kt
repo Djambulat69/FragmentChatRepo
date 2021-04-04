@@ -9,7 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentStreamsBinding
-import com.djambulat69.fragmentchat.model.Topic
+import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.SearchQueryListener
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsAdapter
@@ -83,7 +83,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     }
 
     override fun makeSearch(query: String) {
-        presenter.searchStreams(query)
+        //presenter.searchStreams(query)
     }
 
     private fun setUiVisibility(isVisible: Boolean) {

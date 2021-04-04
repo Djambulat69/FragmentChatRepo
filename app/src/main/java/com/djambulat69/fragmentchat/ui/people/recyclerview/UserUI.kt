@@ -1,7 +1,7 @@
 package com.djambulat69.fragmentchat.ui.people.recyclerview
 
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.model.User
+import com.djambulat69.fragmentchat.model.network.User
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
 class UserUI(

@@ -1,12 +1,15 @@
 package com.djambulat69.fragmentchat.ui.people
 
-import com.djambulat69.fragmentchat.model.db.DataBase
+import android.util.Log
+import com.djambulat69.fragmentchat.model.network.ZulipRemote
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UserUI
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
 import java.util.concurrent.TimeUnit
+
+private const val TAG = "PeoplePresenter"
 
 class PeoplePresenter : MvpPresenter<PeopleView>() {
 
@@ -24,15 +27,18 @@ class PeoplePresenter : MvpPresenter<PeopleView>() {
 
     private fun getUsers() {
         compositeDisposable.add(
-            DataBase.usersSingle
+            ZulipRemote.getUsers()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { viewState.showLoading() }
                 .delay(2, TimeUnit.SECONDS)
-                .map { users -> users.map { user -> UserUI(user) } }
+                .map { allUsersResponse -> allUsersResponse.users.map { user -> UserUI(user) } }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { userUIs -> viewState.showUsers(userUIs) },
-                    { viewState.showError() }
+                    { exception ->
+                        viewState.showError()
+                        Log.e(TAG, exception.stackTraceToString())
+                    }
                 )
         )
     }

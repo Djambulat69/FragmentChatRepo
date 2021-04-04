@@ -1,6 +1,6 @@
 package com.djambulat69.fragmentchat.ui
 
-import com.djambulat69.fragmentchat.model.Topic
+import com.djambulat69.fragmentchat.model.network.Topic
 
 interface FragmentInteractor {
     fun back()

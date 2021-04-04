@@ -24,7 +24,6 @@
         android:id="@+id/flexbox_reactions_outcoming"
         android:layout_width="@dimen/message_flexbox_width"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
         android:layout_marginTop="@dimen/margin_small"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"

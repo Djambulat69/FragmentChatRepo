@@ -2,6 +2,7 @@ package com.djambulat69.fragmentchat.ui.chat.recyclerview
 
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.RequestManager
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.IncomingMessageLayoutBinding
 import com.djambulat69.fragmentchat.databinding.OutcomingMessageLayoutBinding
@@ -10,7 +11,7 @@ import com.djambulat69.fragmentchat.utils.recyclerView.BaseViewHolder
 import com.djambulat69.fragmentchat.utils.recyclerView.HolderFactory
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
-class ChatHolderFactory : HolderFactory() {
+class ChatHolderFactory(private val glide: RequestManager) : HolderFactory() {
     override fun createHolder(
         parent: ViewGroup,
         viewType: Int,
@@ -19,7 +20,7 @@ class ChatHolderFactory : HolderFactory() {
         return when (viewType) {
             R.layout.incoming_message_layout -> {
                 val binding = IncomingMessageLayoutBinding.bind(view)
-                IncomingMessageViewHolder(binding)
+                IncomingMessageViewHolder(binding, glide)
             }
             R.layout.outcoming_message_layout -> {
                 val binding = OutcomingMessageLayoutBinding.bind(view)
