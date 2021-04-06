@@ -14,6 +14,7 @@ class ChatAdapter(holderFactory: ChatHolderFactory) :
         get() = differ.currentList
         set(value) = differ.submitList(value)
 
+
     object ChatDiffCallback : DiffUtil.ItemCallback<ViewTyped>() {
 
         override fun areItemsTheSame(oldItem: ViewTyped, newItem: ViewTyped): Boolean {

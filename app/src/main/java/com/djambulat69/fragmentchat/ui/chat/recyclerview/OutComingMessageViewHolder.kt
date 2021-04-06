@@ -1,5 +1,6 @@
 package com.djambulat69.fragmentchat.ui.chat.recyclerview
 
+import com.djambulat69.fragmentchat.customUI.setReactions
 import com.djambulat69.fragmentchat.databinding.OutcomingMessageLayoutBinding
 import com.djambulat69.fragmentchat.utils.recyclerView.BaseViewHolder
 
@@ -18,11 +19,11 @@ class OutComingMessageViewHolder(
             addReactionButtonOutcoming.setOnClickListener {
                 item.click()
             }
-            /*flexboxReactionsOutcoming.setReactions(
-                item.message.reactions.toMutableList(),
+            flexboxReactionsOutcoming.setReactions(
+                item.message.reactions,
                 addReactionButtonOutcoming,
                 item.reactionUpdate
-            )*/
+            )
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.core.view.marginTop
 import com.bumptech.glide.RequestManager
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.Reaction1
+import com.djambulat69.fragmentchat.model.network.Reaction
 import com.google.android.material.imageview.ShapeableImageView
 
 class MessageViewGroup @JvmOverloads constructor(
@@ -77,7 +78,7 @@ class MessageViewGroup @JvmOverloads constructor(
         }
 
     fun setReactions(
-        reactions: MutableList<Reaction1>,
+        reactions: List<Reaction>,
         reactionUpdate: (MutableList<Reaction1>) -> Unit
     ) {
         flexBox.setReactions(reactions, addReactionButton, reactionUpdate)

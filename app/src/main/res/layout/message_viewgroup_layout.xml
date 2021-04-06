@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="@dimen/padding_small"
     tools:parentTag="com.djambulat69.fragmentchat.customUI.MessageViewGroup">
 
@@ -13,9 +13,9 @@
         android:layout_height="@dimen/avatar_size"
         android:layout_marginEnd="@dimen/margin_small"
         android:clickable="true"
+        android:focusable="true"
         app:shapeAppearance="@style/circleImageViewShape"
-        app:srcCompat="@drawable/ic_launcher_background"
-        android:focusable="true" />
+        app:srcCompat="@drawable/ic_launcher_background" />
 
     <LinearLayout
         android:id="@+id/message_linear_layout"

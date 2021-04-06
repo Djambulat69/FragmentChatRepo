@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
-import com.djambulat69.fragmentchat.model.Message1
 import com.djambulat69.fragmentchat.model.Reaction1
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Topic
@@ -136,16 +135,9 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         binding.sendButton.isEnabled = isVisible
     }
 
-    private fun getSendButtonObservable(): Observable<Message1> = Observable.create { emitter ->
+    private fun getSendButtonObservable(): Observable<String> = Observable.create { emitter ->
         binding.sendButton.setOnClickListener {
-            val message = Message1(
-                UUID.randomUUID().toString(),
-                binding.messageEditText.text.toString().trim(),
-                "Edit Author",
-                mutableListOf(),
-                getCurrentTime()
-            )
-            emitter.onNext(message)
+            emitter.onNext(binding.messageEditText.text.toString().trim())
             binding.messageEditText.setText("")
         }
     }
@@ -154,7 +146,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         compositeDisposable.add(
             getSendButtonObservable()
                 .subscribeOn(Schedulers.io())
-                .subscribe { message -> presenter.sendMessage(message) }
+                .subscribe { messageText -> presenter.sendMessage(messageText) }
         )
     }
 

@@ -1,11 +1,9 @@
 package com.djambulat69.fragmentchat.model.network
 
+import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 import okhttp3.Credentials
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 const val myUserName = "Djambulat Isaev"
 
@@ -37,5 +35,20 @@ interface ZulipChatService {
 
     @GET("users")
     fun getUsers(@Header(AUTH_HEADER) cred: String = credential): Single<AllUsersResponse>
+
+    @POST("messages")
+    fun sendMessage(
+        @Query("type") type: String,
+        @Query("to") streamId: Int,
+        @Query("content") text: String,
+        @Query("topic") topicTitle: String,
+        @Header(AUTH_HEADER) cred: String = credential
+    ): Maybe<SendMessageResponse>
+
+    @GET("get_stream_id")
+    fun getStreamId(
+        @Query("stream") streamTitle: String,
+        @Header(AUTH_HEADER) cred: String = credential
+    ): Single<StreamIdResponse>
 
 }

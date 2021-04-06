@@ -119,9 +119,8 @@ data class Reaction(
     val reactionType: String, // one of: "unicode_emoji", "realm_emoji", "zulip_extra_emoji"
     @SerialName("user_id")
     val userId: Int,
-) {
-    var count: Int = 0
-}
+    var userIds: List<Int>? = null // null until List<Reaction>.withUsers() called
+)
 
 @Serializable
 data class OwnUser(
@@ -191,4 +190,24 @@ data class User(
     val timezone: String,
     @SerialName("user_id")
     val userId: Int,
+)
+
+@Serializable
+data class SendMessageResponse(
+    @SerialName("id")
+    val id: Int,
+    @SerialName("msg")
+    val msg: String,
+    @SerialName("result")
+    val result: String
+)
+
+@Serializable
+data class StreamIdResponse(
+    @SerialName("msg")
+    val msg: String,
+    @SerialName("result")
+    val result: String,
+    @SerialName("stream_id")
+    val streamId: Int
 )

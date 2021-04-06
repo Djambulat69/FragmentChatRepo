@@ -7,25 +7,27 @@ import androidx.core.view.isVisible
 import androidx.core.view.setMargins
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.Reaction1
+import com.djambulat69.fragmentchat.model.network.Reaction
 import kotlin.math.roundToInt
 
 fun FlexBoxLayout.setReactions(
-    reactions: MutableList<Reaction1>,
+    reactions: List<Reaction>,
     addReactionButton: View,
     updateReactions: (MutableList<Reaction1>) -> Unit
 ) {
     removeViews(0, childCount - 1)
+
     addReactionButton.isVisible = reactions.isNotEmpty()
     isVisible = reactions.isNotEmpty()
 
-    reactions.forEach { reaction ->
-        addEmojiViewByReaction(reactions, reaction, updateReactions)
+    reactions.distinctBy { it.emojiCode }.forEach { reaction ->
+        addEmojiViewByReaction(reaction, reactions.count { it.emojiCode == reaction.emojiCode }, updateReactions)
     }
 }
 
 private fun FlexBoxLayout.addEmojiViewByReaction(
-    allReactions: MutableList<Reaction1>,
-    reaction: Reaction1,
+    reaction: Reaction,
+    count: Int,
     updateReactions: (MutableList<Reaction1>) -> Unit
 ) {
     addView(EmojiView(context).apply {
@@ -37,18 +39,18 @@ private fun FlexBoxLayout.addEmojiViewByReaction(
             height
         ).apply { setMargins(margin) }
         setPadding(widthPadding, 0, widthPadding, 0)
-        setEmoji(reaction.emoji)
-        reactionCount = reaction.reactionCount
+        setEmoji(reaction.emojiCode.toInt(16))
+        reactionCount = count
         setOnClickListener {
-            updateReactionOnClick(reaction)
-            if (reaction.reactionCount == 0) {
+//            updateReactionOnClick(reaction)
+            /*if (reaction.reactionCount == 0) {
                 removeView(it)
                 allReactions.remove(reaction)
                 this@addEmojiViewByReaction.isVisible = allReactions.isNotEmpty()
             }
-            updateReactions(allReactions)
+            updateReactions(allReactions)*/
         }
-        isSelected = reaction.isSet
+//        isSelected = reaction.isSet
     }, childCount - 1)
 }
 

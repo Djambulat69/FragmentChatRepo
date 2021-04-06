@@ -12,6 +12,7 @@ private const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/
 
 private const val ANCHOR_MESSAGE_RANGE = 30
 private const val ANCHOR_MESSAGE = "newest"
+private const val MESSAGE_TYPE = "stream"
 
 @ExperimentalSerializationApi
 object ZulipRemote {
@@ -43,4 +44,9 @@ object ZulipRemote {
     fun getOwnUser() = zulipService.getOwnUser()
 
     fun getUsers() = zulipService.getUsers()
+
+    fun sendMessageMaybe(streamId: Int, text: String, topicTitle: String) =
+        zulipService.sendMessage(MESSAGE_TYPE, streamId, text, topicTitle)
+
+    fun getStreamIdSingle(streamTitle: String) = zulipService.getStreamId(streamTitle)
 }
