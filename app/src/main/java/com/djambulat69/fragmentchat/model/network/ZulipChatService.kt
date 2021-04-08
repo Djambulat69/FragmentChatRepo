@@ -1,5 +1,6 @@
 package com.djambulat69.fragmentchat.model.network
 
+import com.djambulat69.fragmentchat.ui.channels.streams.StreamsResponseSealed
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 import okhttp3.Credentials
@@ -15,7 +16,10 @@ private val credential: String = Credentials.basic("djambulat69@gmail.com", API_
 interface ZulipChatService {
 
     @GET("streams")
-    fun getStreams(@Header(AUTH_HEADER) cred: String = credential): Single<AllStreamsResponse>
+    fun getStreams(@Header(AUTH_HEADER) cred: String = credential): Single<StreamsResponseSealed.AllStreamsResponse>
+
+    @GET("users/me/subscriptions")
+    fun getSubscriptions(@Header(AUTH_HEADER) cred: String = credential): Single<StreamsResponseSealed.SubscribedStreamsResponse>
 
     @GET("users/me/{stream_id}/topics")
     fun getTopics(@Path("stream_id") streamId: Int, @Header(AUTH_HEADER) cred: String = credential): Single<TopicsResponse>
@@ -50,5 +54,4 @@ interface ZulipChatService {
         @Query("stream") streamTitle: String,
         @Header(AUTH_HEADER) cred: String = credential
     ): Single<StreamIdResponse>
-
 }

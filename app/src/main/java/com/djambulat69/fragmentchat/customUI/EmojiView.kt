@@ -2,10 +2,15 @@ package com.djambulat69.fragmentchat.customUI
 
 import android.content.Context
 import android.graphics.*
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
+import androidx.core.graphics.withTranslation
+import androidx.emoji.text.EmojiCompat
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.utils.spToPx
 import com.djambulat69.fragmentchat.utils.toEmoji
@@ -27,10 +32,12 @@ class EmojiView @JvmOverloads constructor(
             }
         }
     private var contentSize: Float
-    private var emoji = 0x1F600.toEmoji()
+    private var emoji: CharSequence = 0x1F600.toEmoji()
 
-    fun setEmoji(code: Int) {
-        emoji = code.toEmoji()
+    fun setEmoji(code: String) {
+        val processed = EmojiCompat.get().process(code)
+        emoji = processed
+        emojiLayout = StaticLayout(emoji, textPaint, 80, Layout.Alignment.ALIGN_CENTER, 1f, 0f, false)
         invalidate()
     }
 
@@ -49,15 +56,16 @@ class EmojiView @JvmOverloads constructor(
     private var viewRect = RectF()
     private var contentWidth = 0
     private var contentHeight = 0
-    private var textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private var textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
         textSize = contentSize
         color = Color.WHITE
     }
-    private var emojiBounds = Rect()
+    private var emojiLayout =
+        StaticLayout(emoji, textPaint, 20, Layout.Alignment.ALIGN_CENTER, 1f, 0f, false)
     private var reactionCountBounds = Rect()
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        textPaint.getTextBounds(emoji, 0, emoji.length, emojiBounds)
+
         textPaint.getTextBounds(
             reactionCount.toString(),
             0,
@@ -66,12 +74,12 @@ class EmojiView @JvmOverloads constructor(
         )
         contentWidth =
             resolveSize(
-                emojiBounds.width() + reactionCountBounds.width() + paddingStart + paddingEnd,
+                emojiLayout.width + reactionCountBounds.width() + paddingStart + paddingEnd,
                 widthMeasureSpec
             )
         contentHeight =
             resolveSize(
-                emojiBounds.height() + paddingTop + paddingBottom,
+                emojiLayout.height + paddingTop + paddingBottom,
                 heightMeasureSpec
             )
         viewRect.right = contentWidth.toFloat()
@@ -81,12 +89,13 @@ class EmojiView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.drawText(
-            emoji,
-            paddingStart.toFloat(),
-            (contentHeight / 2f + emojiBounds.height() / 4f),
-            textPaint
-        )
+
+        canvas?.withTranslation(
+            paddingStart / 2f,
+            paddingTop.toFloat() + paddingBottom.toFloat()
+        ) {
+            emojiLayout.draw(this)
+        }
         canvas?.drawText(
             reactionCount.toString(),
             (contentWidth - reactionCountBounds.width() - paddingEnd).toFloat(),

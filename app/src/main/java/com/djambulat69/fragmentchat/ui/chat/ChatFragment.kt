@@ -19,6 +19,7 @@ import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatAdapter
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatHolderFactory
+import com.djambulat69.fragmentchat.ui.chat.recyclerview.DateSeparatorUI
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.MessageUI
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.core.Observable
@@ -26,7 +27,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
-import java.text.SimpleDateFormat
 import java.util.*
 
 private const val ARG_TOPIC = "topic"
@@ -98,7 +98,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     override fun showMessages(messages: List<Message>) {
-        (binding.chatRecyclerView.adapter as ChatAdapter).items = messagesToMessageUIs(messages)
+        (binding.chatRecyclerView.adapter as ChatAdapter).items =
+            messagesToMessageUIs(messages).groupBy { it.date }.flatMap { (date: String, messageUIsByDate: List<MessageUI>) ->
+                listOf(DateSeparatorUI(date)) + messageUIsByDate
+            }
         setLoading(false)
         setChatVisibility(true)
     }
@@ -179,15 +182,9 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
 
         MessageUI(
             message,
-            "Edit Author",
             clickCallback,
             reactionUpdateCallback
         )
-    }
-
-    private fun getCurrentTime(): String {
-        val currentTimeMillis = GregorianCalendar.getInstance().timeInMillis
-        return SimpleDateFormat("MMM dd", Locale.getDefault()).format(Date(currentTimeMillis))
     }
 
     companion object {

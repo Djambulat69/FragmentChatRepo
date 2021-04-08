@@ -49,8 +49,7 @@
     <com.djambulat69.fragmentchat.customUI.FlexBoxLayout
         android:id="@+id/flex_box"
         android:layout_width="@dimen/message_flexbox_width"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/add_reaction_button_outcoming"

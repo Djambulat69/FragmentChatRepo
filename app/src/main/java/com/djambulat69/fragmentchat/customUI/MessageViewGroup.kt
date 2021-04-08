@@ -9,10 +9,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.marginBottom
-import androidx.core.view.marginEnd
-import androidx.core.view.marginStart
-import androidx.core.view.marginTop
+import androidx.core.view.*
 import com.bumptech.glide.RequestManager
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.Reaction1
@@ -81,7 +78,7 @@ class MessageViewGroup @JvmOverloads constructor(
         reactions: List<Reaction>,
         reactionUpdate: (MutableList<Reaction1>) -> Unit
     ) {
-        flexBox.setReactions(reactions, addReactionButton, reactionUpdate)
+        flexBox.setReactions(reactions, reactionUpdate)
     }
 
     fun setOnMessageClickListener(clickListener: () -> Unit) = messageLayout.setOnLongClickListener { clickListener(); true }
@@ -107,6 +104,16 @@ class MessageViewGroup @JvmOverloads constructor(
             messageLayout.measuredHeight + messageLayout.marginTop + messageLayout.marginBottom
         flexBoxWidth = flexBox.measuredWidth + flexBox.marginStart + flexBox.marginEnd
         flexBoxHeight = flexBox.measuredHeight + flexBox.marginTop + flexBox.marginBottom
+
+        if (avatarView.isGone) avatarSize = 0
+        if (messageLayout.isGone) {
+            messageHeight = 0
+            messageWidth = 0
+        }
+        if (flexBox.isGone) {
+            flexBoxHeight = 0
+            flexBoxWidth = 0
+        }
         setMeasuredDimension(
             resolveSize(
                 avatarSize + maxOf(messageWidth, flexBoxWidth) + paddingStart + paddingEnd,

@@ -3,15 +3,7 @@ package com.djambulat69.fragmentchat.model.network
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class AllStreamsResponse(
-    @SerialName("msg")
-    val msg: String,
-    @SerialName("result")
-    val result: String,
-    @SerialName("streams")
-    val streams: List<Stream>
-)
+// StreamsResponse Serializable defined in ui.channels.streams.StreamsResponseSealed
 
 @Serializable
 data class Stream(

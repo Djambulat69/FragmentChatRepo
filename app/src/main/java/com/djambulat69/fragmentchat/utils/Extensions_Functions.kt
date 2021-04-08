@@ -9,7 +9,14 @@ import androidx.annotation.Px
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.math.roundToInt
+
+
+// Extensions
 
 @Px
 fun Context.spToPx(sp: Int): Int {
@@ -38,4 +45,20 @@ fun ViewPager2.getCurrentFragments(fragmentManager: FragmentManager): List<Fragm
         fragments[i] = fragmentManager.findFragmentByTag("f$i")
     }
     return fragments
+}
+
+// Functions
+
+private const val DATE_FORMAT_PATTERN = "d MMM"
+
+fun secondsToDateString(timeStamp: Long): String {
+    return LocalDateTime
+        .ofEpochSecond(
+            timeStamp,
+            1000,
+            ZoneOffset.ofTotalSeconds(0)
+        )
+        .format(
+            DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN, Locale.getDefault())
+        )
 }

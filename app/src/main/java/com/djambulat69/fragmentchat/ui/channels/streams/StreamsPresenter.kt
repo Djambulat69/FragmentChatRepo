@@ -1,7 +1,9 @@
 package com.djambulat69.fragmentchat.ui.channels.streams
 
+import android.util.Log
 import com.djambulat69.fragmentchat.model.network.Stream
 import com.djambulat69.fragmentchat.model.network.ZulipRemote
+import com.djambulat69.fragmentchat.ui.channels.ChannelsPages
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamUI
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.TopicUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
@@ -15,11 +17,14 @@ import moxy.MvpPresenter
 private const val TAG = "StreamsPresenter"
 
 
-class StreamsPresenter(private val tabPosition: Int) : MvpPresenter<StreamsView>() {
+class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
 
+    private val zulipService = ZulipRemote
     private val compositeDisposable = CompositeDisposable()
 
+    private val streamsSingle: Single<StreamsResponseSealed> = getStreamsSingle(tabPosition)
     private var recyclerItemUIs: List<ViewTyped> = emptyList()
+    private var streams: List<Stream> = emptyList()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -31,22 +36,15 @@ class StreamsPresenter(private val tabPosition: Int) : MvpPresenter<StreamsView>
         compositeDisposable.dispose()
     }
 
-/*    fun searchStreams(query: String) {
+    fun searchStreams(query: String) {
         compositeDisposable.add(
-            DataBase.searchStreams(query)
+            Single.fromCallable { streams.filter { it.name.startsWith(query, ignoreCase = true) } }
                 .subscribeOn(Schedulers.io())
-                .delay(500, TimeUnit.MILLISECONDS)
-                .map { searchedStreams ->
-                    streamUIs = streamsToStreamUIs(searchedStreams)
-                    streamUIs
-                }
+                .map { searchedStreams -> streamsToStreamUIs(searchedStreams) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe {
-                    viewState.showLoading()
-                }
                 .subscribe(
                     { streamUIs ->
-                        this.streamUIs = streamUIs
+                        this.recyclerItemUIs = streamUIs
                         showStreams()
                     },
                     {
@@ -54,7 +52,7 @@ class StreamsPresenter(private val tabPosition: Int) : MvpPresenter<StreamsView>
                     }
                 )
         )
-    }*/
+    }
 
     private fun showStreams() {
         viewState.showStreams(recyclerItemUIs)
@@ -62,24 +60,32 @@ class StreamsPresenter(private val tabPosition: Int) : MvpPresenter<StreamsView>
 
     private fun getStreams() {
         compositeDisposable.add(
-            ZulipRemote.getStreamsSingle()
+            streamsSingle
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { viewState.showLoading() }
-                .flatMapObservable { allStreamsResponse -> Observable.fromIterable(allStreamsResponse.streams) }
+                .flatMapObservable { streamsResponse: StreamsResponseSealed ->
+                    Observable.fromIterable(streamsResponse.streams)
+                }
                 .flatMapSingle { stream ->
-                    ZulipRemote.getTopicsSingle(stream.streamId).zipWith(Single.just(stream)) { topicsResponse, _ ->
+                    zulipService.getTopicsSingle(stream.streamId).zipWith(Single.just(stream)) { topicsResponse, _ ->
                         stream.apply { topics = topicsResponse.topics }
                     }
                 }
                 .toList()
-                .map { streams -> streamsToStreamUIs(streams) }
+                .map { streams ->
+                    this.streams = streams
+                    streamsToStreamUIs(streams)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { streamUIs ->
                         this.recyclerItemUIs = streamUIs
                         showStreams()
                     },
-                    { viewState.showError() }
+                    { exception ->
+                        viewState.showError()
+                        Log.e(TAG, exception.stackTraceToString())
+                    }
                 )
         )
     }
@@ -103,4 +109,10 @@ class StreamsPresenter(private val tabPosition: Int) : MvpPresenter<StreamsView>
         }
         showStreams()
     }
+
+    private fun getStreamsSingle(tabPosition: Int) = when (tabPosition) {
+        ChannelsPages.SUBSCRIBED.ordinal -> zulipService.getSubscribtionsSingle()
+        ChannelsPages.ALL_STREAMS.ordinal -> zulipService.getStreamsSingle()
+        else -> throw IllegalStateException("Undefined StreamsFragment tabPosition: $tabPosition")
+    } as Single<StreamsResponseSealed>
 }

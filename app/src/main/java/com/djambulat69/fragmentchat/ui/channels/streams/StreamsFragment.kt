@@ -83,7 +83,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     }
 
     override fun makeSearch(query: String) {
-        //presenter.searchStreams(query)
+        presenter.searchStreams(query)
     }
 
     private fun setUiVisibility(isVisible: Boolean) {

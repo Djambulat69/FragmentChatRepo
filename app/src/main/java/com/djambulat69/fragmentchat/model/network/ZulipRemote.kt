@@ -26,6 +26,8 @@ object ZulipRemote {
 
     fun getStreamsSingle() = zulipService.getStreams()
 
+    fun getSubscribtionsSingle() = zulipService.getSubscriptions()
+
     fun getTopicsSingle(streamId: Int) = zulipService.getTopics(streamId)
 
     fun getTopicMessagesSingle(streamTitle: String, topicTitle: String) =

@@ -7,6 +7,7 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.Skip
 
 interface StreamsView : MvpView {
+
     @AddToEndSingle
     fun showStreams(streamUIs: List<ViewTyped>)
 
