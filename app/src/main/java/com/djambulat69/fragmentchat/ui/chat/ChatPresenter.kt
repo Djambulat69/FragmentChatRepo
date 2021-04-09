@@ -31,7 +31,7 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
     }
 
     fun sendMessage(messageText: String) {
-        zulipRemote.sendMessageMaybe(streamId!!, messageText, topic.name)
+        zulipRemote.sendMessageCompletable(streamId!!, messageText, topic.name)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(

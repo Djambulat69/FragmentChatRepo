@@ -4,7 +4,9 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
@@ -17,10 +19,16 @@ private const val MESSAGE_TYPE = "stream"
 @ExperimentalSerializationApi
 object ZulipRemote {
 
+    private val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(logging)
+        .build()
+
     private val zulipService = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addCallAdapterFactory(RxJava3CallAdapterFactory.createSynchronous())
-        .addConverterFactory(Json { ignoreUnknownKeys = true }.asConverterFactory(MediaType.get("application/json")))
+        .addConverterFactory(Json { ignoreUnknownKeys = true }.asConverterFactory("application/json".toMediaType()))
+        .client(client)
         .build()
         .create(ZulipChatService::class.java)
 
@@ -47,8 +55,10 @@ object ZulipRemote {
 
     fun getUsers() = zulipService.getUsers()
 
-    fun sendMessageMaybe(streamId: Int, text: String, topicTitle: String) =
+    fun sendMessageCompletable(streamId: Int, text: String, topicTitle: String) =
         zulipService.sendMessage(MESSAGE_TYPE, streamId, text, topicTitle)
 
     fun getStreamIdSingle(streamTitle: String) = zulipService.getStreamId(streamTitle)
+
+    fun getUserPresence(idOrEmail: String) = zulipService.getUserPresence(idOrEmail)
 }

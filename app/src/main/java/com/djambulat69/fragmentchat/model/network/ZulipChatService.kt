@@ -1,17 +1,19 @@
 package com.djambulat69.fragmentchat.model.network
 
 import com.djambulat69.fragmentchat.ui.channels.streams.StreamsResponseSealed
-import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import okhttp3.Credentials
 import retrofit2.http.*
 
 const val myUserName = "Djambulat Isaev"
+const val myUserId = 402250
 
 private const val API_KEY = "4nJfSYDBV23HhUcQgBxgQ3KIroRkMjDS"
 private const val AUTH_HEADER = "Authorization"
 
 private val credential: String = Credentials.basic("djambulat69@gmail.com", API_KEY)
+
 
 interface ZulipChatService {
 
@@ -47,11 +49,17 @@ interface ZulipChatService {
         @Query("content") text: String,
         @Query("topic") topicTitle: String,
         @Header(AUTH_HEADER) cred: String = credential
-    ): Maybe<SendMessageResponse>
+    ): Completable
 
     @GET("get_stream_id")
     fun getStreamId(
         @Query("stream") streamTitle: String,
         @Header(AUTH_HEADER) cred: String = credential
     ): Single<StreamIdResponse>
+
+    @GET("users/{user_id_or_email}/presence")
+    fun getUserPresence(
+        @Path("user_id_or_email") idOrEmail: String,
+        @Header(AUTH_HEADER) cred: String = credential
+    ): Single<UserPresenceResponse>
 }

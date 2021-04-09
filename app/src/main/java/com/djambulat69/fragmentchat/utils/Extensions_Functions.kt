@@ -10,9 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
 import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.math.roundToInt
 
 
@@ -49,16 +48,14 @@ fun ViewPager2.getCurrentFragments(fragmentManager: FragmentManager): List<Fragm
 
 // Functions
 
-private const val DATE_FORMAT_PATTERN = "d MMM"
-
 fun secondsToDateString(timeStamp: Long): String {
     return LocalDateTime
         .ofEpochSecond(
             timeStamp,
             1000,
-            ZoneOffset.ofTotalSeconds(0)
+            ZoneId.systemDefault().rules.getOffset(LocalDateTime.now())
         )
         .format(
-            DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN, Locale.getDefault())
+            DateTimeFormatter.ofPattern("d MMM")
         )
 }

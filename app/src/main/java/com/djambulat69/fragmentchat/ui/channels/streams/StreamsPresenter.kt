@@ -23,9 +23,8 @@ class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
     private val compositeDisposable = CompositeDisposable()
 
     private val streamsSingle: Single<StreamsResponseSealed> = getStreamsSingle(tabPosition)
-    private var recyclerItemUIs: List<ViewTyped> = emptyList()
+    private var recyclerUiItems: List<ViewTyped> = emptyList()
     private var streams: List<Stream> = emptyList()
-        get() = field.toMutableList()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -45,7 +44,7 @@ class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { streamUIs ->
-                        this.recyclerItemUIs = streamUIs
+                        this.recyclerUiItems = streamUIs
                         showStreams()
                     },
                     { viewState.showError() }
@@ -54,7 +53,7 @@ class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
     }
 
     private fun showStreams() {
-        viewState.showStreams(recyclerItemUIs)
+        viewState.showStreams(recyclerUiItems)
     }
 
     private fun getStreams() {
@@ -68,7 +67,7 @@ class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
                 .flatMapSingle { stream ->
                     zulipService.getTopicsSingle(stream.streamId).zipWith(Single.just(stream)) { topicsResponse, _ ->
                         stream.apply { topics = topicsResponse.topics }
-                    }
+                    }.subscribeOn(Schedulers.io()).retry()
                 }
                 .toList()
                 .map { streams ->
@@ -78,7 +77,7 @@ class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { streamUIs ->
-                        this.recyclerItemUIs = streamUIs
+                        this.recyclerUiItems = streamUIs
                         showStreams()
                     },
                     { exception ->
@@ -98,7 +97,7 @@ class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
     }
 
     private fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
-        recyclerItemUIs = recyclerItemUIs.toMutableList().apply {
+        recyclerUiItems = recyclerUiItems.toMutableList().apply {
             if (isChecked) {
                 addAll(position + 1, topicUIs)
             } else {

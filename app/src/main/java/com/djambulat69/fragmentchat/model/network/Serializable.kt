@@ -203,3 +203,31 @@ data class StreamIdResponse(
     @SerialName("stream_id")
     val streamId: Int
 )
+
+@Serializable
+data class UserPresenceResponse(
+    @SerialName("msg")
+    val msg: String,
+    @SerialName("presence")
+    val presence: Presence,
+    @SerialName("result")
+    val result: String
+)
+
+@Serializable
+data class Presence(
+    @SerialName("ZulipMobile")
+    val zulipMobile: PresenceClient? = null,
+    @SerialName("aggregated")
+    val aggregated: PresenceClient,
+    @SerialName("website")
+    val website: PresenceClient
+)
+
+@Serializable
+data class PresenceClient(
+    @SerialName("status")
+    val status: String,
+    @SerialName("timestamp")
+    val timestamp: Int
+)
