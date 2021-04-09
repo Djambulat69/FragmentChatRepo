@@ -25,6 +25,7 @@ class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
     private val streamsSingle: Single<StreamsResponseSealed> = getStreamsSingle(tabPosition)
     private var recyclerItemUIs: List<ViewTyped> = emptyList()
     private var streams: List<Stream> = emptyList()
+        get() = field.toMutableList()
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -47,9 +48,7 @@ class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
                         this.recyclerItemUIs = streamUIs
                         showStreams()
                     },
-                    {
-                        viewState.showError()
-                    }
+                    { viewState.showError() }
                 )
         )
     }
@@ -111,7 +110,7 @@ class StreamsPresenter(tabPosition: Int) : MvpPresenter<StreamsView>() {
     }
 
     private fun getStreamsSingle(tabPosition: Int) = when (tabPosition) {
-        ChannelsPages.SUBSCRIBED.ordinal -> zulipService.getSubscribtionsSingle()
+        ChannelsPages.SUBSCRIBED.ordinal -> zulipService.getSubscriptionsSingle()
         ChannelsPages.ALL_STREAMS.ordinal -> zulipService.getStreamsSingle()
         else -> throw IllegalStateException("Undefined StreamsFragment tabPosition: $tabPosition")
     } as Single<StreamsResponseSealed>

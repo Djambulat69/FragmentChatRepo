@@ -20,8 +20,7 @@ class StreamsAdapter(holderFactory: StreamsHolderFactory) : BaseAdapter(holderFa
 
         override fun areContentsTheSame(oldItem: ViewTyped, newItem: ViewTyped): Boolean {
             return when {
-                oldItem is StreamUI && newItem is StreamUI ->
-                    oldItem.stream == newItem.stream && oldItem.isExpanded == newItem.isExpanded
+                oldItem is StreamUI && newItem is StreamUI -> oldItem as StreamUI == newItem as StreamUI
                 oldItem is TopicUI && newItem is TopicUI -> oldItem.topic == newItem.topic
                 else -> true
             }
