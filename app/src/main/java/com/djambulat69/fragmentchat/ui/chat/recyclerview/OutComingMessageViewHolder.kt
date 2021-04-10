@@ -21,7 +21,8 @@ class OutComingMessageViewHolder(
             }
             flexboxReactionsOutcoming.setReactions(
                 item.message.reactions,
-                item.reactionUpdate
+                item.reactionClick,
+                item.message.id
             )
         }
     }

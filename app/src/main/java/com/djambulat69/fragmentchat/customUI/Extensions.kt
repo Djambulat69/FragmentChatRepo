@@ -5,28 +5,37 @@ import androidx.annotation.Px
 import androidx.core.view.isVisible
 import androidx.core.view.setMargins
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.model.Reaction1
 import com.djambulat69.fragmentchat.model.network.Reaction
+import com.djambulat69.fragmentchat.model.network.myUserId
 import com.djambulat69.fragmentchat.utils.toEmoji
 import kotlin.math.roundToInt
 
 fun FlexBoxLayout.setReactions(
     reactions: List<Reaction>,
-    updateReactions: (MutableList<Reaction1>) -> Unit
+    reactionClick: (Boolean, Int, String) -> Unit,
+    messageId: Int
 ) {
     removeViews(0, childCount - 1)
 
     isVisible = reactions.isNotEmpty()
 
     reactions.distinctBy { it.emojiCode }.forEach { reaction ->
-        addEmojiViewByReaction(reaction.emojiCode, reactions.count { it.emojiCode == reaction.emojiCode }, updateReactions)
+        addEmojiViewByReaction(
+            reaction,
+            reactions.count { it.emojiCode == reaction.emojiCode },
+            reactionClick,
+            myUserId in reactions.filter { it.emojiCode == reaction.emojiCode }.map { it.userId },
+            messageId
+        )
     }
 }
 
 private fun FlexBoxLayout.addEmojiViewByReaction(
-    emojiCode: String,
+    reaction: Reaction,
     count: Int,
-    updateReactions: (MutableList<Reaction1>) -> Unit
+    reactionClick: (Boolean, Int, String) -> Unit,
+    isSet: Boolean,
+    messageId: Int
 ) {
     addView(EmojiView(context).apply {
         @Px val height = resources.getDimension(R.dimen.emoji_view_height).roundToInt()
@@ -38,28 +47,24 @@ private fun FlexBoxLayout.addEmojiViewByReaction(
             height
         ).apply { setMargins(margin) }
         setPadding(widthPadding, heightPadding, widthPadding, heightPadding)
-        setEmoji(emojiCode.toInt(16).toEmoji())
+        setEmoji(reaction.emojiCode.toInt(16).toEmoji())
         reactionCount = count
         setOnClickListener {
-//            updateReactionOnClick(reaction)
-            /*if (reaction.reactionCount == 0) {
+            updateEmojiViewOnClick()
+            reactionClick(isSelected, messageId, reaction.emojiName)
+            if (reactionCount == 0) {
                 removeView(it)
-                allReactions.remove(reaction)
-                this@addEmojiViewByReaction.isVisible = allReactions.isNotEmpty()
+                this@addEmojiViewByReaction.isVisible = childCount > 1
             }
-            updateReactions(allReactions)*/
         }
-//        isSelected = reaction.isSet
+        isSelected = isSet
     }, childCount - 1)
 }
 
-private fun EmojiView.updateReactionOnClick(reaction: Reaction1) {
-    reaction.isSet = !reaction.isSet
-    if (reaction.isSet) {
-        reaction.reactionCount += 1
+private fun EmojiView.updateEmojiViewOnClick() {
+    if (isSelected) {
         reactionCount += 1
     } else {
-        reaction.reactionCount -= 1
         reactionCount -= 1
     }
 }

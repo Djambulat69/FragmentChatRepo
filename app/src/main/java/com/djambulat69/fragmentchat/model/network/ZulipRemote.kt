@@ -1,7 +1,6 @@
 package com.djambulat69.fragmentchat.model.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -12,11 +11,10 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
 private const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/v1/"
 
-private const val ANCHOR_MESSAGE_RANGE = 30
+private const val ANCHOR_MESSAGE_RANGE = 100
 private const val ANCHOR_MESSAGE = "newest"
 private const val MESSAGE_TYPE = "stream"
 
-@ExperimentalSerializationApi
 object ZulipRemote {
 
     private val client: OkHttpClient
@@ -66,6 +64,7 @@ object ZulipRemote {
 
     fun getUserPresence(idOrEmail: String) = zulipService.getUserPresence(idOrEmail)
 
-    fun addReaction(messageId: Int, emojiName: String) =
-        zulipService.addReaction(messageId, emojiName)
+    fun addReaction(messageId: Int, emojiName: String) = zulipService.addReaction(messageId, emojiName)
+
+    fun deleteReaction(messageId: Int, emojiName: String) = zulipService.deleteReaction(messageId, emojiName)
 }

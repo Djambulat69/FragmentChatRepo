@@ -76,7 +76,7 @@ data class Message(
     @SerialName("is_me_message")
     val isMeMessage: Boolean,
     @SerialName("reactions")
-    var reactions: List<Reaction>,
+    var reactions: MutableList<Reaction>,
     @SerialName("recipient_id")
     val recipientId: Int,
     @SerialName("sender_email")
@@ -111,7 +111,6 @@ data class Reaction(
     val reactionType: String, // one of: "unicode_emoji", "realm_emoji", "zulip_extra_emoji"
     @SerialName("user_id")
     val userId: Int,
-    var userIds: List<Int>? = null // null until List<Reaction>.withUsers() called
 )
 
 @Serializable

@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.core.view.*
 import com.bumptech.glide.RequestManager
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.model.Reaction1
 import com.djambulat69.fragmentchat.model.network.Reaction
 import com.google.android.material.imageview.ShapeableImageView
 
@@ -76,9 +75,10 @@ class MessageViewGroup @JvmOverloads constructor(
 
     fun setReactions(
         reactions: List<Reaction>,
-        reactionUpdate: (MutableList<Reaction1>) -> Unit
+        reactionClick: (Boolean, Int, String) -> Unit,
+        messageId: Int
     ) {
-        flexBox.setReactions(reactions, reactionUpdate)
+        flexBox.setReactions(reactions, reactionClick, messageId)
     }
 
     fun setOnMessageClickListener(clickListener: () -> Unit) = messageLayout.setOnLongClickListener { clickListener(); true }

@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
-import com.djambulat69.fragmentchat.model.Reaction1
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
@@ -117,7 +116,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     override fun addReaction(messageId: Int, emojiName: String) {
-        presenter.addReactionToMessage(messageId, emojiName)
+        presenter.addReactionInMessage(messageId, emojiName)
     }
 
     private fun setLoading(isVisible: Boolean) {
@@ -167,8 +166,12 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         val longClickCallback = {
             EmojiBottomSheetDialog.newInstance(message.id).show(childFragmentManager, null)
         }
-        val reactionUpdateCallback = { reactions: MutableList<Reaction1> ->
-//            presenter.updateReactionsInMessage(message, reactions)
+        val reactionUpdateCallback = { isSet: Boolean, messageId: Int, emojiName: String ->
+            if (isSet) {
+                presenter.addReactionInMessage(messageId, emojiName)
+            } else {
+                presenter.removeReactionInMessage(messageId, emojiName)
+            }
         }
 
         MessageUI(

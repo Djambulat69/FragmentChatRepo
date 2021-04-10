@@ -69,4 +69,11 @@ interface ZulipChatService {
         @Query("emoji_name") emojiName: String,
         @Header(AUTH_HEADER) cred: String = credential
     ): Completable
+
+    @DELETE("messages/{message_id}/reactions")
+    fun deleteReaction(
+        @Path("message_id") messageId: Int,
+        @Query("emoji_name") emojiName: String,
+        @Header(AUTH_HEADER) cred: String = credential
+    ): Completable
 }

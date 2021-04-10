@@ -1,8 +1,6 @@
 package com.djambulat69.fragmentchat.ui.chat
 
 import android.util.Log
-import com.djambulat69.fragmentchat.model.Message1
-import com.djambulat69.fragmentchat.model.Reaction1
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.model.network.ZulipRemote
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -44,11 +42,24 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
 
     }
 
-    fun updateReactionsInMessage(message: Message1, reactions: MutableList<Reaction1>) {}
-
-    fun addReactionToMessage(messageId: Int, emojiName: String) {
+    fun addReactionInMessage(messageId: Int, emojiName: String) {
         compositeDisposable.add(
             zulipRemote.addReaction(messageId, emojiName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { getMessages(false) },
+                    { exception ->
+                        viewState.showError()
+                        Log.e(TAG, exception.stackTraceToString())
+                    }
+                )
+        )
+    }
+
+    fun removeReactionInMessage(messageId: Int, emojiName: String) {
+        compositeDisposable.add(
+            zulipRemote.deleteReaction(messageId, emojiName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

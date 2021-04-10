@@ -16,7 +16,7 @@ class IncomingMessageViewHolder(
             author = item.message.senderFullName
             setOnMessageClickListener(item.click)
             setAddReactionListener(item.click)
-            setReactions(item.message.reactions, item.reactionUpdate)
+            setReactions(item.message.reactions, item.reactionClick, item.message.id)
             setAvatar(glide, item.message.avatarUrl)
         }
     }
