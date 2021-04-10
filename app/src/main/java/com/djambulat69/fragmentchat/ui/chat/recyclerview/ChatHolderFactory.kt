@@ -29,6 +29,6 @@ class ChatHolderFactory(private val glide: RequestManager) : HolderFactory() {
             R.layout.date_separator -> DateSeparatorViewHolder(view)
             else ->
                 throw Exception("Unknown ViewType ${parent.resources.getResourceName(viewType)}")
-        }.apply { setIsRecyclable(false) } as BaseViewHolder<ViewTyped> // Временно, пока не исправлю баг с неВызовом onMeasure TODO
+        } as BaseViewHolder<ViewTyped>
     }
 }

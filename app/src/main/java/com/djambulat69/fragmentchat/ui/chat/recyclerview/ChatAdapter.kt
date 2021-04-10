@@ -23,8 +23,7 @@ class ChatAdapter(holderFactory: ChatHolderFactory) :
 
         override fun areContentsTheSame(oldItem: ViewTyped, newItem: ViewTyped): Boolean {
             return when {
-                oldItem is MessageUI && newItem is MessageUI ->
-                    oldItem.message == newItem.message && oldItem.viewType == newItem.viewType
+                oldItem is MessageUI && newItem is MessageUI -> oldItem.message == newItem.message
                 oldItem is DateSeparatorUI && newItem is DateSeparatorUI -> oldItem.date == newItem.date
                 else -> true
             }

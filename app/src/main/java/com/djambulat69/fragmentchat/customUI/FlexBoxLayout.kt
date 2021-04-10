@@ -15,7 +15,7 @@ class FlexBoxLayout @JvmOverloads constructor(
 ) : ViewGroup(context, attrs, defStyleAttr, defStyleRes) {
 
     init {
-        setWillNotDraw(true)
+//        setWillNotDraw(true)
     }
 
     private var layoutWidth = 0
@@ -29,8 +29,8 @@ class FlexBoxLayout @JvmOverloads constructor(
         measureChildren(widthMeasureSpec, heightMeasureSpec)
         var isOneLine = true
         children.forEach { child ->
-            val childWidth = child.measuredWidth + child.marginStart + child.marginEnd
-            val childHeight = child.measuredHeight + child.marginTop + child.marginBottom
+            val childWidth = if (child.isGone) 0 else child.measuredWidth + child.marginStart + child.marginEnd
+            val childHeight = if (child.isGone) 0 else child.measuredHeight + child.marginTop + child.marginBottom
             if (widthUsed + childWidth > layoutWidth) {
                 maxWidthUsed = maxOf(widthUsed, maxWidthUsed)
                 widthUsed = 0

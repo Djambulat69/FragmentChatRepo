@@ -106,15 +106,6 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         setChatVisibility(true)
     }
 
-    /*override fun showMessages(messages: List<Message>) {
-        (binding.chatRecyclerView.adapter as ChatAdapter).items =
-            messages.groupBy { it.date }.flatMap { (date: String, messagesbyDate: List<Message1>) ->
-                listOf(DateSeparatorUI(date)) + messagesToMessageUIs(messagesbyDate)
-            }
-        setLoading(false)
-        setChatVisibility(true)
-    }*/
-
     override fun showError() {
         setLoading(false)
         Snackbar.make(requireContext(), binding.root, getString(R.string.check_connection_text), Snackbar.LENGTH_SHORT).show()
@@ -125,8 +116,8 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         setChatVisibility(false)
     }
 
-    override fun emojiClicked(messageId: Int, emojiCode: Int) {
-//        presenter.addReactionToMessage(messageId, emojiCode)
+    override fun addReaction(messageId: Int, emojiName: String) {
+        presenter.addReactionToMessage(messageId, emojiName)
     }
 
     private fun setLoading(isVisible: Boolean) {
@@ -173,7 +164,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message ->
-        val clickCallback = {
+        val longClickCallback = {
             EmojiBottomSheetDialog.newInstance(message.id).show(childFragmentManager, null)
         }
         val reactionUpdateCallback = { reactions: MutableList<Reaction1> ->
@@ -182,7 +173,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
 
         MessageUI(
             message,
-            clickCallback,
+            longClickCallback,
             reactionUpdateCallback
         )
     }

@@ -11,7 +11,7 @@ import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.EmojiBottomRecyclerAdapter
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.EmojiHolderFactory
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.EmojiUI
-import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
+import com.djambulat69.fragmentchat.utils.EmojiEnum
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 private const val ARG_MESSAGE_ID = "message_id"
@@ -37,20 +37,17 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
             EmojiBottomRecyclerAdapter(EmojiHolderFactory(), createEmojiList())
     }
 
-    // Позже уберу это
-    private fun createEmojiList() = mutableListOf<ViewTyped>().apply {
-        var code = 0x1F600
-        for (i in 0..59) {
-            add(EmojiUI(code) { clickedEmojiCode ->
-                listener!!.emojiClicked(requireArguments().getInt(ARG_MESSAGE_ID), clickedEmojiCode)
+    private fun createEmojiList(): List<EmojiUI> = mutableListOf<EmojiUI>().apply {
+        EmojiEnum.values().distinctBy { it.unicode }.sortedByDescending { it.unicodeCodePoint }.forEach {
+            add(EmojiUI(it) { emojiName ->
+                listener!!.addReaction(requireArguments().getInt(ARG_MESSAGE_ID), emojiName)
                 dismiss()
             })
-            code += 0x00001
         }
     }
 
     interface EmojiBottomDialogListener {
-        fun emojiClicked(messageId: Int, emojiCode: Int)
+        fun addReaction(messageId: Int, emojiName: String)
     }
 
     companion object {

@@ -47,8 +47,9 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+    implementation "androidx.recyclerview:recyclerview:1.2.0"
     //EmojiCompat
-    implementation "androidx.emoji:emoji-bundled:1.1.0"
+    implementation "androidx.emoji:emoji-bundled:$emoji_bundled_version"
     //KTX
     implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
     //Rx

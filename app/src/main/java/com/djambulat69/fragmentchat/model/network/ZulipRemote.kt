@@ -19,10 +19,14 @@ private const val MESSAGE_TYPE = "stream"
 @ExperimentalSerializationApi
 object ZulipRemote {
 
-    private val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .build()
+    private val client: OkHttpClient
+
+    init {
+        val loggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+        client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
 
     private val zulipService = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -61,4 +65,7 @@ object ZulipRemote {
     fun getStreamIdSingle(streamTitle: String) = zulipService.getStreamId(streamTitle)
 
     fun getUserPresence(idOrEmail: String) = zulipService.getUserPresence(idOrEmail)
+
+    fun addReaction(messageId: Int, emojiName: String) =
+        zulipService.addReaction(messageId, emojiName)
 }

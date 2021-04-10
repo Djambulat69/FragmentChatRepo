@@ -21,7 +21,7 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        getMessages()
+        getMessages(true)
         getStreamId()
     }
 
@@ -35,7 +35,7 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { getMessages() },
+                { getMessages(false) },
                 { exception ->
                     viewState.showError()
                     Log.e(TAG, exception.stackTraceToString())
@@ -46,21 +46,30 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
 
     fun updateReactionsInMessage(message: Message1, reactions: MutableList<Reaction1>) {}
 
-    fun addReactionToMessage(messageId: String, emojiCode: Int) {}
+    fun addReactionToMessage(messageId: Int, emojiName: String) {
+        compositeDisposable.add(
+            zulipRemote.addReaction(messageId, emojiName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { getMessages(false) },
+                    { exception ->
+                        viewState.showError()
+                        Log.e(TAG, exception.stackTraceToString())
+                    }
+                )
+        )
+    }
 
-    private fun getMessages() {
+    private fun getMessages(showShimmer: Boolean) {
         compositeDisposable.add(
             zulipRemote.getTopicMessagesSingle(streamTitle, topic.name)
                 .subscribeOn(Schedulers.io())
-                .map { messagesResponse ->
-                    messagesResponse.messages
-                }
+                .map { messagesResponse -> messagesResponse.messages }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { viewState.showLoading() }
+                .doOnSubscribe { if (showShimmer) viewState.showLoading() }
                 .subscribe(
-                    { messages ->
-                        viewState.showMessages(messages)
-                    },
+                    { messages -> viewState.showMessages(messages) },
                     { exception ->
                         viewState.showError()
                         Log.e(TAG, exception.stackTraceToString())

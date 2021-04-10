@@ -18,6 +18,8 @@ import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.util.concurrent.TimeUnit
 
+private val SEARCH_DEBOUNCE_MILLIS = 400L
+
 class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
 
     private var _binding: FragmentChannelsBinding? = null
@@ -38,8 +40,10 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.channelsViewPager.adapter =
-            ChannelsViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+        binding.channelsViewPager.apply {
+            adapter = ChannelsViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
+            offscreenPageLimit = ChannelsPages.values().size - 1
+        }
         TabLayoutMediator(binding.channelsTabLayout, binding.channelsViewPager) { tab, position ->
             tab.text = getString(
                 when (position) {
@@ -85,7 +89,7 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
         compositeDisposable.add(
             getSearchBarObservable()
                 .subscribeOn(Schedulers.io())
-                .debounce(400, TimeUnit.MILLISECONDS)
+                .debounce(SEARCH_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { query ->
                     presenter.searchStreams(query)

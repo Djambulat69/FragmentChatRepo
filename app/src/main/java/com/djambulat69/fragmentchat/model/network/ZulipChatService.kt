@@ -62,4 +62,11 @@ interface ZulipChatService {
         @Path("user_id_or_email") idOrEmail: String,
         @Header(AUTH_HEADER) cred: String = credential
     ): Single<UserPresenceResponse>
+
+    @POST("messages/{message_id}/reactions")
+    fun addReaction(
+        @Path("message_id") messageId: Int,
+        @Query("emoji_name") emojiName: String,
+        @Header(AUTH_HEADER) cred: String = credential
+    ): Completable
 }
