@@ -18,7 +18,7 @@ import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.util.concurrent.TimeUnit
 
-private val SEARCH_DEBOUNCE_MILLIS = 400L
+private const val SEARCH_DEBOUNCE_MILLIS = 400L
 
 class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
 
@@ -72,17 +72,18 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
     }
 
     private fun getSearchBarObservable(): Observable<String> = Observable.create { emitter ->
-        (binding.channelsToolbar.menu.findItem(R.id.search_menu_item).actionView as SearchView).setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
+        (binding.channelsToolbar.menu.findItem(R.id.search_menu_item).actionView as SearchView).setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
 
-            override fun onQueryTextSubmit(query: String?): Boolean = false
+                override fun onQueryTextSubmit(query: String?): Boolean = false
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                emitter.onNext(newText.orEmpty().trim())
-                return true
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    emitter.onNext(newText.orEmpty().trim())
+                    return true
+                }
+
             }
-
-        })
+        )
     }
 
     private fun subscribeOnSearching() {

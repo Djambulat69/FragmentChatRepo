@@ -1,6 +1,7 @@
 package com.djambulat69.fragmentchat.ui.chat
 
 import android.util.Log
+import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.model.network.ZulipRemote
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -76,7 +77,9 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
         compositeDisposable.add(
             zulipRemote.getTopicMessagesSingle(streamTitle, topic.name)
                 .subscribeOn(Schedulers.io())
-                .map { messagesResponse -> messagesResponse.messages }
+                .map { messagesResponse ->
+                    messagesResponse.messages.onEach { bindMessageToTopic(it) }
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { if (showShimmer) viewState.showLoading() }
                 .subscribe(
@@ -101,5 +104,10 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
                     }
                 )
         )
+    }
+
+    private fun bindMessageToTopic(message: Message) {
+        message.topicName = topic.name
+        message.streamName = streamTitle
     }
 }
