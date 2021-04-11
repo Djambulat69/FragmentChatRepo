@@ -91,7 +91,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     }
 
     private fun setLoading(isLoadingVisible: Boolean) {
-        binding.shimmerStreamList.isVisible = isLoadingVisible
+        binding.includeShimmerFragmentStreams.shimmerStreamList.isVisible = isLoadingVisible
     }
 
     private fun setError(isVisible: Boolean) {

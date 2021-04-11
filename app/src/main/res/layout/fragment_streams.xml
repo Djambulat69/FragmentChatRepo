@@ -19,41 +19,8 @@
 
     <include layout="@layout/error_layout" />
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer_stream_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-            <include layout="@layout/shimmer_stream_list_item" />
-
-        </LinearLayout>
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
+    <include
+        layout="@layout/shimmer_fragment_streams"
+        android:id="@+id/include_shimmer_fragment_streams" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
