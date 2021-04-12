@@ -11,8 +11,11 @@ import io.reactivex.rxjava3.core.Flowable
 @Dao
 interface StreamsDao {
 
-    @Query("SELECT * FROM streams_table")
+    @Query("SELECT * FROM streams_table WHERE NOT isSubscribed")
     fun getStreams(): Flowable<List<Stream>>
+
+    @Query("SELECT * FROM streams_table WHERE isSubscribed")
+    fun getSubscribedStreams(): Flowable<List<Stream>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveStreams(streams: List<Stream>): Completable

@@ -7,13 +7,14 @@ import kotlinx.serialization.Serializable
 
 // StreamsResponse Serializable defined in ui.channels.streams.StreamsResponseSealed
 
-@Entity(tableName = "streams_table")
+@Entity(tableName = "streams_table", primaryKeys = ["streamId", "isSubscribed"])
 @Serializable
 data class Stream(
     @SerialName("name") val name: String,
-    @SerialName("stream_id") @PrimaryKey val streamId: Int
+    @SerialName("stream_id") val streamId: Int
 ) {
     var topics: List<Topic> = emptyList()
+    var isSubscribed: Boolean = false
 }
 
 @Serializable
@@ -49,11 +50,9 @@ data class Message(
     @SerialName("sender_full_name") val senderFullName: String,
     @SerialName("sender_id") val senderId: Int,
     @SerialName("timestamp") val timestamp: Int,
-    @SerialName("stream_id") val streamId: Int? = null,
-) {
-    var topicName: String? = null
-    var streamName: String? = null
-}
+    @SerialName("stream_id") val streamId: Int,
+    @SerialName("subject") val topicName: String
+)
 
 @Serializable
 data class Reaction(

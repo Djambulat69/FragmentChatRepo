@@ -6,13 +6,12 @@ import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
 class TopicUI(
     val topic: Topic,
-    private val streamTitle: String,
-    openTopic: (Topic, String) -> Unit
+    openTopic: (Topic) -> Unit
 ) :
     ViewTyped {
     override val id: String = topic.name
     override val viewType: Int = R.layout.topic_list_item
     override val click: (() -> Unit) = {
-        openTopic(topic, streamTitle)
+        openTopic(topic)
     }
 }

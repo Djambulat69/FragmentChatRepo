@@ -1,7 +1,6 @@
 package com.djambulat69.fragmentchat.ui.chat
 
 import android.util.Log
-import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.model.network.ZulipRemote
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -11,9 +10,7 @@ import moxy.MvpPresenter
 
 private const val TAG = "ChatPresenter"
 
-class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<ChatView>() {
-
-    var streamId: Int? = null
+class ChatPresenter(val topic: Topic, val streamTitle: String, val streamId: Int) : MvpPresenter<ChatView>() {
 
     private val compositeDisposable = CompositeDisposable()
     private val zulipRemote = ZulipRemote
@@ -21,7 +18,6 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         getMessages(true)
-        getStreamId()
     }
 
     override fun onDestroy() {
@@ -30,7 +26,7 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
     }
 
     fun sendMessage(messageText: String) {
-        zulipRemote.sendMessageCompletable(streamId!!, messageText, topic.name)
+        zulipRemote.sendMessageCompletable(streamId, messageText, topic.name)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -77,9 +73,7 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
         compositeDisposable.add(
             zulipRemote.getTopicMessagesSingle(streamTitle, topic.name)
                 .subscribeOn(Schedulers.io())
-                .map { messagesResponse ->
-                    messagesResponse.messages.onEach { bindMessageToTopic(it) }
-                }
+                .map { messagesResponse -> messagesResponse.messages }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { if (showShimmer) viewState.showLoading() }
                 .subscribe(
@@ -92,22 +86,4 @@ class ChatPresenter(val topic: Topic, val streamTitle: String) : MvpPresenter<Ch
         )
     }
 
-    private fun getStreamId() {
-        compositeDisposable.add(
-            zulipRemote.getStreamIdSingle(streamTitle)
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    { streamIdResponse -> this.streamId = streamIdResponse.streamId },
-                    { exception ->
-                        viewState.showError()
-                        Log.e(TAG, exception.stackTraceToString())
-                    }
-                )
-        )
-    }
-
-    private fun bindMessageToTopic(message: Message) {
-        message.topicName = topic.name
-        message.streamName = streamTitle
-    }
 }

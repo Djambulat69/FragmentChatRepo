@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentStreamsBinding
+import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.SearchQueryListener
@@ -24,7 +25,12 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
     private var fragmentInteractor: FragmentInteractor? = null
 
-    private val presenter: StreamsPresenter by moxyPresenter { StreamsPresenter(requireArguments().getInt(ARG_TAB_POSITION)) }
+    private val presenter: StreamsPresenter by moxyPresenter {
+        StreamsPresenter(
+            requireArguments().getInt(ARG_TAB_POSITION),
+            StreamsRepository(FragmentChatDatabase.get(requireContext().applicationContext).streamsDao())
+        )
+    }
 
     private var _binding: FragmentStreamsBinding? = null
     private val binding get() = _binding!!
@@ -62,6 +68,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
     override fun showStreams(streamUIs: List<ViewTyped>) {
         (binding.streamsRecyclerView.adapter as StreamsAdapter).items = streamUIs
+        setError(false)
         setLoading(false)
         setUiVisibility(true)
     }
@@ -78,8 +85,8 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
         setLoading(true)
     }
 
-    override fun openTopicFragment(topic: Topic, streamTitle: String) {
-        fragmentInteractor?.openTopic(topic, streamTitle)
+    override fun openTopicFragment(topic: Topic, streamTitle: String, streamId: Int) {
+        fragmentInteractor?.openTopic(topic, streamTitle, streamId)
     }
 
     override fun makeSearch(query: String) {

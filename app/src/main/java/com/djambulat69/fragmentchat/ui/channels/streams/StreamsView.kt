@@ -18,5 +18,5 @@ interface StreamsView : MvpView {
     fun showLoading()
 
     @Skip
-    fun openTopicFragment(topic: Topic, streamTitle: String)
+    fun openTopicFragment(topic: Topic, streamTitle: String, streamId: Int)
 }

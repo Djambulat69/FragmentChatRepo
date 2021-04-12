@@ -24,10 +24,10 @@ class MainActivity : AppCompatActivity(), FragmentInteractor {
         supportFragmentManager.popBackStack()
     }
 
-    override fun openTopic(topic: Topic, streamTitle: String) {
+    override fun openTopic(topic: Topic, streamTitle: String, streamId: Int) {
         supportFragmentManager.commit {
             addToBackStack(null)
-            replace(R.id.fragment_container, ChatFragment.newInstance(topic, streamTitle))
+            replace(R.id.fragment_container, ChatFragment.newInstance(topic, streamTitle, streamId))
         }
     }
 }

@@ -8,14 +8,14 @@ import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 data class StreamUI(
     val stream: Stream,
     val expand: (Boolean, List<TopicUI>, Int) -> Unit,
-    val openTopic: (Topic, String) -> Unit
+    val openTopic: (Topic) -> Unit
 ) : ViewTyped {
 
     override val viewType: Int = R.layout.stream_list_item
     override val id: String = stream.name
     override val click: () -> Unit = { isExpanded = !isExpanded }
 
-    val childTopicUIs: List<TopicUI> = stream.topics.map { topic -> TopicUI(topic, stream.name, openTopic) }
+    private val childTopicUIs: List<TopicUI> = stream.topics.map { topic -> TopicUI(topic, openTopic) }
 
     var isExpanded = false
 

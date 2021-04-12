@@ -10,8 +10,8 @@ import io.reactivex.rxjava3.core.Flowable
 @Dao
 interface MessagesDao {
 
-    @Query("SELECT * FROM messages_table WHERE topicName = :topicName AND streamName = :streamName")
-    fun getMesssages(topicName: String, streamName: String): Flowable<List<Message>>
+    @Query("SELECT * FROM messages_table WHERE topicName = :topicName AND streamId = :streamId")
+    fun getMesssages(topicName: String, streamId: Int): Flowable<List<Message>>
 
     @Insert
     fun saveMessages(messages: List<Message>): Completable

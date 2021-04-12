@@ -60,8 +60,8 @@ class MainFragment : Fragment(), FragmentInteractor {
         fragmentInteractor?.back()
     }
 
-    override fun openTopic(topic: Topic, streamTitle: String) {
-        fragmentInteractor?.openTopic(topic, streamTitle)
+    override fun openTopic(topic: Topic, streamTitle: String, streamId: Int) {
+        fragmentInteractor?.openTopic(topic, streamTitle, streamId)
     }
 
     private fun openFragment(fragment: Fragment): Boolean {

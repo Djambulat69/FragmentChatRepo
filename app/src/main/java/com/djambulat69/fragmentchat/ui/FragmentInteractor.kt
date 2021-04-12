@@ -4,5 +4,5 @@ import com.djambulat69.fragmentchat.model.network.Topic
 
 interface FragmentInteractor {
     fun back()
-    fun openTopic(topic: Topic, streamTitle: String)
+    fun openTopic(topic: Topic, streamTitle: String, streamId: Int)
 }

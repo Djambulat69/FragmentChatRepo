@@ -30,6 +30,7 @@ import java.util.*
 
 private const val ARG_TOPIC = "topic"
 private const val ARG_STREAM_TITLE = "stream_title"
+private const val ARG_STREAM_ID = "stream_id"
 
 class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener {
 
@@ -41,7 +42,8 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     private val presenter: ChatPresenter by moxyPresenter {
         ChatPresenter(
             requireArguments().getSerializable(ARG_TOPIC) as Topic,
-            requireArguments().getString(ARG_STREAM_TITLE) as String
+            requireArguments().getString(ARG_STREAM_TITLE) as String,
+            requireArguments().getInt(ARG_STREAM_ID)
         )
     }
 
@@ -182,10 +184,11 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     companion object {
-        fun newInstance(topic: Topic, streamTitle: String) = ChatFragment().apply {
+        fun newInstance(topic: Topic, streamTitle: String, streamId: Int) = ChatFragment().apply {
             arguments = bundleOf(
                 ARG_TOPIC to topic,
-                ARG_STREAM_TITLE to streamTitle
+                ARG_STREAM_TITLE to streamTitle,
+                ARG_STREAM_ID to streamId
             )
         }
     }
