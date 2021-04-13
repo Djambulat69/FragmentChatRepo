@@ -61,19 +61,21 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
                 .subscribeOn(Schedulers.io())
                 .flattenAsObservable { streamResponse -> streamResponse.streams }
                 .flatMapSingle { stream ->
-                    repository.getTopicsFromNetwork(stream.streamId).zipWith(Single.just(stream)) { topicsResponse, _ ->
-                        stream.apply {
-                            topics = topicsResponse.topics
-                            isSubscribed = tabPosition == ChannelsPages.SUBSCRIBED.ordinal
-                        }
-                    }.subscribeOn(Schedulers.io()).retry()
+                    repository.getTopicsFromNetwork(stream.streamId)
+                        .zipWith(Single.just(stream)) { topicsResponse, _ ->
+                            stream.apply {
+                                topics = topicsResponse.topics
+                                isSubscribed = tabPosition == ChannelsPages.SUBSCRIBED.ordinal
+                            }
+                        }.subscribeOn(Schedulers.io()).retry()
                 }
                 .toList()
                 .flatMapCompletable { streams -> repository.saveStreams(streams) }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     Functions.EMPTY_ACTION,
                     { exception ->
-                        viewState.showError()
+                        viewState.showToastError()
                         Log.e(TAG, exception.stackTraceToString())
                     }
                 )
@@ -90,13 +92,7 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { streamUIs ->
-                        if (streamUIs.isEmpty()) viewState.showLoading()
-                        else {
-                            recyclerUiItems = streamUIs
-                            showStreams()
-                        }
-                    },
+                    { streamUIs -> showDbStreamUIsIfNotEmpty(streamUIs) },
                     { exception ->
                         viewState.showError()
                         Log.e(TAG, exception.stackTraceToString())
@@ -125,16 +121,25 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
         showStreams()
     }
 
-    private fun getStreamsFromNetwork(): Single<StreamsResponseSealed> = when (tabPosition) {
+    private fun getStreamsFromNetwork(): Single<out StreamsResponseSealed> = when (tabPosition) {
         ChannelsPages.SUBSCRIBED.ordinal -> repository.getSubscribedStreamsFromNetwork()
         ChannelsPages.ALL_STREAMS.ordinal -> repository.getAllStreamsFromNetwork()
         else -> throw IllegalStateException("Undefined StreamsFragment tabPosition: $tabPosition")
-    } as Single<StreamsResponseSealed>
+    }
 
     private fun getStreamsFromDb(): Flowable<List<Stream>> = when (tabPosition) {
         ChannelsPages.SUBSCRIBED.ordinal -> repository.getSubscribedStreamsFromDb()
         ChannelsPages.ALL_STREAMS.ordinal -> repository.getAllStreamsFromDb()
         else -> throw IllegalStateException("Undefined StreamsFragment tabPosition: $tabPosition")
+    }
+
+    private fun showDbStreamUIsIfNotEmpty(streamUIs: List<StreamUI>) {
+        if (streamUIs.isEmpty()) {
+            viewState.showLoading()
+        } else {
+            recyclerUiItems = streamUIs
+            showStreams()
+        }
     }
 
 }

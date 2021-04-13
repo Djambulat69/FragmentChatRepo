@@ -11,9 +11,12 @@ import io.reactivex.rxjava3.core.Flowable
 interface MessagesDao {
 
     @Query("SELECT * FROM messages_table WHERE topicName = :topicName AND streamId = :streamId")
-    fun getMesssages(topicName: String, streamId: Int): Flowable<List<Message>>
+    fun getMessages(topicName: String, streamId: Int): Flowable<List<Message>>
 
     @Insert
     fun saveMessages(messages: List<Message>): Completable
+
+    @Query("DELETE FROM messages_table WHERE topicName = :topicName AND streamId = :streamId")
+    fun deleteTopicMessages(topicName: String, streamId: Int): Completable
 
 }

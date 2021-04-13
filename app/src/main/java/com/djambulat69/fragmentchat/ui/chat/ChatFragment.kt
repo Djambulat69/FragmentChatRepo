@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
+import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
@@ -43,7 +44,8 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         ChatPresenter(
             requireArguments().getSerializable(ARG_TOPIC) as Topic,
             requireArguments().getString(ARG_STREAM_TITLE) as String,
-            requireArguments().getInt(ARG_STREAM_ID)
+            requireArguments().getInt(ARG_STREAM_ID),
+            ChatRepository(FragmentChatDatabase.get(requireContext().applicationContext).messagesDao())
         )
     }
 
@@ -108,7 +110,6 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     override fun showError() {
-        setLoading(false)
         Snackbar.make(requireContext(), binding.root, getString(R.string.check_connection_text), Snackbar.LENGTH_SHORT).show()
     }
 

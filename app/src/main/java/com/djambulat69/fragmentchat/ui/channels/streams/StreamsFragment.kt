@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentStreamsBinding
 import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
@@ -77,6 +79,10 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
         setLoading(false)
         setUiVisibility(false)
         setError(true)
+    }
+
+    override fun showToastError() {
+        Toast.makeText(requireContext(), getString(R.string.check_connection_text), Toast.LENGTH_SHORT).show()
     }
 
     override fun showLoading() {

@@ -11,10 +11,10 @@ import io.reactivex.rxjava3.core.Flowable
 @Dao
 interface StreamsDao {
 
-    @Query("SELECT * FROM streams_table WHERE NOT isSubscribed")
+    @Query("SELECT * FROM streams_table WHERE NOT isSubscribed ORDER BY streamId")
     fun getStreams(): Flowable<List<Stream>>
 
-    @Query("SELECT * FROM streams_table WHERE isSubscribed")
+    @Query("SELECT * FROM streams_table WHERE isSubscribed ORDER BY streamId")
     fun getSubscribedStreams(): Flowable<List<Stream>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -4,6 +4,7 @@ import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
+import moxy.viewstate.strategy.alias.OneExecution
 import moxy.viewstate.strategy.alias.Skip
 
 interface StreamsView : MvpView {
@@ -14,9 +15,13 @@ interface StreamsView : MvpView {
     @AddToEndSingle
     fun showError()
 
+    @OneExecution
+    fun showToastError()
+
     @AddToEndSingle
     fun showLoading()
 
     @Skip
     fun openTopicFragment(topic: Topic, streamTitle: String, streamId: Int)
+
 }

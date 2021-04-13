@@ -6,7 +6,6 @@ import io.reactivex.rxjava3.core.Single
 import okhttp3.Credentials
 import retrofit2.http.*
 
-const val myUserName = "Djambulat Isaev"
 const val myUserId = 402250
 
 private const val API_KEY = "4nJfSYDBV23HhUcQgBxgQ3KIroRkMjDS"
@@ -42,6 +41,13 @@ interface ZulipChatService {
     @GET("users")
     fun getUsers(@Header(AUTH_HEADER) cred: String = credential): Single<AllUsersResponse>
 
+    @GET("users/{user_id_or_email}/presence")
+    fun getUserPresence(
+        @Path("user_id_or_email") idOrEmail: String,
+        @Header(AUTH_HEADER) cred: String = credential
+    ): Single<UserPresenceResponse>
+
+
     @POST("messages")
     fun sendMessage(
         @Query("type") type: String,
@@ -51,18 +57,6 @@ interface ZulipChatService {
         @Header(AUTH_HEADER) cred: String = credential
     ): Completable
 
-    @GET("get_stream_id")
-    fun getStreamId(
-        @Query("stream") streamTitle: String,
-        @Header(AUTH_HEADER) cred: String = credential
-    ): Single<StreamIdResponse>
-
-    @GET("users/{user_id_or_email}/presence")
-    fun getUserPresence(
-        @Path("user_id_or_email") idOrEmail: String,
-        @Header(AUTH_HEADER) cred: String = credential
-    ): Single<UserPresenceResponse>
-
     @POST("messages/{message_id}/reactions")
     fun addReaction(
         @Path("message_id") messageId: Int,
@@ -70,10 +64,12 @@ interface ZulipChatService {
         @Header(AUTH_HEADER) cred: String = credential
     ): Completable
 
+
     @DELETE("messages/{message_id}/reactions")
     fun deleteReaction(
         @Path("message_id") messageId: Int,
         @Query("emoji_name") emojiName: String,
         @Header(AUTH_HEADER) cred: String = credential
     ): Completable
+
 }

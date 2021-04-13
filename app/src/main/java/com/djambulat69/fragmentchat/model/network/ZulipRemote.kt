@@ -60,8 +60,6 @@ object ZulipRemote {
     fun sendMessageCompletable(streamId: Int, text: String, topicTitle: String) =
         zulipService.sendMessage(MESSAGE_TYPE, streamId, text, topicTitle)
 
-    fun getStreamIdSingle(streamTitle: String) = zulipService.getStreamId(streamTitle)
-
     fun getUserPresence(idOrEmail: String) = zulipService.getUserPresence(idOrEmail)
 
     fun addReaction(messageId: Int, emojiName: String) = zulipService.addReaction(messageId, emojiName)

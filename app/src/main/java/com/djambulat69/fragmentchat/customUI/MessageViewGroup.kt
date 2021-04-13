@@ -136,14 +136,14 @@ class MessageViewGroup @JvmOverloads constructor(
         messageLayout.layout(
             paddingStart + avatarSize + messageLayout.marginStart,
             messageLayout.marginTop + paddingTop,
-            paddingStart + avatarSize + messageLayout.marginStart + messageLayout.measuredWidth,
-            paddingTop + messageLayout.marginTop + messageLayout.measuredHeight
+            paddingStart + avatarSize + maxOf(0, messageWidth - messageLayout.marginEnd),
+            paddingTop + maxOf(0, messageHeight - messageLayout.marginBottom)
         )
         flexBox.layout(
             paddingStart + avatarSize + flexBox.marginStart,
             paddingTop + messageHeight + flexBox.marginTop,
-            paddingStart + avatarSize + flexBox.marginStart + flexBox.measuredWidth,
-            paddingTop + messageHeight + flexBox.marginTop + flexBox.measuredHeight
+            paddingStart + avatarSize + maxOf(0, flexBoxWidth - flexBox.marginEnd),
+            paddingTop + messageHeight + maxOf(0, flexBoxHeight - flexBox.marginBottom)
         )
     }
 
