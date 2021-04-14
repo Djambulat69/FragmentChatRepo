@@ -37,6 +37,7 @@ data class NarrowSearchOperator(
 @Serializable
 data class MessagesResponse(
     @SerialName("messages") val messages: List<Message>,
+    @SerialName("found_oldest") val foundOldest: Boolean
 )
 
 @Entity(tableName = "messages_table")

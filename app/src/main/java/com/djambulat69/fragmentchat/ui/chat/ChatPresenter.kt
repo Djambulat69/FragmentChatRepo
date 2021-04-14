@@ -22,6 +22,10 @@ class ChatPresenter(
 
     private val compositeDisposable = CompositeDisposable()
 
+    var isNextPageLoading = false
+    var hasMoreMessages = true
+    var shouldScrollBottom = false
+
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         subscribeOnDbMessages()
@@ -34,13 +38,16 @@ class ChatPresenter(
     }
 
     fun sendMessage(messageText: String) {
-        repository.sendMessage(streamId, messageText, topic.name)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { getMessages() },
-                { exception -> showError(exception) }
-            )
+        shouldScrollBottom = true
+        compositeDisposable.add(
+            repository.sendMessage(streamId, messageText, topic.name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { getMessages() },
+                    { exception -> showError(exception) }
+                )
+        )
     }
 
     fun addReactionInMessage(messageId: Int, emojiName: String) {
@@ -67,11 +74,36 @@ class ChatPresenter(
         )
     }
 
+    fun getNextMessages(anchor: Long) {
+        compositeDisposable.add(
+            repository.getMessagesFromNetwork(streamTitle, topic.name, anchor, 20)
+                .subscribeOn(Schedulers.io())
+                .map { messagesResponse ->
+                    if (messagesResponse.foundOldest) hasMoreMessages = false
+                    messagesResponse.messages
+                }
+                .flatMapCompletable { messages ->
+                    repository.saveMessages(messages)
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { isNextPageLoading = false },
+                    { exception ->
+                        isNextPageLoading = false
+                        showError(exception)
+                    }
+                )
+        )
+    }
+
     private fun getMessages() {
         compositeDisposable.add(
-            repository.getMessagesFromNetwork(streamTitle, topic.name)
+            repository.getMessagesFromNetwork(streamTitle, topic.name, count = 15)
                 .subscribeOn(Schedulers.io())
-                .map { messagesResponse -> messagesResponse.messages }
+                .map { messagesResponse ->
+                    if (messagesResponse.foundOldest) hasMoreMessages = false
+                    messagesResponse.messages
+                }
                 .flatMapCompletable { messages ->
                     repository.clearTopicMessages(topic.name, streamId).andThen(repository.saveMessages(messages.takeLast(50)))
                 }

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
@@ -21,6 +22,8 @@ import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatAdapter
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatHolderFactory
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.DateSeparatorUI
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.MessageUI
+import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
+import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -78,12 +81,31 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                 registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                         super.onItemRangeInserted(positionStart, itemCount)
-                        if (positionStart != 0) {
+                        if (presenter.shouldScrollBottom) {
                             chatRecyclerView.adapter?.let { chatRecyclerView.scrollToPosition(it.itemCount - 1) }
+                            presenter.shouldScrollBottom = false
                         }
                     }
                 })
             }
+            chatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    if (!presenter.isNextPageLoading && presenter.hasMoreMessages && recyclerView.adapter != null) {
+
+                        val itemsRemaining = (recyclerView.layoutManager as LinearLayoutManager)
+                            .findFirstCompletelyVisibleItemPosition()
+
+                        if (itemsRemaining < 5) {
+                            presenter.isNextPageLoading = true
+                            val lastLoadedMessageId =
+                                (recyclerView.adapter as ChatAdapter).items.first { uiItem -> uiItem is MessageUI }.id.toLong()
+                            presenter.getNextMessages(lastLoadedMessageId)
+                        }
+                    }
+                }
+            })
             chatTopicTitle.text = getString(R.string.topic_title, topic.name)
             toolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
@@ -101,10 +123,13 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     override fun showMessages(messages: List<Message>) {
-        (binding.chatRecyclerView.adapter as ChatAdapter).items =
+        val uiItemsToAdd: MutableList<ViewTyped> =
             messagesToMessageUIs(messages).groupBy { it.date }.flatMap { (date: String, messageUIsByDate: List<MessageUI>) ->
                 listOf(DateSeparatorUI(date)) + messageUIsByDate
-            }
+            } as MutableList<ViewTyped>
+        if (presenter.hasMoreMessages) uiItemsToAdd.add(0, SpinnerUI())
+        (binding.chatRecyclerView.adapter as ChatAdapter).items = uiItemsToAdd
+
         setLoading(false)
         setChatVisibility(true)
     }
