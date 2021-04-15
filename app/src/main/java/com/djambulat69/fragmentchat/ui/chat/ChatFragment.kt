@@ -31,10 +31,14 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 private const val ARG_TOPIC = "topic"
 private const val ARG_STREAM_TITLE = "stream_title"
 private const val ARG_STREAM_ID = "stream_id"
+
+private const val MESSAGES_PREFETCH_DISTANCE = 5
+private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 1000L
 
 class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener {
 
@@ -88,24 +92,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                     }
                 })
             }
-            chatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
 
-                    if (!presenter.isNextPageLoading && presenter.hasMoreMessages && recyclerView.adapter != null) {
-
-                        val itemsRemaining = (recyclerView.layoutManager as LinearLayoutManager)
-                            .findFirstCompletelyVisibleItemPosition()
-
-                        if (itemsRemaining < 5) {
-                            presenter.isNextPageLoading = true
-                            val lastLoadedMessageId =
-                                (recyclerView.adapter as ChatAdapter).items.first { uiItem -> uiItem is MessageUI }.id.toLong()
-                            presenter.getNextMessages(lastLoadedMessageId)
-                        }
-                    }
-                }
-            })
             chatTopicTitle.text = getString(R.string.topic_title, topic.name)
             toolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
@@ -113,6 +100,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         }
 
         subscribeOnSendingMessages()
+        subscribeOnScrolling()
         setupTextWatcher()
     }
 
@@ -168,6 +156,39 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
             getSendButtonObservable()
                 .subscribeOn(Schedulers.io())
                 .subscribe { messageText -> presenter.sendMessage(messageText) }
+        )
+    }
+
+    private fun getScrollObservable() = Observable.create<Long> { emitter ->
+        binding.chatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (!presenter.isNextPageLoading && presenter.hasMoreMessages && recyclerView.adapter != null) {
+
+                    val itemsRemaining = (recyclerView.layoutManager as LinearLayoutManager)
+                        .findFirstCompletelyVisibleItemPosition()
+
+                    if (itemsRemaining < MESSAGES_PREFETCH_DISTANCE && itemsRemaining != RecyclerView.NO_POSITION) {
+                        presenter.isNextPageLoading = true
+                        val lastLoadedMessageId =
+                            (recyclerView.adapter as ChatAdapter).items.first { uiItem -> uiItem is MessageUI }.id.toLong()
+                        emitter.onNext(lastLoadedMessageId)
+                    }
+                }
+            }
+        })
+    }
+
+    private fun subscribeOnScrolling() {
+        compositeDisposable.add(
+            getScrollObservable()
+                .subscribeOn(Schedulers.io())
+                .debounce(SCROLL_EMIT_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
+                .subscribe { anchor ->
+                    presenter.getNextMessages(anchor)
+                }
         )
     }
 

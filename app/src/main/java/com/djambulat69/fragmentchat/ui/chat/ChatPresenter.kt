@@ -1,7 +1,6 @@
 package com.djambulat69.fragmentchat.ui.chat
 
 import android.util.Log
-import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Topic
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -12,6 +11,9 @@ import java.util.concurrent.TimeUnit
 
 private const val TAG = "ChatPresenter"
 private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
+private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
+private const val INITIAL_PAGE_SIZE = 50
+private const val NEXT_PAGE_SIZE = 30
 
 class ChatPresenter(
     val topic: Topic,
@@ -76,10 +78,10 @@ class ChatPresenter(
 
     fun getNextMessages(anchor: Long) {
         compositeDisposable.add(
-            repository.getMessagesFromNetwork(streamTitle, topic.name, anchor, 20)
+            repository.getMessagesFromNetwork(streamTitle, topic.name, anchor, count = INITIAL_PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .map { messagesResponse ->
-                    if (messagesResponse.foundOldest) hasMoreMessages = false
+                    hasMoreMessages = !messagesResponse.foundOldest
                     messagesResponse.messages
                 }
                 .flatMapCompletable { messages ->
@@ -98,14 +100,14 @@ class ChatPresenter(
 
     private fun getMessages() {
         compositeDisposable.add(
-            repository.getMessagesFromNetwork(streamTitle, topic.name, count = 15)
+            repository.getMessagesFromNetwork(streamTitle, topic.name, NEWEST_ANCHOR_MESSAGE, count = NEXT_PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .map { messagesResponse ->
-                    if (messagesResponse.foundOldest) hasMoreMessages = false
+                    hasMoreMessages = !messagesResponse.foundOldest
                     messagesResponse.messages
                 }
                 .flatMapCompletable { messages ->
-                    repository.clearTopicMessages(topic.name, streamId).andThen(repository.saveMessages(messages.takeLast(50)))
+                    repository.clearTopicMessages(topic.name, streamId).andThen(repository.saveMessages(messages))
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -121,21 +123,15 @@ class ChatPresenter(
                 .subscribeOn(Schedulers.io())
                 .debounce(DB_MESSAGES_LOAD_DEBOUNCE, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { viewState.showLoading() }
+                .filter { it.isNotEmpty() }
                 .subscribe(
                     { messages ->
-                        showDbMessagesIfNotEmpty(messages)
+                        viewState.showMessages(messages)
                     },
                     { exception -> showError(exception) }
                 )
         )
-    }
-
-    private fun showDbMessagesIfNotEmpty(messages: List<Message>) {
-        if (messages.isEmpty()) {
-            viewState.showLoading()
-        } else {
-            viewState.showMessages(messages)
-        }
     }
 
     private fun showError(exception: Throwable) {

@@ -8,7 +8,6 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 
-private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
 
 class ChatRepository(private val messagesDao: MessagesDao) {
 
@@ -26,7 +25,7 @@ class ChatRepository(private val messagesDao: MessagesDao) {
     fun getMessagesFromNetwork(
         streamTitle: String,
         topicTitle: String,
-        anchor: Long = NEWEST_ANCHOR_MESSAGE,
+        anchor: Long,
         count: Int
     ): Single<MessagesResponse> =
         zulipService.getTopicMessagesSingle(streamTitle, topicTitle, anchor, count)
