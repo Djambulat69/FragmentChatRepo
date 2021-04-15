@@ -11,9 +11,8 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 
 private const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/v1/"
 
-private const val ANCHOR_MESSAGE_RANGE = 50
-private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
 private const val MESSAGE_TYPE = "stream"
+private const val MESSAGES_COUNT_AFTER_ANCHOR = 0
 
 object ZulipRemote {
 
@@ -40,11 +39,11 @@ object ZulipRemote {
 
     fun getTopicsSingle(streamId: Int) = zulipService.getTopics(streamId)
 
-    fun getTopicMessagesSingle(streamTitle: String, topicTitle: String, anchor: Long = NEWEST_ANCHOR_MESSAGE, count: Int) =
+    fun getTopicMessagesSingle(streamTitle: String, topicTitle: String, anchor: Long, count: Int) =
         zulipService.getMessages(
             anchor,
             count,
-            0,
+            MESSAGES_COUNT_AFTER_ANCHOR,
             Json.encodeToString(
                 listOf(
                     NarrowSearchOperator("stream", streamTitle),
