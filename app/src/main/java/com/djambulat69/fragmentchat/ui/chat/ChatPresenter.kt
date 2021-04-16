@@ -22,11 +22,12 @@ class ChatPresenter(
     private val repository: ChatRepository
 ) : MvpPresenter<ChatView>() {
 
-    private val compositeDisposable = CompositeDisposable()
-
-    var isNextPageLoading = false
     var hasMoreMessages = true
     var shouldScrollBottom = false
+
+    private val compositeDisposable = CompositeDisposable()
+    private var isNextPageLoading = false
+
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -77,8 +78,10 @@ class ChatPresenter(
     }
 
     fun getNextMessages(anchor: Long) {
+        if (isNextPageLoading || !hasMoreMessages) return
+        isNextPageLoading = true
         compositeDisposable.add(
-            repository.getMessagesFromNetwork(streamTitle, topic.name, anchor, count = INITIAL_PAGE_SIZE)
+            repository.getMessagesFromNetwork(streamTitle, topic.name, anchor, count = NEXT_PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .map { messagesResponse ->
                     hasMoreMessages = !messagesResponse.foundOldest
@@ -88,19 +91,18 @@ class ChatPresenter(
                     repository.saveMessages(messages)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
+                .doFinally { isNextPageLoading = false }
                 .subscribe(
-                    { isNextPageLoading = false },
-                    { exception ->
-                        isNextPageLoading = false
-                        showError(exception)
-                    }
+                    Functions.EMPTY_ACTION,
+                    { exception -> showError(exception) }
                 )
         )
     }
 
     private fun getMessages() {
+        shouldScrollBottom = true
         compositeDisposable.add(
-            repository.getMessagesFromNetwork(streamTitle, topic.name, NEWEST_ANCHOR_MESSAGE, count = NEXT_PAGE_SIZE)
+            repository.getMessagesFromNetwork(streamTitle, topic.name, NEWEST_ANCHOR_MESSAGE, count = INITIAL_PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .map { messagesResponse ->
                     hasMoreMessages = !messagesResponse.foundOldest
@@ -126,9 +128,7 @@ class ChatPresenter(
                 .doOnSubscribe { viewState.showLoading() }
                 .filter { it.isNotEmpty() }
                 .subscribe(
-                    { messages ->
-                        viewState.showMessages(messages)
-                    },
+                    { messages -> viewState.showMessages(messages) },
                     { exception -> showError(exception) }
                 )
         )

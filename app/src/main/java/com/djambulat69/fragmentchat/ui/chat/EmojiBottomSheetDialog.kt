@@ -40,7 +40,7 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
     private fun createEmojiList(): List<EmojiUI> = mutableListOf<EmojiUI>().apply {
         EmojiEnum.values().distinctBy { it.unicode }.sortedByDescending { it.unicodeCodePoint }.forEach {
             add(EmojiUI(it) { emojiName ->
-                listener!!.addReaction(requireArguments().getInt(ARG_MESSAGE_ID), emojiName)
+                listener?.addReaction(requireArguments().getInt(ARG_MESSAGE_ID), emojiName)
                 dismiss()
             })
         }

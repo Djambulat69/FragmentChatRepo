@@ -16,7 +16,6 @@ import moxy.MvpPresenter
 
 private const val TAG = "StreamsPresenter"
 
-
 class StreamsPresenter(private val tabPosition: Int, private val repository: StreamsRepository) : MvpPresenter<StreamsView>() {
 
     private val compositeDisposable = CompositeDisposable()
@@ -61,13 +60,7 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
                 .subscribeOn(Schedulers.io())
                 .flattenAsObservable { streamResponse -> streamResponse.streams }
                 .flatMapSingle { stream ->
-                    repository.getTopicsFromNetwork(stream.streamId)
-                        .zipWith(Single.just(stream)) { topicsResponse, _ ->
-                            stream.apply {
-                                topics = topicsResponse.topics
-                                isSubscribed = tabPosition == ChannelsPages.SUBSCRIBED.ordinal
-                            }
-                        }.subscribeOn(Schedulers.io()).retry()
+                    zipStreamWithTopics(stream).subscribeOn(Schedulers.io()).retry()
                 }
                 .toList()
                 .flatMapCompletable { streams -> repository.saveStreams(streams) }
@@ -90,9 +83,14 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
                     this.streams = streams
                     streamsToStreamUIs(streams)
                 }
+                .filter { it.isNotEmpty() }
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { viewState.showLoading() }
                 .subscribe(
-                    { streamUIs -> showDbStreamUIsIfNotEmpty(streamUIs) },
+                    { streamUIs ->
+                        recyclerUiItems = streamUIs
+                        showStreams()
+                    },
                     { exception ->
                         viewState.showError()
                         Log.e(TAG, exception.stackTraceToString())
@@ -140,6 +138,16 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
             recyclerUiItems = streamUIs
             showStreams()
         }
+    }
+
+    private fun zipStreamWithTopics(stream: Stream): Single<Stream> {
+        return repository.getTopicsFromNetwork(stream.streamId)
+            .zipWith(Single.just(stream)) { topicsResponse, _ ->
+                stream.apply {
+                    topics = topicsResponse.topics
+                    isSubscribed = tabPosition == ChannelsPages.SUBSCRIBED.ordinal
+                }
+            }
     }
 
 }

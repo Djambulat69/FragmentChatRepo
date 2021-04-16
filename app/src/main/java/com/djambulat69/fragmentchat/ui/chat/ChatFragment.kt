@@ -2,8 +2,6 @@ package com.djambulat69.fragmentchat.ui.chat
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +22,7 @@ import com.djambulat69.fragmentchat.ui.chat.recyclerview.DateSeparatorUI
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.MessageUI
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
+import com.google.android.material.internal.TextWatcherAdapter
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -164,13 +163,12 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                if (!presenter.isNextPageLoading && presenter.hasMoreMessages && recyclerView.adapter != null) {
+                if (recyclerView.adapter != null) {
 
                     val itemsRemaining = (recyclerView.layoutManager as LinearLayoutManager)
                         .findFirstCompletelyVisibleItemPosition()
 
                     if (itemsRemaining < MESSAGES_PREFETCH_DISTANCE && itemsRemaining != RecyclerView.NO_POSITION) {
-                        presenter.isNextPageLoading = true
                         val lastLoadedMessageId =
                             (recyclerView.adapter as ChatAdapter).items.first { uiItem -> uiItem is MessageUI }.id.toLong()
                         emitter.onNext(lastLoadedMessageId)
@@ -193,21 +191,11 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     private fun setupTextWatcher() {
-        binding.messageEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                text: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
+        binding.messageEditText.addTextChangedListener(object : TextWatcherAdapter() {
+            override fun onTextChanged(text: CharSequence, start: Int, before: Int, count: Int) {
+                binding.sendButton.isVisible = text.isBlank() == false
+                binding.addFileButton.isVisible = text.isBlank() == true
             }
-
-            override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.sendButton.isVisible = text?.isBlank() == false
-                binding.addFileButton.isVisible = text?.isBlank() == true
-            }
-
-            override fun afterTextChanged(editable: Editable?) {}
         })
     }
 

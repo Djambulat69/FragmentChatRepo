@@ -3,7 +3,7 @@ package com.djambulat69.fragmentchat.ui.chat
 import com.djambulat69.fragmentchat.model.db.MessagesDao
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.MessagesResponse
-import com.djambulat69.fragmentchat.model.network.ZulipRemote
+import com.djambulat69.fragmentchat.model.network.ZulipServiceImpl
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
@@ -11,7 +11,7 @@ import io.reactivex.rxjava3.core.Single
 
 class ChatRepository(private val messagesDao: MessagesDao) {
 
-    private val zulipService = ZulipRemote
+    private val zulipService = ZulipServiceImpl
 
     fun getMessagesFromDb(topicTitle: String, streamId: Int): Flowable<List<Message>> =
         messagesDao.getMessages(topicTitle, streamId)

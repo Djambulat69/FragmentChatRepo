@@ -10,6 +10,8 @@ import com.djambulat69.fragmentchat.model.network.myUserId
 import com.djambulat69.fragmentchat.utils.toEmoji
 import kotlin.math.roundToInt
 
+private const val BITS_IN_UNICODE = 16
+
 fun FlexBoxLayout.setReactions(
     reactions: List<Reaction>,
     reactionClick: (Boolean, Int, String) -> Unit,
@@ -47,7 +49,7 @@ private fun FlexBoxLayout.addEmojiViewByReaction(
             height
         ).apply { setMargins(margin) }
         setPadding(widthPadding, heightPadding, widthPadding, heightPadding)
-        setEmoji(reaction.emojiCode.toInt(16).toEmoji())
+        setEmoji(reaction.emojiCode.toInt(BITS_IN_UNICODE).toEmoji())
         reactionCount = count
         setOnClickListener {
             updateEmojiViewOnClick()

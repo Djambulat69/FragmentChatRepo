@@ -1,6 +1,6 @@
 package com.djambulat69.fragmentchat.ui.profile
 
-import com.djambulat69.fragmentchat.model.network.ZulipRemote
+import com.djambulat69.fragmentchat.model.network.ZulipServiceImpl
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -11,7 +11,7 @@ private const val TAG = "ProfilePresenter"
 class ProfilePresenter : MvpPresenter<ProfileView>() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val zulipRemote = ZulipRemote
+    private val zulipRemote = ZulipServiceImpl
 
     override fun onDestroy() {
         super.onDestroy()

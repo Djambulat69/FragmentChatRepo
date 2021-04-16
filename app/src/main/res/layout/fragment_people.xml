@@ -23,36 +23,10 @@
         tools:itemCount="3"
         tools:listitem="@layout/user_list_item" />
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer_user_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/people_toolbar">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <include layout="@layout/shimmer_user_list_item" />
-
-            <include layout="@layout/shimmer_user_list_item" />
-
-            <include layout="@layout/shimmer_user_list_item" />
-
-            <include layout="@layout/shimmer_user_list_item" />
-
-            <include layout="@layout/shimmer_user_list_item" />
-
-            <include layout="@layout/shimmer_user_list_item" />
-
-            <include layout="@layout/shimmer_user_list_item" />
-
-            <include layout="@layout/shimmer_user_list_item" />
-
-        </LinearLayout>
-    </com.facebook.shimmer.ShimmerFrameLayout>
+    <include
+        android:id="@+id/include_shimmer_fragment_people"
+        layout="@layout/shimmer_fragment_people"
+        android:visibility="gone" />
 
     <include layout="@layout/error_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

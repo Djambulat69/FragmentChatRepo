@@ -27,7 +27,7 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentPeopleBinding.inflate(inflater, container, false)
         _errorBinding = ErrorLayoutBinding.bind(binding.root)
         return binding.root
@@ -67,7 +67,7 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
     }
 
     private fun setLoading(isLoadingVisible: Boolean) {
-        binding.shimmerUserList.isVisible = isLoadingVisible
+        binding.includeShimmerFragmentPeople.shimmerUserList.isVisible = isLoadingVisible
     }
 
     companion object {

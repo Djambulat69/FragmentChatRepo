@@ -3,14 +3,14 @@ package com.djambulat69.fragmentchat.ui.channels.streams
 import com.djambulat69.fragmentchat.model.db.StreamsDao
 import com.djambulat69.fragmentchat.model.network.Stream
 import com.djambulat69.fragmentchat.model.network.TopicsResponse
-import com.djambulat69.fragmentchat.model.network.ZulipRemote
+import com.djambulat69.fragmentchat.model.network.ZulipServiceImpl
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 
 class StreamsRepository(private val streamsDao: StreamsDao) {
 
-    private val zulipService = ZulipRemote
+    private val zulipService = ZulipServiceImpl
 
     fun getAllStreamsFromNetwork(): Single<StreamsResponseSealed.AllStreamsResponse> = zulipService.getStreamsSingle()
 

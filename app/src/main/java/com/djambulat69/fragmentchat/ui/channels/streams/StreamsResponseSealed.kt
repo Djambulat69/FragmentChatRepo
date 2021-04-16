@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 sealed class StreamsResponseSealed {
 
     @Serializable
-    data class AllStreamsResponse(
+    class AllStreamsResponse(
         @SerialName("streams") override val streams: List<Stream>
     ) : StreamsResponseSealed()
 

@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 @Entity(tableName = "streams_table", primaryKeys = ["streamId", "isSubscribed"])
 @Serializable
-data class Stream(
+class Stream(
     @SerialName("name") val name: String,
     @SerialName("stream_id") val streamId: Int
 ) {
@@ -18,24 +18,24 @@ data class Stream(
 }
 
 @Serializable
-data class TopicsResponse(
+class TopicsResponse(
     @SerialName("topics") val topics: List<Topic>
 )
 
 @Serializable
-data class Topic(
+class Topic(
     @SerialName("max_id") val maxId: Int,
     @SerialName("name") val name: String
 ) : java.io.Serializable
 
 @Serializable
-data class NarrowSearchOperator(
+class NarrowSearchOperator(
     @SerialName("operator") val operator: String,
     @SerialName("operand") val operand: String
 )
 
 @Serializable
-data class MessagesResponse(
+class MessagesResponse(
     @SerialName("messages") val messages: List<Message>,
     @SerialName("found_oldest") val foundOldest: Boolean
 )
@@ -63,7 +63,7 @@ data class Reaction(
 )
 
 @Serializable
-data class OwnUser(
+class OwnUser(
     @SerialName("avatar_url") val avatarUrl: String,
     @SerialName("email") val email: String,
     @SerialName("full_name") val fullName: String,
@@ -72,12 +72,12 @@ data class OwnUser(
 )
 
 @Serializable
-data class AllUsersResponse(
+class AllUsersResponse(
     @SerialName("members") val users: List<User>,
 )
 
 @Serializable
-data class User(
+class User(
     @SerialName("avatar_url") val avatarUrl: String,
     @SerialName("email") val email: String,
     @SerialName("full_name") val fullName: String,
@@ -87,24 +87,19 @@ data class User(
 )
 
 @Serializable
-data class StreamIdResponse(
-    @SerialName("stream_id") val streamId: Int
-)
-
-@Serializable
-data class UserPresenceResponse(
+class UserPresenceResponse(
     @SerialName("presence") val presence: Presence,
 )
 
 @Serializable
-data class Presence(
+class Presence(
     @SerialName("ZulipMobile") val zulipMobile: PresenceClient? = null,
     @SerialName("aggregated") val aggregated: PresenceClient,
     @SerialName("website") val website: PresenceClient
 )
 
 @Serializable
-data class PresenceClient(
+class PresenceClient(
     @SerialName("status") val status: String,
     @SerialName("timestamp") val timestamp: Int
 )

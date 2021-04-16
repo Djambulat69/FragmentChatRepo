@@ -1,10 +1,10 @@
 package com.djambulat69.fragmentchat.ui.people
 
 import android.util.Log
-import com.djambulat69.fragmentchat.model.network.ZulipRemote
+import com.djambulat69.fragmentchat.model.network.User
+import com.djambulat69.fragmentchat.model.network.ZulipServiceImpl
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UserUI
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -15,7 +15,7 @@ private const val TAG = "PeoplePresenter"
 class PeoplePresenter : MvpPresenter<PeopleView>() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val zulipService = ZulipRemote
+    private val zulipService = ZulipServiceImpl
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -32,11 +32,9 @@ class PeoplePresenter : MvpPresenter<PeopleView>() {
             zulipService.getUsers()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { viewState.showLoading() }
-                .flatMapObservable { allUsersResponse -> Observable.fromIterable(allUsersResponse.users.filter { !it.isBot }) }
+                .flattenAsObservable { allUsersResponse -> allUsersResponse.users.filter { !it.isBot } }
                 .flatMapSingle { user ->
-                    zulipService.getUserPresence(user.email).zipWith(Single.just(user)) { userPresenceResponse, _ ->
-                        UserUI(user, userPresenceResponse.presence.aggregated)
-                    }.subscribeOn(Schedulers.io()).retry()
+                    zipUserWithUserPresence(user).subscribeOn(Schedulers.io()).retry()
                 }
                 .toList()
                 .observeOn(Schedulers.computation())
@@ -50,5 +48,11 @@ class PeoplePresenter : MvpPresenter<PeopleView>() {
                     }
                 )
         )
+    }
+
+    private fun zipUserWithUserPresence(user: User): Single<UserUI> {
+        return zulipService.getUserPresence(user.email).zipWith(Single.just(user)) { userPresenceResponse, _ ->
+            UserUI(user, userPresenceResponse.presence.aggregated)
+        }
     }
 }
