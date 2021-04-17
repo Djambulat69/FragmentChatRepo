@@ -12,11 +12,14 @@ import com.djambulat69.fragmentchat.utils.recyclerView.HolderFactory
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
 class ChatHolderFactory(private val glide: RequestManager) : HolderFactory() {
+
     override fun createHolder(
         parent: ViewGroup,
         viewType: Int,
     ): BaseViewHolder<ViewTyped> {
+
         val view = parent.inflate<View>(viewType)
+
         return when (viewType) {
             R.layout.incoming_message_layout -> {
                 val binding = IncomingMessageLayoutBinding.bind(view)

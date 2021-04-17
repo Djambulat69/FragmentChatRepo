@@ -16,8 +16,10 @@ object ZulipRetrofit {
 
     init {
         val loggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+        val authInterceptor = AuthInterceptor()
         client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(authInterceptor)
             .build()
     }
 
