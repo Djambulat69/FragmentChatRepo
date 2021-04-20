@@ -16,6 +16,7 @@ import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
+import com.djambulat69.fragmentchat.ui.NetworkListener
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatAdapter
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatHolderFactory
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.DateSeparatorUI
@@ -38,8 +39,9 @@ private const val ARG_STREAM_ID = "stream_id"
 
 private const val MESSAGES_PREFETCH_DISTANCE = 5
 private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 1000L
+private const val MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL = 2
 
-class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener {
+class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener, NetworkListener {
 
     private var fragmentInteractor: FragmentInteractor? = null
 
@@ -51,7 +53,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
             requireArguments().getSerializable(ARG_TOPIC) as Topic,
             requireArguments().getString(ARG_STREAM_TITLE) as String,
             requireArguments().getInt(ARG_STREAM_ID),
-            ChatRepository(FragmentChatDatabase.get(requireContext().applicationContext).messagesDao())
+            ChatRepository(FragmentChatDatabase.INSTANCE.messagesDao())
         )
     }
 
@@ -84,9 +86,11 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                 registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                         super.onItemRangeInserted(positionStart, itemCount)
-                        if (presenter.shouldScrollBottom) {
-                            chatRecyclerView.adapter?.let { chatRecyclerView.scrollToPosition(it.itemCount - 1) }
-                            presenter.shouldScrollBottom = false
+
+                        chatRecyclerView.adapter?.let {
+                            if (positionStart > MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL) {
+                                chatRecyclerView.scrollToPosition(it.itemCount - 1)
+                            }
                         }
                     }
                 })
@@ -114,6 +118,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
             messagesToMessageUIs(messages).groupBy { it.date }.flatMap { (date: String, messageUIsByDate: List<MessageUI>) ->
                 listOf(DateSeparatorUI(date)) + messageUIsByDate
             } as MutableList<ViewTyped>
+
         if (presenter.hasMoreMessages) uiItemsToAdd.add(0, SpinnerUI())
         (binding.chatRecyclerView.adapter as ChatAdapter).items = uiItemsToAdd
 
@@ -132,6 +137,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
 
     override fun addReaction(messageId: Int, emojiName: String) {
         presenter.addReactionInMessage(messageId, emojiName)
+    }
+
+    override fun onAvailable() {
+        presenter.updateMessages()
     }
 
     private fun setLoading(isVisible: Boolean) {
@@ -163,6 +172,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
+                loadNextPage(recyclerView)
+            }
+
+            private fun loadNextPage(recyclerView: RecyclerView) {
                 if (recyclerView.adapter != null) {
 
                     val itemsRemaining = (recyclerView.layoutManager as LinearLayoutManager)
@@ -193,8 +206,8 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     private fun setupTextWatcher() {
         binding.messageEditText.addTextChangedListener(object : TextWatcherAdapter() {
             override fun onTextChanged(text: CharSequence, start: Int, before: Int, count: Int) {
-                binding.sendButton.isVisible = text.isBlank() == false
-                binding.addFileButton.isVisible = text.isBlank() == true
+                binding.sendButton.isVisible = text.isNotBlank()
+                binding.addFileButton.isVisible = text.isBlank()
             }
         })
     }

@@ -5,8 +5,8 @@ import androidx.annotation.Px
 import androidx.core.view.isVisible
 import androidx.core.view.setMargins
 import com.djambulat69.fragmentchat.R
+import com.djambulat69.fragmentchat.model.MyUser
 import com.djambulat69.fragmentchat.model.network.Reaction
-import com.djambulat69.fragmentchat.model.network.myUserId
 import com.djambulat69.fragmentchat.utils.toEmoji
 import kotlin.math.roundToInt
 
@@ -17,6 +17,8 @@ fun FlexBoxLayout.setReactions(
     reactionClick: (Boolean, Int, String) -> Unit,
     messageId: Int
 ) {
+    val myUserId = MyUser.getId()
+
     removeViews(0, childCount - 1)
 
     isVisible = reactions.isNotEmpty()

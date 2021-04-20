@@ -9,233 +9,211 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView2"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView2"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView2" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView3"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView4"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView30"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView30" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView30"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView29"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView29" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView29"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView30"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView28"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView28" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView28"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView29"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView27"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView27" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView27"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView28"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView26"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView26" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView26"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView27"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView25"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView25" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView25"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView26"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView24"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView24" />
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <View
             android:id="@+id/shapeableImageView24"
             android:layout_width="@dimen/user_list_avatar_size"
             android:layout_height="@dimen/user_list_avatar_size"
+            android:background="@drawable/circle_shape_bg"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView25"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView3"
-            app:shapeAppearance="@style/circleImageViewShape"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView3" />
 
-        <TextView
+        <View
             android:id="@+id/textView6"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView4"
             app:layout_constraintTop_toTopOf="@+id/shapeableImageView4" />
 
-        <TextView
+        <View
             android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toBottomOf="@+id/shapeableImageView2"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView2"
             app:layout_constraintTop_toTopOf="@+id/shapeableImageView2" />
 
-        <TextView
+        <View
             android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toBottomOf="@+id/shapeableImageView"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView"
             app:layout_constraintTop_toBottomOf="@+id/shapeableImageView2" />
 
-        <TextView
+        <View
             android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toBottomOf="@+id/shapeableImageView3"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView3"
             app:layout_constraintTop_toBottomOf="@+id/shapeableImageView" />
 
-        <TextView
+        <View
             android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView25"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView24"
             app:layout_constraintTop_toBottomOf="@+id/shapeableImageView3" />
 
-        <TextView
+        <View
             android:id="@+id/textView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView26"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView25"
             app:layout_constraintTop_toTopOf="@+id/shapeableImageView25" />
 
-        <TextView
+        <View
             android:id="@+id/textView11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView27"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView26"
             app:layout_constraintTop_toTopOf="@+id/shapeableImageView26" />
 
-        <TextView
+        <View
             android:id="@+id/textView12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView28"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView27"
             app:layout_constraintTop_toTopOf="@+id/shapeableImageView27" />
 
-        <TextView
+        <View
             android:id="@+id/textView13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView29"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView28"
             app:layout_constraintTop_toTopOf="@+id/shapeableImageView28" />
 
-        <TextView
+        <View
             android:id="@+id/textView14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView30"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView29"
             app:layout_constraintTop_toTopOf="@+id/shapeableImageView29" />
 
-        <TextView
+        <View
             android:id="@+id/textView15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="300dp"
+            android:layout_height="32dp"
             android:background="@drawable/primary_round_rect_shape_bg"
             android:text="Name Surname"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView4"
             app:layout_constraintStart_toEndOf="@+id/shapeableImageView30"
             app:layout_constraintTop_toTopOf="@+id/shapeableImageView30" />

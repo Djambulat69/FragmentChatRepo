@@ -30,7 +30,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     private val presenter: StreamsPresenter by moxyPresenter {
         StreamsPresenter(
             requireArguments().getInt(ARG_TAB_POSITION),
-            StreamsRepository(FragmentChatDatabase.get(requireContext().applicationContext).streamsDao())
+            StreamsRepository(FragmentChatDatabase.INSTANCE.streamsDao())
         )
     }
 

@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentProfileBinding
-import com.djambulat69.fragmentchat.model.network.OwnUser
+import com.djambulat69.fragmentchat.model.network.User
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -43,7 +43,7 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
         _binding = null
     }
 
-    override fun showProfile(user: OwnUser) {
+    override fun showProfile(user: User) {
         with(binding) {
             Glide.with(this@ProfileFragment).load(user.avatarUrl).into(profileAvatar)
             profileName.text = user.fullName

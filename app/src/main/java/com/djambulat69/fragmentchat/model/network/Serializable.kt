@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// StreamsResponse Serializable defined in ui.channels.streams.StreamsResponseSealed
+// StreamsResponse Serializables defined in ui.channels.streams.StreamsResponseSealed
 
 @Entity(tableName = "streams_table", primaryKeys = ["streamId", "isSubscribed"])
 @Serializable
@@ -63,15 +63,6 @@ data class Reaction(
 )
 
 @Serializable
-class OwnUser(
-    @SerialName("avatar_url") val avatarUrl: String,
-    @SerialName("email") val email: String,
-    @SerialName("full_name") val fullName: String,
-    @SerialName("timezone") val timezone: String,
-    @SerialName("user_id") val userId: Int
-)
-
-@Serializable
 class AllUsersResponse(
     @SerialName("members") val users: List<User>,
 )
@@ -102,4 +93,26 @@ class Presence(
 class PresenceClient(
     @SerialName("status") val status: String,
     @SerialName("timestamp") val timestamp: Int
+)
+
+@Serializable
+data class RegisterEventResponse(
+    @SerialName("queue_id") val queueId: String,
+    @SerialName("last_event_id") val lastEventId: Int
+)
+
+@Serializable
+data class GetEventsResponse(
+    @SerialName("result") val result: String,
+    @SerialName("msg") val msg: String,
+    @SerialName("events") val events: List<Event>,
+    @SerialName("queue_id") val queueId: String? = null
+)
+
+@Serializable
+data class Event(
+    @SerialName("type") val type: String,
+    @SerialName("message") val message: Message? = null,
+    @SerialName("flags") val flags: List<String>? = null,
+    @SerialName("id") val id: Int
 )

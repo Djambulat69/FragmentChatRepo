@@ -3,9 +3,11 @@ package com.djambulat69.fragmentchat.model.network
 import com.djambulat69.fragmentchat.ui.channels.streams.StreamsResponseSealed
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import retrofit2.http.*
 
-const val myUserId = 402250
+//const val myUserId = 402250
 
 interface ZulipChatService {
 
@@ -28,7 +30,7 @@ interface ZulipChatService {
     ): Single<MessagesResponse>
 
     @GET("users/me")
-    fun getOwnUser(): Single<OwnUser>
+    fun getOwnUser(): Single<User>
 
     @GET("users")
     fun getUsers(): Single<AllUsersResponse>
@@ -37,6 +39,12 @@ interface ZulipChatService {
     fun getUserPresence(
         @Path("user_id_or_email") idOrEmail: String
     ): Single<UserPresenceResponse>
+
+    @GET("events")
+    fun getEventsQueue(
+        @Query("queue_id") queueId: String,
+        @Query("last_event_id") lastEventId: Int
+    ): Single<GetEventsResponse>
 
 
     @POST("messages")
@@ -52,6 +60,11 @@ interface ZulipChatService {
         @Path("message_id") messageId: Int,
         @Query("emoji_name") emojiName: String
     ): Completable
+
+    @POST("register")
+    fun registerEventsQueue(
+        @Query("event_types") events: String = Json.encodeToString(arrayOf("message"))
+    ): Single<RegisterEventResponse>
 
 
     @DELETE("messages/{message_id}/reactions")

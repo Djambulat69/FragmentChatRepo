@@ -13,22 +13,31 @@ class ChatRepository(private val messagesDao: MessagesDao) {
 
     private val zulipService = ZulipServiceImpl
 
-    fun getMessagesFromDb(topicTitle: String, streamId: Int): Flowable<List<Message>> =
+    fun getMessages(topicTitle: String, streamId: Int): Flowable<List<Message>> =
         messagesDao.getMessages(topicTitle, streamId)
 
-    fun saveMessages(messages: List<Message>): Completable =
-        messagesDao.saveMessages(messages)
+    fun updateMessages(
+        streamTitle: String,
+        topicTitle: String,
+        streamId: Int,
+        anchor: Long,
+        count: Int
+    ): Single<MessagesResponse> =
+        zulipService.getTopicMessagesSingle(streamTitle, topicTitle, anchor, count)
+            .flatMap { messagesResponse ->
+                clearAndLoadNewMessages(topicTitle, streamId, messagesResponse)
+            }
 
-    fun clearTopicMessages(topicTitle: String, streamId: Int): Completable =
-        messagesDao.deleteTopicMessages(topicTitle, streamId)
-
-    fun getMessagesFromNetwork(
+    fun getNextPageMessages(
         streamTitle: String,
         topicTitle: String,
         anchor: Long,
         count: Int
     ): Single<MessagesResponse> =
         zulipService.getTopicMessagesSingle(streamTitle, topicTitle, anchor, count)
+            .flatMap { messagesResponse ->
+                messagesDao.saveMessages(messagesResponse.messages).andThen(Single.just(messagesResponse))
+            }
 
     fun sendMessage(streamId: Int, text: String, topicTitle: String): Completable =
         zulipService.sendMessageCompletable(streamId, text, topicTitle)
@@ -39,4 +48,12 @@ class ChatRepository(private val messagesDao: MessagesDao) {
     fun deleteReaction(messageId: Int, emojiName: String): Completable =
         zulipService.deleteReaction(messageId, emojiName)
 
+    private fun clearAndLoadNewMessages(
+        topicTitle: String,
+        streamId: Int,
+        messagesResponse: MessagesResponse
+    ) =
+        messagesDao.deleteTopicMessages(topicTitle, streamId)
+            .andThen(messagesDao.saveMessages(messagesResponse.messages))
+            .andThen(Single.just(messagesResponse))
 }

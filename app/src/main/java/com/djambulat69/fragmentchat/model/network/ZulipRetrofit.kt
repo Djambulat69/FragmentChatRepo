@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
+import java.util.concurrent.TimeUnit
 
 object ZulipRetrofit {
 
@@ -20,6 +21,7 @@ object ZulipRetrofit {
         client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(authInterceptor)
+            .readTimeout(0L, TimeUnit.MILLISECONDS)
             .build()
     }
 
@@ -32,4 +34,5 @@ object ZulipRetrofit {
         .create(ZulipChatService::class.java)
 
     fun get(): ZulipChatService = retrofit
+
 }

@@ -17,6 +17,9 @@ interface MessagesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveMessages(messages: List<Message>): Completable
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun saveMessageSync(message: Message)
+
     @Query("DELETE FROM messages_table WHERE topicName = :topicName AND streamId = :streamId")
     fun deleteTopicMessages(topicName: String, streamId: Int): Completable
 

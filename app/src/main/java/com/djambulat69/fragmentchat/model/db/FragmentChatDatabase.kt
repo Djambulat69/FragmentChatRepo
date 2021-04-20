@@ -1,15 +1,16 @@
 package com.djambulat69.fragmentchat.model.db
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Stream
+import com.djambulat69.fragmentchat.ui.FragmentChatApplication
+import com.djambulat69.fragmentchat.model.db.TypeConverters as Type
 
 @Database(entities = [Stream::class, Message::class], version = 1, exportSchema = false)
-@TypeConverters(com.djambulat69.fragmentchat.model.db.TypeConverters::class)
+@TypeConverters(Type::class)
 abstract class FragmentChatDatabase : RoomDatabase() {
 
     abstract fun streamsDao(): StreamsDao
@@ -19,19 +20,12 @@ abstract class FragmentChatDatabase : RoomDatabase() {
 
         private const val DATABASE_NAME = "fragmentChatDatabase"
 
-        @Volatile
-        private var INSTANCE: FragmentChatDatabase? = null
-
-        fun get(context: Context): FragmentChatDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    FragmentChatDatabase::class.java,
-                    DATABASE_NAME
-                ).fallbackToDestructiveMigration().build()
-                INSTANCE = instance
-                return instance
-            }
+        val INSTANCE: FragmentChatDatabase by lazy {
+            return@lazy Room.databaseBuilder(
+                FragmentChatApplication.applicationContext(),
+                FragmentChatDatabase::class.java,
+                DATABASE_NAME
+            ).fallbackToDestructiveMigration().build()
         }
     }
 }

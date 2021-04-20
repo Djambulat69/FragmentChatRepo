@@ -1,6 +1,7 @@
 package com.djambulat69.fragmentchat.ui.chat
 
 import android.util.Log
+import com.djambulat69.fragmentchat.model.network.NetworkChecker
 import com.djambulat69.fragmentchat.model.network.Topic
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -23,16 +24,16 @@ class ChatPresenter(
 ) : MvpPresenter<ChatView>() {
 
     var hasMoreMessages = true
-    var shouldScrollBottom = false
 
+    private var isOnline = NetworkChecker.isConnected()
     private val compositeDisposable = CompositeDisposable()
     private var isNextPageLoading = false
 
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        subscribeOnDbMessages()
         getMessages()
+        if (isOnline) updateMessages()
     }
 
     override fun onDestroy() {
@@ -41,13 +42,12 @@ class ChatPresenter(
     }
 
     fun sendMessage(messageText: String) {
-        shouldScrollBottom = true
         compositeDisposable.add(
             repository.sendMessage(streamId, messageText, topic.name)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { getMessages() },
+                    { updateMessages() },
                     { exception -> showError(exception) }
                 )
         )
@@ -59,7 +59,7 @@ class ChatPresenter(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { getMessages() },
+                    { updateMessages() },
                     { exception -> showError(exception) }
                 )
         )
@@ -71,7 +71,7 @@ class ChatPresenter(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { getMessages() },
+                    { updateMessages() },
                     { exception -> showError(exception) }
                 )
         )
@@ -81,47 +81,41 @@ class ChatPresenter(
         if (isNextPageLoading || !hasMoreMessages) return
         isNextPageLoading = true
         compositeDisposable.add(
-            repository.getMessagesFromNetwork(streamTitle, topic.name, anchor, count = NEXT_PAGE_SIZE)
+            repository.getNextPageMessages(streamTitle, topic.name, anchor, NEXT_PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .map { messagesResponse ->
                     hasMoreMessages = !messagesResponse.foundOldest
                     messagesResponse.messages
                 }
-                .flatMapCompletable { messages ->
-                    repository.saveMessages(messages)
+                .doFinally { isNextPageLoading = false }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    Functions.emptyConsumer(),
+                    { exception -> showError(exception) }
+                )
+        )
+    }
+
+    fun updateMessages() {
+        isOnline = true
+        compositeDisposable.add(
+            repository.updateMessages(streamTitle, topic.name, streamId, NEWEST_ANCHOR_MESSAGE, count = INITIAL_PAGE_SIZE)
+                .subscribeOn(Schedulers.io())
+                .map { messagesResponse ->
+                    hasMoreMessages = !messagesResponse.foundOldest
+                    messagesResponse.messages
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doFinally { isNextPageLoading = false }
                 .subscribe(
-                    Functions.EMPTY_ACTION,
+                    Functions.emptyConsumer(),
                     { exception -> showError(exception) }
                 )
         )
     }
 
     private fun getMessages() {
-        shouldScrollBottom = true
         compositeDisposable.add(
-            repository.getMessagesFromNetwork(streamTitle, topic.name, NEWEST_ANCHOR_MESSAGE, count = INITIAL_PAGE_SIZE)
-                .subscribeOn(Schedulers.io())
-                .map { messagesResponse ->
-                    hasMoreMessages = !messagesResponse.foundOldest
-                    messagesResponse.messages
-                }
-                .flatMapCompletable { messages ->
-                    repository.clearTopicMessages(topic.name, streamId).andThen(repository.saveMessages(messages))
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    Functions.EMPTY_ACTION,
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-    private fun subscribeOnDbMessages() {
-        compositeDisposable.add(
-            repository.getMessagesFromDb(topic.name, streamId)
+            repository.getMessages(topic.name, streamId)
                 .subscribeOn(Schedulers.io())
                 .debounce(DB_MESSAGES_LOAD_DEBOUNCE, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())

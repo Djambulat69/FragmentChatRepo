@@ -26,7 +26,11 @@
     <include
         android:id="@+id/include_shimmer_fragment_people"
         layout="@layout/shimmer_fragment_people"
-        android:visibility="gone" />
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/people_toolbar" />
 
     <include layout="@layout/error_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

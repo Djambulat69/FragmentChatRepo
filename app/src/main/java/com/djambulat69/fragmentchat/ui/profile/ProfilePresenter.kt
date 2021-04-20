@@ -11,7 +11,7 @@ private const val TAG = "ProfilePresenter"
 class ProfilePresenter : MvpPresenter<ProfileView>() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val zulipRemote = ZulipServiceImpl
+    private val zulipService = ZulipServiceImpl
 
     override fun onDestroy() {
         super.onDestroy()
@@ -25,7 +25,7 @@ class ProfilePresenter : MvpPresenter<ProfileView>() {
 
     private fun showProfile() {
         compositeDisposable.add(
-            zulipRemote.getOwnUser()
+            zulipService.getOwnUser()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { viewState.showLoading() }
                 .observeOn(AndroidSchedulers.mainThread())

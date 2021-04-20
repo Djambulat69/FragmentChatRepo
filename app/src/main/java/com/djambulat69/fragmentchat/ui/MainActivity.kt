@@ -1,9 +1,12 @@
 package com.djambulat69.fragmentchat.ui
 
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
+import com.djambulat69.fragmentchat.model.network.NetworkChecker
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.chat.ChatFragment
 
@@ -18,6 +21,12 @@ class MainActivity : AppCompatActivity(), FragmentInteractor {
                 add(R.id.fragment_container, MainFragment.newInstance())
             }
         }
+
+        NetworkChecker.registerNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                supportFragmentManager.fragments.filterIsInstance<NetworkListener>().forEach { it.onAvailable() }
+            }
+        })
     }
 
     override fun back() {

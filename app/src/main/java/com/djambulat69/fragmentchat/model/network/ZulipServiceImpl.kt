@@ -32,7 +32,7 @@ object ZulipServiceImpl {
             )
         )
 
-    fun getOwnUser(): Single<OwnUser> = zulipService.getOwnUser()
+    fun getOwnUser(): Single<User> = zulipService.getOwnUser()
 
     fun getUsers(): Single<AllUsersResponse> = zulipService.getUsers()
 
@@ -44,4 +44,9 @@ object ZulipServiceImpl {
     fun addReaction(messageId: Int, emojiName: String): Completable = zulipService.addReaction(messageId, emojiName)
 
     fun deleteReaction(messageId: Int, emojiName: String): Completable = zulipService.deleteReaction(messageId, emojiName)
+
+    fun registerEventQueue(): Single<RegisterEventResponse> = zulipService.registerEventsQueue()
+
+    fun getEventQueue(queueId: String, lastEventId: Int): Single<GetEventsResponse> =
+        zulipService.getEventsQueue(queueId, lastEventId)
 }
