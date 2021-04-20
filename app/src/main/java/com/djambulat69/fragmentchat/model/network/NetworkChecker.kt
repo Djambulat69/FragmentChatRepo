@@ -10,15 +10,17 @@ object NetworkChecker {
 
 
     fun registerNetworkCallback(callback: ConnectivityManager.NetworkCallback) {
-        val connectivityManager =
-            FragmentChatApplication.applicationContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkRequest = NetworkRequest.Builder().build()
-        connectivityManager.registerNetworkCallback(networkRequest, callback)
+        getConnectivityManager().registerNetworkCallback(networkRequest, callback)
+    }
+
+    fun unRegisterCallback(callback: ConnectivityManager.NetworkCallback) {
+        getConnectivityManager().unregisterNetworkCallback(callback)
     }
 
     fun isConnected(): Boolean {
-        val connectivityManager =
-            FragmentChatApplication.applicationContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = getConnectivityManager()
+
         for (network in connectivityManager.allNetworks) {
             val capabilities = connectivityManager.getNetworkCapabilities(network)
             if (capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true) {
@@ -27,4 +29,7 @@ object NetworkChecker {
         }
         return false
     }
+
+    private fun getConnectivityManager() =
+        FragmentChatApplication.applicationContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 }

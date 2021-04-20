@@ -12,6 +12,14 @@ import com.djambulat69.fragmentchat.ui.chat.ChatFragment
 
 class MainActivity : AppCompatActivity(), FragmentInteractor {
 
+    private val networkCallback: ConnectivityManager.NetworkCallback by lazy {
+        object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                supportFragmentManager.fragments.filterIsInstance<NetworkListener>().forEach { it.onAvailable() }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -22,11 +30,12 @@ class MainActivity : AppCompatActivity(), FragmentInteractor {
             }
         }
 
-        NetworkChecker.registerNetworkCallback(object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                supportFragmentManager.fragments.filterIsInstance<NetworkListener>().forEach { it.onAvailable() }
-            }
-        })
+        NetworkChecker.registerNetworkCallback(networkCallback)
+    }
+
+    override fun onDestroy() {
+        NetworkChecker.unRegisterCallback(networkCallback)
+        super.onDestroy()
     }
 
     override fun back() {
