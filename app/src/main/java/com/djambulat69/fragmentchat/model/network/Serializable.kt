@@ -23,7 +23,7 @@ class TopicsResponse(
 )
 
 @Serializable
-class Topic(
+data class Topic(
     @SerialName("max_id") val maxId: Int,
     @SerialName("name") val name: String
 ) : java.io.Serializable

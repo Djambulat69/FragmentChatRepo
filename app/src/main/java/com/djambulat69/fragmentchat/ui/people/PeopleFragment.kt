@@ -8,9 +8,10 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentPeopleBinding
+import com.djambulat69.fragmentchat.ui.people.recyclerview.UserDiffCallback
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UserUI
-import com.djambulat69.fragmentchat.ui.people.recyclerview.UsersAdapter
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UsersHolderFactory
+import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -36,7 +37,7 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.usersRecyclerView.adapter = UsersAdapter(UsersHolderFactory(Glide.with(this)))
+        binding.usersRecyclerView.adapter = AsyncAdapter(UsersHolderFactory(Glide.with(this)), UserDiffCallback)
     }
 
     override fun onDestroyView() {
@@ -48,7 +49,7 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
     override fun showUsers(userUIs: List<UserUI>) {
         setUiVisibility(true)
         setLoading(false)
-        (binding.usersRecyclerView.adapter as UsersAdapter).items = userUIs
+        (binding.usersRecyclerView.adapter as AsyncAdapter).items = userUIs
     }
 
     override fun showError() {

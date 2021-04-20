@@ -17,10 +17,8 @@ import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.NetworkListener
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatAdapter
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatHolderFactory
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.DateSeparatorUI
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.MessageUI
+import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
+import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import com.google.android.material.internal.TextWatcherAdapter
@@ -82,19 +80,20 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
 
         with(binding) {
             toolbar.title = getString(R.string.sharp_placeholder, streamTitle)
-            chatRecyclerView.adapter = ChatAdapter(ChatHolderFactory(Glide.with(this@ChatFragment))).apply {
-                registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-                    override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                        super.onItemRangeInserted(positionStart, itemCount)
+            chatRecyclerView.adapter =
+                AsyncAdapter(ChatHolderFactory(Glide.with(this@ChatFragment)), ChatDiffCallback).apply {
+                    registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                            super.onItemRangeInserted(positionStart, itemCount)
 
-                        chatRecyclerView.adapter?.let {
-                            if (positionStart > MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL) {
-                                chatRecyclerView.scrollToPosition(it.itemCount - 1)
+                            chatRecyclerView.adapter?.let {
+                                if (positionStart > MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL) {
+                                    chatRecyclerView.scrollToPosition(it.itemCount - 1)
+                                }
                             }
                         }
-                    }
-                })
-            }
+                    })
+                }
 
             chatTopicTitle.text = getString(R.string.topic_title, topic.name)
             toolbar.setNavigationOnClickListener {
@@ -120,7 +119,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
             } as MutableList<ViewTyped>
 
         if (presenter.hasMoreMessages) uiItemsToAdd.add(0, SpinnerUI())
-        (binding.chatRecyclerView.adapter as ChatAdapter).items = uiItemsToAdd
+        (binding.chatRecyclerView.adapter as AsyncAdapter).items = uiItemsToAdd
 
         setLoading(false)
         setChatVisibility(true)
@@ -183,7 +182,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
 
                     if (itemsRemaining < MESSAGES_PREFETCH_DISTANCE && itemsRemaining != RecyclerView.NO_POSITION) {
                         val lastLoadedMessageId =
-                            (recyclerView.adapter as ChatAdapter).items.first { uiItem -> uiItem is MessageUI }.id.toLong()
+                            (recyclerView.adapter as AsyncAdapter).items.first { uiItem -> uiItem is MessageUI }.id.toLong()
                         emitter.onNext(lastLoadedMessageId)
                     }
                 }

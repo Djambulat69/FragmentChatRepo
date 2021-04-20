@@ -15,8 +15,9 @@ import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.SearchQueryListener
-import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsAdapter
+import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamDiffCallback
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsHolderFactory
+import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
@@ -59,7 +60,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.streamsRecyclerView.adapter = StreamsAdapter(StreamsHolderFactory())
+        binding.streamsRecyclerView.adapter = AsyncAdapter(StreamsHolderFactory(), StreamDiffCallback)
     }
 
     override fun onDestroyView() {
@@ -69,7 +70,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     }
 
     override fun showStreams(streamUIs: List<ViewTyped>) {
-        (binding.streamsRecyclerView.adapter as StreamsAdapter).items = streamUIs
+        (binding.streamsRecyclerView.adapter as AsyncAdapter).items = streamUIs
         setError(false)
         setLoading(false)
         setUiVisibility(true)
