@@ -6,12 +6,7 @@ import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import com.djambulat69.fragmentchat.utils.secondsToDateString
 
-class MessageUI(
-    val message: Message,
-    override val click: () -> Unit,
-    val reactionClick: (Boolean, Int, String) -> Unit
-) :
-    ViewTyped {
+class MessageUI(val message: Message) : ViewTyped {
 
     override val viewType: Int =
         if (message.senderId == MyUser.getId()) R.layout.outcoming_message_layout else R.layout.incoming_message_layout

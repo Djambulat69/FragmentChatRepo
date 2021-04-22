@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat.recyclerview
+package com.djambulat69.fragmentchat.ui.chat.bottomsheet
 
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +14,7 @@ class EmojiHolderFactory : HolderFactory() {
     override fun createHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewTyped> {
         val view = parent.inflate<View>(viewType)
         return when (viewType) {
-            R.layout.emoji_grid_item -> EmojiViewHolder(view as TextView)
+            R.layout.emoji_grid_item -> EmojiViewHolder(view as TextView, clicks)
             else -> throw Exception("Unknown viewType: $viewType")
         } as BaseViewHolder<ViewTyped>
     }

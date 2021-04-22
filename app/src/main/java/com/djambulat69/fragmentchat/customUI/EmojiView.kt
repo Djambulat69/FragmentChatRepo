@@ -15,6 +15,8 @@ import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.utils.spToPx
 import com.djambulat69.fragmentchat.utils.toEmoji
 
+private const val EMOJI_LAYOUT_WIDTH = 80
+
 class EmojiView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -24,6 +26,7 @@ class EmojiView @JvmOverloads constructor(
     context, attrs, defStyleAttrs, defStyleRes
 ) {
 
+    var emojiName: String = "no name"
     var reactionCount: Int = 5
         set(value) {
             if (value != reactionCount) {
@@ -31,13 +34,14 @@ class EmojiView @JvmOverloads constructor(
                 requestLayout()
             }
         }
+
     private var contentSize: Float
     private var emoji: CharSequence = 0x1F600.toEmoji()
 
     fun setEmoji(code: String) {
         val processed = EmojiCompat.get().process(code)
         emoji = processed
-        emojiLayout = StaticLayout(emoji, textPaint, 80, Layout.Alignment.ALIGN_CENTER, 1f, 0f, false)
+        emojiLayout = StaticLayout(emoji, textPaint, EMOJI_LAYOUT_WIDTH, Layout.Alignment.ALIGN_CENTER, 1f, 0f, false)
         invalidate()
     }
 
@@ -61,7 +65,7 @@ class EmojiView @JvmOverloads constructor(
         color = Color.WHITE
     }
     private var emojiLayout =
-        StaticLayout(emoji, textPaint, 20, Layout.Alignment.ALIGN_CENTER, 1f, 0f, false)
+        StaticLayout(emoji, textPaint, EMOJI_LAYOUT_WIDTH, Layout.Alignment.ALIGN_CENTER, 1f, 0f, false)
     private var reactionCountBounds = Rect()
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

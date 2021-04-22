@@ -44,7 +44,7 @@ class MessageViewGroup @JvmOverloads constructor(
         avatarView = findViewById(R.id.avatar_view)
         messageLayout = findViewById(R.id.message_linear_layout)
         authorText = findViewById(R.id.profile_name_text_view)
-        messageText = findViewById(R.id.message_text_view)
+        messageText = findViewById(R.id.message_text_incoming)
         flexBox = findViewById(R.id.flex_box)
         addReactionButton = findViewById(R.id.add_reaction_button_outcoming)
 
@@ -75,16 +75,17 @@ class MessageViewGroup @JvmOverloads constructor(
 
     fun setReactions(
         reactions: List<Reaction>,
-        reactionClick: (Boolean, Int, String) -> Unit,
+        reactionClick: (View) -> Unit,
         messageId: Int
     ) {
-        flexBox.setReactions(reactions, reactionClick, messageId)
+        flexBox.setReactions(reactions, reactionClick)
     }
 
-    fun setOnMessageClickListener(clickListener: () -> Unit) = messageLayout.setOnLongClickListener { clickListener(); true }
+    fun setOnMessageClickListener(clickListener: (View) -> Unit) =
+        messageLayout.setOnLongClickListener { clickListener(it); true }
 
-    fun setAddReactionListener(click: () -> Unit) {
-        addReactionButton.setOnClickListener { click() }
+    fun setAddReactionListener(click: (View) -> Unit) {
+        addReactionButton.setOnClickListener { click(it) }
     }
 
     fun setAvatar(glide: RequestManager, avatarUrl: String) {

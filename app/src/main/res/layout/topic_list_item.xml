@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorSecondaryVariant"
+    android:id="@+id/topic_list_item"
     android:paddingStart="@dimen/padding_large"
     android:paddingEnd="@dimen/padding_large">
 

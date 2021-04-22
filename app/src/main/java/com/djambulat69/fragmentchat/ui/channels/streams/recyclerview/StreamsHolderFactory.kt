@@ -12,8 +12,8 @@ class StreamsHolderFactory : HolderFactory() {
     override fun createHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewTyped> {
         val view = parent.inflate<View>(viewType)
         return when (viewType) {
-            R.layout.stream_list_item -> StreamViewHolder(view)
-            R.layout.topic_list_item -> TopicViewHolder(view)
+            R.layout.stream_list_item -> StreamViewHolder(view, clicks)
+            R.layout.topic_list_item -> TopicViewHolder(view, clicks)
             else -> throw Exception("Unknown ViewType: $viewType")
         } as BaseViewHolder<ViewTyped>
     }

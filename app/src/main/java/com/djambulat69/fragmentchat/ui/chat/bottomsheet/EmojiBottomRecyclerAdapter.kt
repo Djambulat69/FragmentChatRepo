@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat.recyclerview
+package com.djambulat69.fragmentchat.ui.chat.bottomsheet
 
 import com.djambulat69.fragmentchat.utils.recyclerView.BaseAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped

@@ -37,10 +37,11 @@
             tools:text="Name Surname" />
 
         <androidx.emoji.widget.EmojiTextView
-            android:id="@+id/message_text_view"
+            android:id="@+id/message_text_incoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxWidth="@dimen/message_text_width"
+            android:autoLink="web"
             android:textAlignment="viewStart"
             android:textColor="@color/white"
             tools:text="Hello world! This is my message.Hello world! This is my message." />

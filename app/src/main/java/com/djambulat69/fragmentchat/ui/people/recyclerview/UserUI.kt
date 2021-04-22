@@ -14,7 +14,6 @@ class UserUI(
 
     override val viewType: Int = R.layout.user_list_item
     override val id: String = user.userId.toString()
-    override val click: (() -> Unit)? = null
 
     val status: Status
         get() = when (presence.status.toUpperCase(Locale.ROOT)) {

@@ -17,12 +17,14 @@ import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.NetworkListener
+import com.djambulat69.fragmentchat.ui.chat.bottomsheet.EmojiBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import com.google.android.material.internal.TextWatcherAdapter
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -81,7 +83,11 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         with(binding) {
             toolbar.title = getString(R.string.sharp_placeholder, streamTitle)
             chatRecyclerView.adapter =
-                AsyncAdapter(ChatHolderFactory(Glide.with(this@ChatFragment)), ChatDiffCallback).apply {
+                AsyncAdapter(
+                    ChatHolderFactory(Glide.with(this@ChatFragment)),
+                    ChatDiffCallback,
+                    ChatClickMapper()
+                ).apply {
                     registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                             super.onItemRangeInserted(positionStart, itemCount)
@@ -99,8 +105,30 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
             toolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
             }
-        }
+            compositeDisposable.add(
+                (chatRecyclerView.adapter as AsyncAdapter)
+                    .getClicks()
+                    .concatMap {
+                        Observable.just(it)
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        when (it) {
+                            is ChatClickTypes.AddEmojiClick -> {
+                                EmojiBottomSheetDialog.newInstance(it.item.message.id).show(childFragmentManager, null)
+                            }
+                            is ChatClickTypes.ReactionClick -> {
+                                if (it.isSelected) {
+                                    presenter.addReactionInMessage(it.messageId, it.emojiName)
+                                } else {
+                                    presenter.removeReactionInMessage(it.messageId, it.emojiName)
+                                }
+                            }
+                        }
+                    }
+            )
 
+        }
         subscribeOnSendingMessages()
         subscribeOnScrolling()
         setupTextWatcher()
@@ -211,24 +239,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         })
     }
 
-    private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message ->
-        val longClickCallback = {
-            EmojiBottomSheetDialog.newInstance(message.id).show(childFragmentManager, null)
-        }
-        val reactionUpdateCallback = { isSet: Boolean, messageId: Int, emojiName: String ->
-            if (isSet) {
-                presenter.addReactionInMessage(messageId, emojiName)
-            } else {
-                presenter.removeReactionInMessage(messageId, emojiName)
-            }
-        }
-
-        MessageUI(
-            message,
-            longClickCallback,
-            reactionUpdateCallback
-        )
-    }
+    private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message -> MessageUI(message) }
 
     companion object {
         fun newInstance(topic: Topic, streamTitle: String, streamId: Int) = ChatFragment().apply {

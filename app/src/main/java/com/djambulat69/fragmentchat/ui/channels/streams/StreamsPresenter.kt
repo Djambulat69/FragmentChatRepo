@@ -99,15 +99,10 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
         )
     }
 
-    private fun streamsToStreamUIs(streams: List<Stream>): List<StreamUI> = streams.map { stream ->
-        StreamUI(
-            stream,
-            expand = { isChecked, topicUIs, position -> toggleStreamItem(isChecked, topicUIs, position) },
-            openTopic = { topic -> viewState.openTopicFragment(topic, stream.name, stream.streamId) }
-        )
-    }
+    private fun streamsToStreamUIs(streams: List<Stream>): List<StreamUI> =
+        streams.map { stream -> StreamUI(stream) }
 
-    private fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
+    fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
         recyclerUiItems = recyclerUiItems.toMutableList().apply {
             if (isChecked) {
                 addAll(position + 1, topicUIs)

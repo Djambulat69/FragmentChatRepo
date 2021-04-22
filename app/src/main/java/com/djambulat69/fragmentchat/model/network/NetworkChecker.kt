@@ -8,7 +8,6 @@ import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 
 object NetworkChecker {
 
-
     fun registerNetworkCallback(callback: ConnectivityManager.NetworkCallback) {
         val networkRequest = NetworkRequest.Builder().build()
         getConnectivityManager().registerNetworkCallback(networkRequest, callback)

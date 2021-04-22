@@ -23,11 +23,11 @@ class ChatHolderFactory(private val glide: RequestManager) : HolderFactory() {
         return when (viewType) {
             R.layout.incoming_message_layout -> {
                 val binding = IncomingMessageLayoutBinding.bind(view)
-                IncomingMessageViewHolder(binding, glide)
+                IncomingMessageViewHolder(binding, glide, clicks)
             }
             R.layout.outcoming_message_layout -> {
                 val binding = OutcomingMessageLayoutBinding.bind(view)
-                OutComingMessageViewHolder(binding)
+                OutComingMessageViewHolder(binding, clicks)
             }
             R.layout.date_separator -> DateSeparatorViewHolder(view)
             else ->

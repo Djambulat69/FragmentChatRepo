@@ -54,6 +54,7 @@ dependencies {
     //Rx
     implementation "io.reactivex.rxjava3:rxjava:$rxjava3_version"
     implementation "io.reactivex.rxjava3:rxandroid:$rxandroid_version"
+    implementation "com.jakewharton.rxrelay3:rxrelay:$rxrelay_version"
     //Moxy
     implementation "com.github.moxy-community:moxy:$moxy_version"
     kapt "com.github.moxy-community:moxy-compiler:$moxy_version"

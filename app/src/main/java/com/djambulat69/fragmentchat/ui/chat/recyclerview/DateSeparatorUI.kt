@@ -8,5 +8,5 @@ class DateSeparatorUI(
 ) : ViewTyped {
     override val viewType: Int = R.layout.date_separator
     override val id: String = date
-    override val click: (() -> Unit)? = null
+//    override val click: (() -> Unit)? = null
 }

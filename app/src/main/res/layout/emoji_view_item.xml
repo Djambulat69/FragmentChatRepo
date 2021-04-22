@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.djambulat69.fragmentchat.customUI.EmojiView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/emoji_view"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/emoji_view_height"
+    android:layout_margin="@dimen/margin_small"
+    android:paddingTop="@dimen/padding_small"
+    android:paddingBottom="@dimen/padding_small"
+    android:paddingStart="@dimen/padding_medium"
+    android:paddingEnd="@dimen/padding_medium"
+    android:background="@drawable/emoji_view_bg" />

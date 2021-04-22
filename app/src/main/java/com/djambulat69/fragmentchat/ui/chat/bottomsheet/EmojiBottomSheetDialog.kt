@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat
+package com.djambulat69.fragmentchat.ui.chat.bottomsheet
 
 import android.content.Context
 import android.os.Bundle
@@ -8,9 +8,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.EmojiBottomRecyclerAdapter
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.EmojiHolderFactory
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.EmojiUI
 import com.djambulat69.fragmentchat.utils.EmojiEnum
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
