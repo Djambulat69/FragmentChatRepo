@@ -31,12 +31,6 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setUIVisibility(false)
-
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _errorBinding = null
@@ -60,6 +54,7 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
     }
 
     override fun showLoading() {
+        setUIVisibility(false)
         setLoading(true)
     }
 

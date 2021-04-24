@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
-import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
 import com.djambulat69.fragmentchat.model.network.Message
+import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.NetworkListener
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.EmojiBottomSheetDialog
@@ -27,6 +27,8 @@ import io.reactivex.rxjava3.core.Observable
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Provider
 
 private const val ARG_TOPIC = "topic"
 private const val ARG_STREAM_TITLE = "stream_title"
@@ -42,20 +44,21 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
-    private val presenter: ChatPresenter by moxyPresenter {
-        ChatPresenter(
-            requireArguments().getString(ARG_TOPIC) as String,
-            requireArguments().getString(ARG_STREAM_TITLE) as String,
-            requireArguments().getInt(ARG_STREAM_ID),
-            ChatRepository(FragmentChatDatabase.INSTANCE.messagesDao())
-        )
-    }
+    @Inject
+    lateinit var presenterProvider: Provider<ChatPresenter>
+
+    private val presenter: ChatPresenter by moxyPresenter { presenterProvider.get() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
         if (context is FragmentInteractor) {
             fragmentInteractor = context
         }
+
+        (context.applicationContext as FragmentChatApplication).daggerAppComponent.inject(this)
+
+
     }
 
     override fun onCreateView(
@@ -63,6 +66,13 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChatBinding.inflate(layoutInflater, container, false)
+
+        presenter.initParameters(
+            requireArguments().getString(ARG_TOPIC) as String,
+            requireArguments().getString(ARG_STREAM_TITLE) as String,
+            requireArguments().getInt(ARG_STREAM_ID)
+        )
+
         return binding.root
     }
 

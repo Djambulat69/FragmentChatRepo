@@ -6,12 +6,19 @@ import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.ui.chat.ChatFragment
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
+import javax.inject.Inject
+import javax.inject.Provider
 
 class MainActivity : MvpAppCompatActivity(), MainActivityView, FragmentInteractor {
 
-    private val presenter by moxyPresenter { MainActivityPresenter() }
+    @Inject
+    lateinit var presenterProvider: Provider<MainActivityPresenter>
+
+    private val presenter by moxyPresenter { presenterProvider.get() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as FragmentChatApplication).daggerAppComponent.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

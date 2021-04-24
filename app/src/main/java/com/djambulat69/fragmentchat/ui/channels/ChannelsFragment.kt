@@ -1,5 +1,6 @@
 package com.djambulat69.fragmentchat.ui.channels
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChannelsBinding
+import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.SearchQueryListener
 import com.djambulat69.fragmentchat.utils.getCurrentFragments
 import com.google.android.material.tabs.TabLayoutMediator
@@ -17,6 +19,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Provider
 
 private const val SEARCH_DEBOUNCE_MILLIS = 400L
 
@@ -25,9 +29,18 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
     private var _binding: FragmentChannelsBinding? = null
     private val binding get() = _binding!!
 
-    private val presenter: ChannelsPresenter by moxyPresenter { ChannelsPresenter() }
+    @Inject
+    lateinit var presenterProvider: Provider<ChannelsPresenter>
+
+    private val presenter: ChannelsPresenter by moxyPresenter { presenterProvider.get() }
 
     private val compositeDisposable = CompositeDisposable()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        (context.applicationContext as FragmentChatApplication).daggerAppComponent.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

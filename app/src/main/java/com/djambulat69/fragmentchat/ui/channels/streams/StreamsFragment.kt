@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentStreamsBinding
-import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
+import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.SearchQueryListener
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamDiffCallback
@@ -21,6 +21,8 @@ import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import javax.inject.Inject
+import javax.inject.Provider
 
 private const val ARG_TAB_POSITION = "tab_position"
 
@@ -28,12 +30,10 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
     private var fragmentInteractor: FragmentInteractor? = null
 
-    private val presenter: StreamsPresenter by moxyPresenter {
-        StreamsPresenter(
-            requireArguments().getInt(ARG_TAB_POSITION),
-            StreamsRepository(FragmentChatDatabase.INSTANCE.streamsDao())
-        )
-    }
+    @Inject
+    lateinit var presenterProvider: Provider<StreamsPresenter>
+
+    private val presenter: StreamsPresenter by moxyPresenter { presenterProvider.get() }
 
     private var _binding: FragmentStreamsBinding? = null
     private val binding get() = _binding!!
@@ -46,6 +46,8 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
         if (context is FragmentInteractor) {
             fragmentInteractor = context
         }
+
+        (context.applicationContext as FragmentChatApplication).daggerAppComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -62,6 +64,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
         binding.streamsRecyclerView.adapter = AsyncAdapter(StreamsHolderFactory(), StreamDiffCallback, StreamsClickMapper())
 
+        presenter.tabPosition = requireArguments().getInt(ARG_TAB_POSITION)
         presenter.subscribeOnClicks(
             (binding.streamsRecyclerView.adapter as AsyncAdapter<*>)
                 .getClicks()

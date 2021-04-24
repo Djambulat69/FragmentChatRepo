@@ -7,9 +7,10 @@ import com.djambulat69.fragmentchat.model.network.ZulipServiceImpl
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
+import javax.inject.Inject
 
 
-class ChatRepository(private val messagesDao: MessagesDao) {
+class ChatRepository @Inject constructor(private val messagesDao: MessagesDao) {
 
     private val zulipService = ZulipServiceImpl
 

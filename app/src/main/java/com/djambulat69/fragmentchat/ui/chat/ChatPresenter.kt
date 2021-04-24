@@ -2,6 +2,7 @@ package com.djambulat69.fragmentchat.ui.chat
 
 import android.util.Log
 import com.djambulat69.fragmentchat.model.network.NetworkChecker
+import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatClickTypes
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -9,6 +10,7 @@ import io.reactivex.rxjava3.internal.functions.Functions
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 private const val TAG = "ChatPresenter"
 private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
@@ -18,10 +20,7 @@ private const val NEXT_PAGE_SIZE = 30
 private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 300L
 
 
-class ChatPresenter(
-    private val topicTitle: String,
-    private val streamTitle: String,
-    private val streamId: Int,
+class ChatPresenter @Inject constructor(
     private val repository: ChatRepository
 ) : MvpPresenter<ChatView>() {
 
@@ -31,6 +30,11 @@ class ChatPresenter(
     private var isNextPageLoading = false
     private val compositeDisposable = CompositeDisposable()
     private val viewDisposable = CompositeDisposable()
+
+    private lateinit var topicTitle: String
+    private lateinit var streamTitle: String
+    private var streamIdNullable: Int? = null
+    private val streamId get() = streamIdNullable!!
 
 
     override fun onFirstViewAttach() {
@@ -42,6 +46,12 @@ class ChatPresenter(
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.dispose()
+    }
+
+    fun initParameters(_topicTitle: String, _streamTitle: String, _streamId: Int) {
+        topicTitle = _topicTitle
+        streamTitle = _streamTitle
+        streamIdNullable = _streamId
     }
 
     fun subscribeOnSendingMessages(sendObservable: Observable<String>) {

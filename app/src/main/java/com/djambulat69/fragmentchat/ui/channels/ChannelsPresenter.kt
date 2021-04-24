@@ -1,8 +1,9 @@
 package com.djambulat69.fragmentchat.ui.channels
 
 import moxy.MvpPresenter
+import javax.inject.Inject
 
-class ChannelsPresenter : MvpPresenter<ChannelsView>() {
+class ChannelsPresenter @Inject constructor() : MvpPresenter<ChannelsView>() {
 
     private var lastSearchQuery = ""
 

@@ -4,8 +4,9 @@ import android.net.ConnectivityManager
 import android.net.Network
 import com.djambulat69.fragmentchat.model.network.NetworkChecker
 import moxy.MvpPresenter
+import javax.inject.Inject
 
-class MainActivityPresenter : MvpPresenter<MainActivityView>() {
+class MainActivityPresenter @Inject constructor() : MvpPresenter<MainActivityView>() {
 
     private val networkCallback: ConnectivityManager.NetworkCallback by lazy {
         object : ConnectivityManager.NetworkCallback() {

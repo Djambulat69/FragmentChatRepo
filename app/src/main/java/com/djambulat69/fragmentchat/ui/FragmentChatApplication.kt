@@ -5,6 +5,8 @@ import android.content.Context
 import android.util.Log
 import androidx.emoji.bundled.BundledEmojiCompatConfig
 import androidx.emoji.text.EmojiCompat
+import com.djambulat69.fragmentchat.di.AppComponent
+import com.djambulat69.fragmentchat.di.DaggerAppComponent
 import com.djambulat69.fragmentchat.model.MyUser
 import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
 import com.djambulat69.fragmentchat.model.network.GetEventsResponse
@@ -16,6 +18,8 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 private const val TAG = "FragmentChatApplication"
 
 class FragmentChatApplication : Application() {
+
+    val daggerAppComponent: AppComponent = DaggerAppComponent.create()
 
     private val messagesDao by lazy { FragmentChatDatabase.INSTANCE.messagesDao() }
     private val compositeDisposable = CompositeDisposable()

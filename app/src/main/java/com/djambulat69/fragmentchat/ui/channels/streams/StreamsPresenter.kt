@@ -17,10 +17,18 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.internal.functions.Functions
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
+import javax.inject.Inject
 
 private const val TAG = "StreamsPresenter"
 
-class StreamsPresenter(private val tabPosition: Int, private val repository: StreamsRepository) : MvpPresenter<StreamsView>() {
+class StreamsPresenter
+@Inject
+constructor(
+    private val repository: StreamsRepository
+) :
+    MvpPresenter<StreamsView>() {
+
+    var tabPosition: Int? = null
 
     private val compositeDisposable = CompositeDisposable()
     private val viewDisposable = CompositeDisposable()

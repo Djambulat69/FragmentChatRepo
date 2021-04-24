@@ -8,8 +8,9 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
-class StreamsRepository(private val streamsDao: StreamsDao) {
+class StreamsRepository @Inject constructor(private val streamsDao: StreamsDao) {
 
     private val zulipService = ZulipServiceImpl
 

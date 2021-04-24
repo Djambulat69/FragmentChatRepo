@@ -1,6 +1,5 @@
-package com.djambulat69.fragmentchat.ui.chat
+package com.djambulat69.fragmentchat.ui.chat.recyclerview
 
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.MessageUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ClickTypes
 
 sealed class ChatClickTypes : ClickTypes() {

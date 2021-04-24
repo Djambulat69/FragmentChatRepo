@@ -1,8 +1,7 @@
-package com.djambulat69.fragmentchat.ui.chat
+package com.djambulat69.fragmentchat.ui.chat.recyclerview
 
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.customUI.EmojiView
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.MessageUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ClickMapper
 import com.djambulat69.fragmentchat.utils.recyclerView.ItemClick
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
