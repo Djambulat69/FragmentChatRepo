@@ -1,14 +1,17 @@
 package com.djambulat69.fragmentchat.ui.channels.streams
 
 import android.util.Log
+import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.network.Stream
 import com.djambulat69.fragmentchat.ui.channels.ChannelsPages
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamUI
+import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsClickTypes
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.TopicUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.internal.functions.Functions
@@ -20,6 +23,7 @@ private const val TAG = "StreamsPresenter"
 class StreamsPresenter(private val tabPosition: Int, private val repository: StreamsRepository) : MvpPresenter<StreamsView>() {
 
     private val compositeDisposable = CompositeDisposable()
+    private val viewDisposable = CompositeDisposable()
 
     private var recyclerUiItems: List<ViewTyped> = emptyList()
     private var streams: List<Stream> = emptyList()
@@ -51,7 +55,19 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
         )
     }
 
-    fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
+    fun subscribeOnClicks(clicks: Observable<StreamsClickTypes>) {
+        viewDisposable.add(
+            clicks
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleClick(it)
+                }
+        )
+    }
+
+    fun unsubscribeFromViews() = viewDisposable.clear()
+
+    private fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
         recyclerUiItems = recyclerUiItems.toMutableList().apply {
             if (isChecked) {
                 addAll(position + 1, topicUIs)
@@ -61,6 +77,26 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
             }
         }
         showStreams()
+    }
+
+    private fun handleClick(click: StreamsClickTypes) {
+        when (click) {
+            is StreamsClickTypes.StreamClick -> {
+                click.streamUI.isExpanded = !click.streamUI.isExpanded
+                toggleStreamItem(click.streamUI.isExpanded, click.streamUI.childTopicUIs, click.position)
+                click.arrowImageView.setImageResource(
+                    if (click.streamUI.isExpanded)
+                        R.drawable.ic_baseline_keyboard_arrow_up_24
+                    else
+                        R.drawable.ic_baseline_keyboard_arrow_down_24
+                )
+            }
+            is StreamsClickTypes.TopicClick -> viewState.openTopicFragment(
+                click.topicUI.topic.name,
+                click.topicUI.streamTitle,
+                click.topicUI.streamId
+            )
+        }
     }
 
     private fun showStreams() {

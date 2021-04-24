@@ -16,11 +16,9 @@ import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.SearchQueryListener
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamDiffCallback
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsClickMapper
-import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsClickTypes
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsHolderFactory
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
@@ -64,32 +62,15 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
         binding.streamsRecyclerView.adapter = AsyncAdapter(StreamsHolderFactory(), StreamDiffCallback, StreamsClickMapper())
 
-        (binding.streamsRecyclerView.adapter as AsyncAdapter<*>)
-            .getClicks<StreamsClickTypes>()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                when (it) {
-                    is StreamsClickTypes.StreamClick -> {
-                        it.streamUI.isExpanded = !it.streamUI.isExpanded
-                        presenter.toggleStreamItem(it.streamUI.isExpanded, it.streamUI.childTopicUIs, it.position)
-                        it.arrowImageView.setImageResource(
-                            if (it.streamUI.isExpanded)
-                                R.drawable.ic_baseline_keyboard_arrow_up_24
-                            else
-                                R.drawable.ic_baseline_keyboard_arrow_down_24
-                        )
-                    }
-                    is StreamsClickTypes.TopicClick -> openTopicFragment(
-                        it.topicUI.topic.name,
-                        it.topicUI.streamTitle,
-                        it.topicUI.streamId
-                    )
-                }
-            }
+        presenter.subscribeOnClicks(
+            (binding.streamsRecyclerView.adapter as AsyncAdapter<*>)
+                .getClicks()
+        )
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        presenter.unsubscribeFromViews()
         _binding = null
         _errorBinding = null
     }
