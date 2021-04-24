@@ -49,7 +49,7 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
     override fun showUsers(userUIs: List<UserUI>) {
         setUiVisibility(true)
         setLoading(false)
-        (binding.usersRecyclerView.adapter as AsyncAdapter).items = userUIs
+        (binding.usersRecyclerView.adapter as AsyncAdapter<UserUI>).items = userUIs
     }
 
     override fun showError() {

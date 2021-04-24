@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
+    <androidx.emoji.widget.EmojiTextView
         android:id="@+id/message_text_outcoming"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,6 +15,7 @@
         android:maxWidth="@dimen/message_text_width"
         android:padding="@dimen/padding_medium"
         android:textColor="@color/white"
+        android:textIsSelectable="true"
         android:autoLink="web"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -12,18 +12,18 @@ import java.util.concurrent.TimeUnit
 object ZulipRetrofit {
 
     private const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/v1/"
+    private const val READ_TIMEOUT_MILLIS = 0L
 
     private val client: OkHttpClient
-
-    init {
-        val loggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
-        val authInterceptor = AuthInterceptor()
-        client = OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor)
-            .addInterceptor(authInterceptor)
-            .readTimeout(0L, TimeUnit.MILLISECONDS)
-            .build()
-    }
+        get() {
+            val loggingInterceptor = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+            val authInterceptor = AuthInterceptor()
+            return OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
+                .addInterceptor(authInterceptor)
+                .readTimeout(READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .build()
+        }
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)

@@ -7,19 +7,19 @@ import com.djambulat69.fragmentchat.utils.inflate
 import com.jakewharton.rxrelay3.PublishRelay
 import io.reactivex.rxjava3.core.Observable
 
-abstract class HolderFactory : (ViewGroup, Int) -> BaseViewHolder<ViewTyped>() {
+abstract class HolderFactory<VT : ViewTyped> : (ViewGroup, Int) -> BaseViewHolder<VT>() {
 
     protected val clicks: PublishRelay<ItemClick> = PublishRelay.create()
 
     abstract fun createHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): BaseViewHolder<ViewTyped>
+    ): BaseViewHolder<VT>
 
     override fun invoke(
         viewGroup: ViewGroup,
         viewType: Int,
-    ): BaseViewHolder<ViewTyped> {
+    ): BaseViewHolder<VT> {
         val view = viewGroup.inflate<View>(viewType)
         return when (viewType) {
             R.layout.loading_header -> BaseViewHolder(view)

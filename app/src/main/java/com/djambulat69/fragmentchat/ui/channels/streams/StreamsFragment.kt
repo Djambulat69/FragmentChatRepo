@@ -12,7 +12,6 @@ import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentStreamsBinding
 import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
-import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.SearchQueryListener
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamDiffCallback
@@ -65,8 +64,8 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
         binding.streamsRecyclerView.adapter = AsyncAdapter(StreamsHolderFactory(), StreamDiffCallback, StreamsClickMapper())
 
-        (binding.streamsRecyclerView.adapter as AsyncAdapter)
-            .getClicks()
+        (binding.streamsRecyclerView.adapter as AsyncAdapter<*>)
+            .getClicks<StreamsClickTypes>()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 when (it) {
@@ -81,7 +80,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
                         )
                     }
                     is StreamsClickTypes.TopicClick -> openTopicFragment(
-                        it.topicUI.topic,
+                        it.topicUI.topic.name,
                         it.topicUI.streamTitle,
                         it.topicUI.streamId
                     )
@@ -96,7 +95,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     }
 
     override fun showStreams(streamUIs: List<ViewTyped>) {
-        (binding.streamsRecyclerView.adapter as AsyncAdapter).items = streamUIs
+        (binding.streamsRecyclerView.adapter as AsyncAdapter<ViewTyped>).items = streamUIs
         setError(false)
         setLoading(false)
         setUiVisibility(true)
@@ -118,8 +117,8 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
         setLoading(true)
     }
 
-    override fun openTopicFragment(topic: Topic, streamTitle: String, streamId: Int) {
-        fragmentInteractor?.openTopic(topic, streamTitle, streamId)
+    override fun openTopicFragment(topicTitle: String, streamTitle: String, streamId: Int) {
+        fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
     }
 
     override fun makeSearch(query: String) {

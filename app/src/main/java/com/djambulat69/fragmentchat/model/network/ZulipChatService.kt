@@ -7,8 +7,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import retrofit2.http.*
 
-//const val myUserId = 402250
-
 interface ZulipChatService {
 
     @GET("streams")

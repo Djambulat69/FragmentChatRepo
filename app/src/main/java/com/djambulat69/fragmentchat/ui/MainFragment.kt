@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.channels.ChannelsFragment
 import com.djambulat69.fragmentchat.ui.people.PeopleFragment
 import com.djambulat69.fragmentchat.ui.profile.ProfileFragment
@@ -60,8 +59,8 @@ class MainFragment : Fragment(), FragmentInteractor {
         fragmentInteractor?.back()
     }
 
-    override fun openTopic(topic: Topic, streamTitle: String, streamId: Int) {
-        fragmentInteractor?.openTopic(topic, streamTitle, streamId)
+    override fun openTopic(topicTitle: String, streamTitle: String, streamId: Int) {
+        fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
     }
 
     private fun openFragment(fragment: Fragment): Boolean {

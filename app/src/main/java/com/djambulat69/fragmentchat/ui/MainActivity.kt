@@ -1,24 +1,15 @@
 package com.djambulat69.fragmentchat.ui
 
-import android.net.ConnectivityManager
-import android.net.Network
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.model.network.NetworkChecker
-import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.chat.ChatFragment
+import moxy.MvpAppCompatActivity
+import moxy.ktx.moxyPresenter
 
-class MainActivity : AppCompatActivity(), FragmentInteractor {
+class MainActivity : MvpAppCompatActivity(), MainActivityView, FragmentInteractor {
 
-    private val networkCallback: ConnectivityManager.NetworkCallback by lazy {
-        object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                supportFragmentManager.fragments.filterIsInstance<NetworkListener>().forEach { it.onAvailable() }
-            }
-        }
-    }
+    private val presenter by moxyPresenter { MainActivityPresenter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,23 +20,20 @@ class MainActivity : AppCompatActivity(), FragmentInteractor {
                 add(R.id.fragment_container, MainFragment.newInstance())
             }
         }
-
-        NetworkChecker.registerNetworkCallback(networkCallback)
     }
 
-    override fun onDestroy() {
-        NetworkChecker.unRegisterCallback(networkCallback)
-        super.onDestroy()
+    override fun onNetworkAvailable() {
+        supportFragmentManager.fragments.filterIsInstance<NetworkListener>().forEach { it.onAvailable() }
     }
 
     override fun back() {
         supportFragmentManager.popBackStack()
     }
 
-    override fun openTopic(topic: Topic, streamTitle: String, streamId: Int) {
+    override fun openTopic(topicTitle: String, streamTitle: String, streamId: Int) {
         supportFragmentManager.commit {
             addToBackStack(null)
-            replace(R.id.fragment_container, ChatFragment.newInstance(topic, streamTitle, streamId))
+            replace(R.id.fragment_container, ChatFragment.newInstance(topicTitle, streamTitle, streamId))
         }
     }
 }

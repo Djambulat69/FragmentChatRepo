@@ -11,7 +11,7 @@ import com.djambulat69.fragmentchat.utils.recyclerView.BaseViewHolder
 import com.djambulat69.fragmentchat.utils.recyclerView.HolderFactory
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
-class ChatHolderFactory(private val glide: RequestManager) : HolderFactory() {
+class ChatHolderFactory(private val glide: RequestManager) : HolderFactory<ViewTyped>() {
 
     override fun createHolder(
         parent: ViewGroup,

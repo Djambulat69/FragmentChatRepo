@@ -26,7 +26,7 @@ class TopicsResponse(
 data class Topic(
     @SerialName("max_id") val maxId: Int,
     @SerialName("name") val name: String
-) : java.io.Serializable
+)
 
 @Serializable
 class NarrowSearchOperator(

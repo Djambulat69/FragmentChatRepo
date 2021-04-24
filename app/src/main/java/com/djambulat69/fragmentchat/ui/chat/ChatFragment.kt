@@ -14,7 +14,6 @@ import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
 import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
 import com.djambulat69.fragmentchat.model.network.Message
-import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.NetworkListener
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.EmojiBottomSheetDialog
@@ -24,21 +23,16 @@ import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import com.google.android.material.internal.TextWatcherAdapter
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 private const val ARG_TOPIC = "topic"
 private const val ARG_STREAM_TITLE = "stream_title"
 private const val ARG_STREAM_ID = "stream_id"
 
 private const val MESSAGES_PREFETCH_DISTANCE = 5
-private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 1000L
 private const val MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL = 2
 
 class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener, NetworkListener {
@@ -50,14 +44,12 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
 
     private val presenter: ChatPresenter by moxyPresenter {
         ChatPresenter(
-            requireArguments().getSerializable(ARG_TOPIC) as Topic,
+            requireArguments().getString(ARG_TOPIC) as String,
             requireArguments().getString(ARG_STREAM_TITLE) as String,
             requireArguments().getInt(ARG_STREAM_ID),
             ChatRepository(FragmentChatDatabase.INSTANCE.messagesDao())
         )
     }
-
-    private val compositeDisposable = CompositeDisposable()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -77,7 +69,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val topic: Topic = requireArguments().getSerializable(ARG_TOPIC) as Topic
+        val topicTitle = requireArguments().getString(ARG_TOPIC)
         val streamTitle = requireArguments().getString(ARG_STREAM_TITLE)
 
         with(binding) {
@@ -101,42 +93,23 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                     })
                 }
 
-            chatTopicTitle.text = getString(R.string.topic_title, topic.name)
+            chatTopicTitle.text = getString(R.string.topic_title, topicTitle)
             toolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
             }
-            compositeDisposable.add(
-                (chatRecyclerView.adapter as AsyncAdapter)
-                    .getClicks()
-                    .concatMap {
-                        Observable.just(it)
-                    }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        when (it) {
-                            is ChatClickTypes.AddEmojiClick -> {
-                                EmojiBottomSheetDialog.newInstance(it.item.message.id).show(childFragmentManager, null)
-                            }
-                            is ChatClickTypes.ReactionClick -> {
-                                if (it.isSelected) {
-                                    presenter.addReactionInMessage(it.messageId, it.emojiName)
-                                } else {
-                                    presenter.removeReactionInMessage(it.messageId, it.emojiName)
-                                }
-                            }
-                        }
-                    }
-            )
 
+            presenter.subscribeOnClicks(
+                (chatRecyclerView.adapter as AsyncAdapter<*>).getClicks()
+            )
         }
-        subscribeOnSendingMessages()
-        subscribeOnScrolling()
+        presenter.subscribeOnSendingMessages(getSendButtonObservable())
+        presenter.subscribeOnScrolling(getScrollObservable())
         setupTextWatcher()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        compositeDisposable.clear()
+        presenter.unsubscribeFromViews()
         _binding = null
     }
 
@@ -147,7 +120,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
             } as MutableList<ViewTyped>
 
         if (presenter.hasMoreMessages) uiItemsToAdd.add(0, SpinnerUI())
-        (binding.chatRecyclerView.adapter as AsyncAdapter).items = uiItemsToAdd
+        (binding.chatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items = uiItemsToAdd
 
         setLoading(false)
         setChatVisibility(true)
@@ -160,6 +133,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     override fun showLoading() {
         setLoading(true)
         setChatVisibility(false)
+    }
+
+    override fun showEmojiBottomSheet(messageId: Int) {
+        EmojiBottomSheetDialog.newInstance(messageId).show(childFragmentManager, null)
     }
 
     override fun addReaction(messageId: Int, emojiName: String) {
@@ -186,15 +163,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         }
     }
 
-    private fun subscribeOnSendingMessages() {
-        compositeDisposable.add(
-            getSendButtonObservable()
-                .subscribeOn(Schedulers.io())
-                .subscribe { messageText -> presenter.sendMessage(messageText) }
-        )
-    }
-
-    private fun getScrollObservable() = Observable.create<Long> { emitter ->
+    private fun getScrollObservable(): Observable<Long> = Observable.create { emitter ->
         binding.chatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -210,24 +179,12 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
 
                     if (itemsRemaining < MESSAGES_PREFETCH_DISTANCE && itemsRemaining != RecyclerView.NO_POSITION) {
                         val lastLoadedMessageId =
-                            (recyclerView.adapter as AsyncAdapter).items.first { uiItem -> uiItem is MessageUI }.id.toLong()
+                            (recyclerView.adapter as AsyncAdapter<ViewTyped>).items.first { uiItem -> uiItem is MessageUI }.id.toLong()
                         emitter.onNext(lastLoadedMessageId)
                     }
                 }
             }
         })
-    }
-
-    private fun subscribeOnScrolling() {
-        compositeDisposable.add(
-            getScrollObservable()
-                .subscribeOn(Schedulers.io())
-                .debounce(SCROLL_EMIT_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS)
-                .observeOn(Schedulers.io())
-                .subscribe { anchor ->
-                    presenter.getNextMessages(anchor)
-                }
-        )
     }
 
     private fun setupTextWatcher() {
@@ -242,9 +199,9 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message -> MessageUI(message) }
 
     companion object {
-        fun newInstance(topic: Topic, streamTitle: String, streamId: Int) = ChatFragment().apply {
+        fun newInstance(topicTitle: String, streamTitle: String, streamId: Int) = ChatFragment().apply {
             arguments = bundleOf(
-                ARG_TOPIC to topic,
+                ARG_TOPIC to topicTitle,
                 ARG_STREAM_TITLE to streamTitle,
                 ARG_STREAM_ID to streamId
             )

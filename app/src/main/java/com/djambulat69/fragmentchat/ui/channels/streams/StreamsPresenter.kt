@@ -7,6 +7,7 @@ import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamUI
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.TopicUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -25,8 +26,8 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        subscribeOnDb()
         getStreams()
+        updateStreams()
     }
 
     override fun onDestroy() {
@@ -50,20 +51,26 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
         )
     }
 
+    fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
+        recyclerUiItems = recyclerUiItems.toMutableList().apply {
+            if (isChecked) {
+                addAll(position + 1, topicUIs)
+            } else {
+                val topics = topicUIs.map { it.topic }
+                removeAll { itemUi -> itemUi is TopicUI && itemUi.topic in topics }
+            }
+        }
+        showStreams()
+    }
+
     private fun showStreams() {
         viewState.showStreams(recyclerUiItems)
     }
 
-    private fun getStreams() {
+    private fun updateStreams() {
         compositeDisposable.add(
-            getStreamsFromNetwork()
+            updateStreamsbyTabPosition()
                 .subscribeOn(Schedulers.io())
-                .flattenAsObservable { streamResponse -> streamResponse.streams }
-                .flatMapSingle { stream ->
-                    zipStreamWithTopics(stream).subscribeOn(Schedulers.io()).retry()
-                }
-                .toList()
-                .flatMapCompletable { streams -> repository.saveStreams(streams) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     Functions.EMPTY_ACTION,
@@ -75,9 +82,9 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
         )
     }
 
-    private fun subscribeOnDb() {
+    private fun getStreams() {
         compositeDisposable.add(
-            getStreamsFromDb()
+            getStreamsbyTabPosition()
                 .subscribeOn(Schedulers.io())
                 .map { streams ->
                     this.streams = streams
@@ -102,47 +109,16 @@ class StreamsPresenter(private val tabPosition: Int, private val repository: Str
     private fun streamsToStreamUIs(streams: List<Stream>): List<StreamUI> =
         streams.map { stream -> StreamUI(stream) }
 
-    fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
-        recyclerUiItems = recyclerUiItems.toMutableList().apply {
-            if (isChecked) {
-                addAll(position + 1, topicUIs)
-            } else {
-                val topics = topicUIs.map { it.topic }
-                removeAll { streamUi -> streamUi is TopicUI && streamUi.topic in topics }
-            }
-        }
-        showStreams()
-    }
-
-    private fun getStreamsFromNetwork(): Single<out StreamsResponseSealed> = when (tabPosition) {
-        ChannelsPages.SUBSCRIBED.ordinal -> repository.getSubscribedStreamsFromNetwork()
-        ChannelsPages.ALL_STREAMS.ordinal -> repository.getAllStreamsFromNetwork()
+    private fun updateStreamsbyTabPosition(): Completable = when (tabPosition) {
+        ChannelsPages.SUBSCRIBED.ordinal -> repository.updateSubscribedStreams()
+        ChannelsPages.ALL_STREAMS.ordinal -> repository.updateAllStreams()
         else -> throw IllegalStateException("Undefined StreamsFragment tabPosition: $tabPosition")
     }
 
-    private fun getStreamsFromDb(): Flowable<List<Stream>> = when (tabPosition) {
-        ChannelsPages.SUBSCRIBED.ordinal -> repository.getSubscribedStreamsFromDb()
-        ChannelsPages.ALL_STREAMS.ordinal -> repository.getAllStreamsFromDb()
+    private fun getStreamsbyTabPosition(): Flowable<List<Stream>> = when (tabPosition) {
+        ChannelsPages.SUBSCRIBED.ordinal -> repository.getSubscribedStreams()
+        ChannelsPages.ALL_STREAMS.ordinal -> repository.getAllStreams()
         else -> throw IllegalStateException("Undefined StreamsFragment tabPosition: $tabPosition")
-    }
-
-    private fun showDbStreamUIsIfNotEmpty(streamUIs: List<StreamUI>) {
-        if (streamUIs.isEmpty()) {
-            viewState.showLoading()
-        } else {
-            recyclerUiItems = streamUIs
-            showStreams()
-        }
-    }
-
-    private fun zipStreamWithTopics(stream: Stream): Single<Stream> {
-        return repository.getTopicsFromNetwork(stream.streamId)
-            .zipWith(Single.just(stream)) { topicsResponse, _ ->
-                stream.apply {
-                    topics = topicsResponse.topics
-                    isSubscribed = tabPosition == ChannelsPages.SUBSCRIBED.ordinal
-                }
-            }
     }
 
 }

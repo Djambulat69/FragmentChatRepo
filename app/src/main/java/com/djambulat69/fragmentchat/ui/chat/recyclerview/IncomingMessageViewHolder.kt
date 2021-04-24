@@ -14,7 +14,9 @@ class IncomingMessageViewHolder(
 ) :
     BaseViewHolder<MessageUI>(binding.root) {
 
-    private val clickFunction = { view: View -> clicks.accept(ItemClick(bindingAdapterPosition, view)) }
+    private val clickFunction = { view: View ->
+        clicks.accept(ItemClick(bindingAdapterPosition, view))
+    }
 
     init {
         with(binding.messageViewgroupIncoming) {

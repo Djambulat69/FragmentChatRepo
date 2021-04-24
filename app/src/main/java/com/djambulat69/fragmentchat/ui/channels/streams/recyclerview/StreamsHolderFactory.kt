@@ -8,7 +8,7 @@ import com.djambulat69.fragmentchat.utils.recyclerView.BaseViewHolder
 import com.djambulat69.fragmentchat.utils.recyclerView.HolderFactory
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
-class StreamsHolderFactory : HolderFactory() {
+class StreamsHolderFactory : HolderFactory<ViewTyped>() {
     override fun createHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewTyped> {
         val view = parent.inflate<View>(viewType)
         return when (viewType) {

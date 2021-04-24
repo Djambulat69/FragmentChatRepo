@@ -1,6 +1,5 @@
 package com.djambulat69.fragmentchat.ui.channels.streams
 
-import com.djambulat69.fragmentchat.model.network.Topic
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
@@ -22,6 +21,6 @@ interface StreamsView : MvpView {
     fun showLoading()
 
     @Skip
-    fun openTopicFragment(topic: Topic, streamTitle: String, streamId: Int)
+    fun openTopicFragment(topicTitle: String, streamTitle: String, streamId: Int)
 
 }

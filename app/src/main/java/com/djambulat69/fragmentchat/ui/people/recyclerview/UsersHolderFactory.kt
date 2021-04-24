@@ -8,11 +8,10 @@ import com.djambulat69.fragmentchat.databinding.UserListItemBinding
 import com.djambulat69.fragmentchat.utils.inflate
 import com.djambulat69.fragmentchat.utils.recyclerView.BaseViewHolder
 import com.djambulat69.fragmentchat.utils.recyclerView.HolderFactory
-import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
-class UsersHolderFactory(private val glide: RequestManager) : HolderFactory() {
+class UsersHolderFactory(private val glide: RequestManager) : HolderFactory<UserUI>() {
 
-    override fun createHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ViewTyped> {
+    override fun createHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<UserUI> {
         val view = parent.inflate<View>(viewType)
         return when (viewType) {
             R.layout.user_list_item -> {
@@ -20,7 +19,7 @@ class UsersHolderFactory(private val glide: RequestManager) : HolderFactory() {
                 UserViewHolder(binding, glide)
             }
             else -> throw IllegalStateException("Unknown viewtype: $viewType")
-        } as BaseViewHolder<ViewTyped>
+        }
     }
 
 }

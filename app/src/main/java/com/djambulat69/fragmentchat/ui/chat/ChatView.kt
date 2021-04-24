@@ -14,5 +14,8 @@ interface ChatView : MvpView {
     fun showLoading()
 
     @OneExecution
+    fun showEmojiBottomSheet(messageId: Int)
+
+    @OneExecution
     fun showError()
 }

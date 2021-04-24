@@ -9,7 +9,9 @@ import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.utils.EmojiEnum
+import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 
 private const val ARG_MESSAGE_ID = "message_id"
 
@@ -31,17 +33,25 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<RecyclerView>(R.id.emoji_bottom_recycler_view)?.adapter =
-            EmojiBottomRecyclerAdapter(EmojiHolderFactory(), createEmojiList())
+            AsyncAdapter(EmojiHolderFactory(), EmojiDiffCallback, EmojiClickMapper()).apply {
+                items = createEmojiList()
+                getClicks<EmojiClickTypes>()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        when (it) {
+                            is EmojiClickTypes.EmojiClick -> {
+                                listener?.addReaction(requireArguments().getInt(ARG_MESSAGE_ID), it.emojiUI.emoji.nameInZulip)
+                                dismiss()
+                            }
+                        }
+                    }
+            }
+
     }
 
-    private fun createEmojiList(): List<EmojiUI> = mutableListOf<EmojiUI>().apply {
-        EmojiEnum.values().distinctBy { it.unicode }.sortedByDescending { it.unicodeCodePoint }.forEach {
-            add(EmojiUI(it) { emojiName ->
-                listener?.addReaction(requireArguments().getInt(ARG_MESSAGE_ID), emojiName)
-                dismiss()
-            })
-        }
-    }
+    private fun createEmojiList(): List<EmojiUI> =
+        EmojiEnum.values().distinctBy { it.unicode }.sortedByDescending { it.unicodeCodePoint }.map { EmojiUI(it) }
+
 
     interface EmojiBottomDialogListener {
         fun addReaction(messageId: Int, emojiName: String)
