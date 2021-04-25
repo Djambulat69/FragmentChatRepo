@@ -2,20 +2,20 @@ package com.djambulat69.fragmentchat.ui.people
 
 import android.util.Log
 import com.djambulat69.fragmentchat.model.network.User
-import com.djambulat69.fragmentchat.model.network.ZulipServiceImpl
+import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UserUI
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
+import javax.inject.Inject
 
 private const val TAG = "PeoplePresenter"
 
-class PeoplePresenter : MvpPresenter<PeopleView>() {
+class PeoplePresenter @Inject constructor(private val zulipService: ZulipServiceHelper) : MvpPresenter<PeopleView>() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val zulipService = ZulipServiceImpl
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()

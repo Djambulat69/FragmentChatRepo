@@ -84,4 +84,6 @@ dependencies {
     //Dagger
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    //ExpanadableLayout
+    implementation "com.github.cachapa:ExpandableLayout:$expand_layout_version"
 }

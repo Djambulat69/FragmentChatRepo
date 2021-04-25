@@ -5,13 +5,12 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 private const val MESSAGE_TYPE = "stream"
 private const val MESSAGES_COUNT_AFTER_ANCHOR = 0
 
-object ZulipServiceImpl {
-
-    private val zulipService: ZulipChatService = ZulipRetrofit.get()
+class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChatService) {
 
     fun getStreamsSingle(): Single<StreamsResponseSealed.AllStreamsResponse> = zulipService.getStreams()
 

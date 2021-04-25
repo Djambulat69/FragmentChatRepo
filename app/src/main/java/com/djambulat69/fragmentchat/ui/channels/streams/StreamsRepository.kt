@@ -3,20 +3,17 @@ package com.djambulat69.fragmentchat.ui.channels.streams
 import com.djambulat69.fragmentchat.model.db.StreamsDao
 import com.djambulat69.fragmentchat.model.network.Stream
 import com.djambulat69.fragmentchat.model.network.TopicsResponse
-import com.djambulat69.fragmentchat.model.network.ZulipServiceImpl
+import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
-class StreamsRepository @Inject constructor(private val streamsDao: StreamsDao) {
-
-    private val zulipService = ZulipServiceImpl
+class StreamsRepository @Inject constructor(private val streamsDao: StreamsDao, private val zulipService: ZulipServiceHelper) {
 
     fun updateAllStreams(): Completable =
         updateStreams(zulipService.getStreamsSingle() as Single<StreamsResponseSealed>)
-
 
     fun updateSubscribedStreams(): Completable =
         updateStreams(zulipService.getSubscriptionsSingle() as Single<StreamsResponseSealed>)
@@ -24,6 +21,7 @@ class StreamsRepository @Inject constructor(private val streamsDao: StreamsDao) 
     fun getSubscribedStreams(): Flowable<List<Stream>> = streamsDao.getSubscribedStreams()
 
     fun getAllStreams(): Flowable<List<Stream>> = streamsDao.getStreams()
+
 
     private fun getTopics(streamId: Int): Single<TopicsResponse> = zulipService.getTopicsSingle(streamId)
 

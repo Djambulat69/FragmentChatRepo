@@ -1,5 +1,6 @@
 package com.djambulat69.fragmentchat.ui.profile
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +10,11 @@ import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentProfileBinding
 import com.djambulat69.fragmentchat.model.network.User
+import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import javax.inject.Inject
+import javax.inject.Provider
 
 class ProfileFragment : MvpAppCompatFragment(), ProfileView {
 
@@ -19,7 +23,16 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
     private var _errorBinding: ErrorLayoutBinding? = null
     private val errorBinding get() = _errorBinding!!
 
-    private val presenter: ProfilePresenter by moxyPresenter { ProfilePresenter() }
+    @Inject
+    lateinit var presenterProvider: Provider<ProfilePresenter>
+
+    private val presenter: ProfilePresenter by moxyPresenter { presenterProvider.get() }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        (context.applicationContext as FragmentChatApplication).daggerAppComponent.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

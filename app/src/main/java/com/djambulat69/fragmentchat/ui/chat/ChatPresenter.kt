@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat
+ package com.djambulat69.fragmentchat.ui.chat
 
 import android.util.Log
 import com.djambulat69.fragmentchat.model.network.NetworkChecker

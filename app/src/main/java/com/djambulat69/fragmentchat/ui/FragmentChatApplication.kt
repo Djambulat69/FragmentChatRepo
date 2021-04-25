@@ -10,9 +10,7 @@ import com.djambulat69.fragmentchat.di.DaggerAppComponent
 import com.djambulat69.fragmentchat.model.MyUser
 import com.djambulat69.fragmentchat.model.db.FragmentChatDatabase
 import com.djambulat69.fragmentchat.model.network.GetEventsResponse
-import com.djambulat69.fragmentchat.model.network.ZulipServiceImpl
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 
 private const val TAG = "FragmentChatApplication"
@@ -38,7 +36,7 @@ class FragmentChatApplication : Application() {
         // Пока просто наброски
         val myUserId = MyUser.getId()
 
-        compositeDisposable.add(
+        /*compositeDisposable.add(
             eventsSubject
                 .observeOn(Schedulers.io())
                 .subscribe(
@@ -47,7 +45,7 @@ class FragmentChatApplication : Application() {
                         getResponse.events.forEach { event ->
                             event.message?.takeIf { it.senderId != myUserId }?.let { messagesDao.saveMessageSync(it) }
                         }
-                        ZulipServiceImpl.getEventQueue(getResponse.queueId!!, getResponse.events.last().id)
+                        ZulipServiceHelper.getEventQueue(getResponse.queueId!!, getResponse.events.last().id)
                             .subscribe(
                                 { getResponse2 ->
                                     eventsSubject.onNext(getResponse2)
@@ -60,17 +58,17 @@ class FragmentChatApplication : Application() {
         )
 
         compositeDisposable.add(
-            ZulipServiceImpl.registerEventQueue()
+            ZulipServiceHelper.registerEventQueue()
                 .subscribeOn(Schedulers.io())
                 .flatMap { registerResponse ->
                     Log.d(TAG, registerResponse.toString())
-                    ZulipServiceImpl.getEventQueue(registerResponse.queueId, registerResponse.lastEventId)
+                    ZulipServiceHelper.getEventQueue(registerResponse.queueId, registerResponse.lastEventId)
                 }
                 .subscribe(
                     { eventsSubject.onNext(it) },
                     { logError(it) }
                 )
-        )
+        )*/
     }
 
     private fun logError(e: Throwable) {
