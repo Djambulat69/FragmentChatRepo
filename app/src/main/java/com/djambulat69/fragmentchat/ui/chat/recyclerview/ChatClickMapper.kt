@@ -11,8 +11,8 @@ class ChatClickMapper : ClickMapper<ChatClickTypes>() {
     override fun map(itemClick: ItemClick, items: List<ViewTyped>): ChatClickTypes =
         when (itemClick.view.id) {
 
-            R.id.message_text_outcoming,
-            R.id.message_linear_layout,
+            R.id.outcoming_message_layout,
+            R.id.message_viewgroup_incoming,
             R.id.add_reaction_button_outcoming -> ChatClickTypes.AddEmojiClick(items[itemClick.position] as MessageUI)
 
             R.id.emoji_view -> ChatClickTypes.ReactionClick(

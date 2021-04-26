@@ -20,7 +20,7 @@ class IncomingMessageViewHolder(
 
     init {
         with(binding.messageViewgroupIncoming) {
-            setOnMessageClickListener(clickFunction)
+            setOnLongClickListener { clickFunction(it); true }
             setAddReactionListener(clickFunction)
         }
     }

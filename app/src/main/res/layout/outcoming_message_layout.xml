@@ -15,7 +15,6 @@
         android:maxWidth="@dimen/message_text_width"
         android:padding="@dimen/padding_medium"
         android:textColor="@color/white"
-        android:textIsSelectable="true"
         android:autoLink="web"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
