@@ -3,4 +3,5 @@
 <com.djambulat69.fragmentchat.customUI.MessageViewGroup xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/message_viewgroup_incoming"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/margin_medium" />

@@ -96,7 +96,7 @@ class EmojiView @JvmOverloads constructor(
 
         canvas?.withTranslation(
             paddingStart / 2f,
-            paddingTop.toFloat() + paddingBottom.toFloat()
+            (paddingTop.toFloat() + paddingBottom.toFloat()) / 1.5f
         ) {
             emojiLayout.draw(this)
         }

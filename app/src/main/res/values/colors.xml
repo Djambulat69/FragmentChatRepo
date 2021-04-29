@@ -4,13 +4,14 @@
     <color name="purple_500">#6200EE</color>
     <color name="purple_700">#3700B3</color>
     <color name="teal_200">#2A9D8F</color>
-    <color name="teal_700">#018786</color>
+    <color name="teal_dark">#006153</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="grey_800">#1C1C1C</color>
     <color name="blue_grey_600">#546E7A</color>
     <color name="lime_green">#32CD32</color>
     <color name="dark_orange">#FF8C00</color>
+    <color name="grey_highlighted">#3A3A3A</color>
 
     <color name="bottom_sheet_rect_color">#555555</color>
 
