@@ -18,7 +18,7 @@ class OutComingMessageViewHolder(
     init {
         with(binding) {
             outcomingMessageLayout.setOnLongClickListener { clickFunction(it); true }
-            addReactionButtonOutcoming.setOnClickListener(clickFunction)
+            addReactionButtonOutcoming.root.setOnClickListener(clickFunction)
         }
     }
 

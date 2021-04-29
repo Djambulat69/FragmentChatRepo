@@ -11,8 +11,8 @@
         android:id="@+id/avatar_view"
         android:layout_width="@dimen/avatar_size"
         android:layout_height="@dimen/avatar_size"
-        android:layout_marginEnd="@dimen/margin_small"
         android:layout_marginStart="12dp"
+        android:layout_marginEnd="@dimen/margin_small"
         app:shapeAppearance="@style/circleImageViewShape"
         app:srcCompat="@drawable/ic_launcher_background" />
 
@@ -32,19 +32,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxWidth="@dimen/message_text_max_width"
-            android:textSize="@dimen/message_author_text_size"
             android:textColor="?attr/colorSecondary"
+            android:textSize="@dimen/message_author_text_size"
             tools:text="Name Surname" />
 
         <androidx.emoji.widget.EmojiTextView
             android:id="@+id/message_text_incoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="@dimen/message_text_max_width"
             android:autoLink="web"
-            android:textSize="@dimen/message_text_size"
+            android:maxWidth="@dimen/message_text_max_width"
             android:textAlignment="viewStart"
             android:textColor="@color/white"
+            android:textSize="@dimen/message_text_size"
             tools:text="Hello world! This is my message.Hello world! This is my message." />
 
     </LinearLayout>
@@ -54,13 +54,9 @@
         android:layout_width="@dimen/message_flexbox_width"
         android:layout_height="wrap_content">
 
-        <ImageButton
+        <include
             android:id="@+id/add_reaction_button_outcoming"
-            android:layout_width="@dimen/emoji_add_button_width"
-            android:layout_height="@dimen/emoji_view_height"
-            android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/emoji_view_bg"
-            app:srcCompat="@drawable/ic_baseline_add_24" />
+            layout="@layout/add_reaction_button" />
 
 
     </com.djambulat69.fragmentchat.customUI.FlexBoxLayout>
