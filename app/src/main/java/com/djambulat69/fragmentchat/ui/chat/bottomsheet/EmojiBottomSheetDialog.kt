@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.utils.EmojiEnum
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import kotlin.math.roundToInt
 
 private const val ARG_MESSAGE_ID = "message_id"
 
@@ -32,7 +34,9 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<RecyclerView>(R.id.emoji_bottom_recycler_view)?.adapter =
+        val recyclerView = view.findViewById<RecyclerView>(R.id.emoji_bottom_recycler_view)
+
+        recyclerView?.adapter =
             AsyncAdapter(EmojiHolderFactory(), EmojiDiffCallback, EmojiClickMapper()).apply {
                 items = createEmojiList()
                 getClicks<EmojiClickTypes>()
@@ -46,6 +50,12 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
                         }
                     }
             }
+
+        with(recyclerView) {
+            val spanCount = (layoutManager as GridLayoutManager).spanCount
+            val spacing = resources.getDimension(R.dimen.padding_medium).roundToInt()
+            addItemDecoration(EmojiGridItemDecoration(spanCount, spacing))
+        }
 
     }
 

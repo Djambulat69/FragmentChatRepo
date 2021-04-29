@@ -17,4 +17,20 @@
         <item name="android:background">@drawable/emoji_view_bg</item>
         <item name="content_size">16sp</item>
     </style>
+
+    <style name="ThemeOverlay.FragmentChat.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.FragmentChat.BottomSheet.Modal</item>
+    </style>
+
+    <style name="Widget.FragmentChat.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.FragmentChat.BottomSheetDialog</item>
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.FragmentChat.BottomSheetDialog" parent="">
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/bottom_sheet_corner_size</item>
+        <item name="cornerSizeTopLeft">@dimen/bottom_sheet_corner_size</item>
+    </style>
 </resources>

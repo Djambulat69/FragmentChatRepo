@@ -11,4 +11,5 @@
     <color name="blue_grey_600">#FF546E7A</color>
     <color name="lime_green">#FF32CD32</color>
     <color name="dark_orange">#FFFF8C00</color>
+    <color name="bottom_sheet_rect_color">#555555</color>
 </resources>

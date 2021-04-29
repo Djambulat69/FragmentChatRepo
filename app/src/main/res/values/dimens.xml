@@ -25,4 +25,11 @@
     <dimen name="message_input_bar_height">48dp</dimen>
     <dimen name="date_separator_corners">24dp</dimen>
     <dimen name="bottom_navigation_height">48dp</dimen>
+
+    <dimen name="bottom_sheet_corner_size">8dp</dimen>
+    <dimen name="bottom_sheet_rect_view_width">62dp</dimen>
+    <dimen name="bottom_sheet_rect_view_height">8dp</dimen>
+    <dimen name="bottom_sheet_rect_view_margin_top">8dp</dimen>
+    <dimen name="bottom_sheet_recycler_margin_top">24dp</dimen>
+
 </resources>

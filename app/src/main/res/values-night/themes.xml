@@ -21,5 +21,7 @@
         <item name="shimmer_colored">true</item>
         <item name="shimmer_base_color">?attr/colorPrimary</item>
         <item name="shimmer_highlight_color">?attr/colorPrimaryDark</item>
+
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.FragmentChat.BottomSheetDialog</item>
     </style>
 </resources>
