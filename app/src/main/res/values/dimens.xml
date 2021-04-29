@@ -23,7 +23,11 @@
     <dimen name="send_button_start_offset">4dp</dimen>
     <dimen name="send_button_size">40dp</dimen>
     <dimen name="message_input_bar_height">48dp</dimen>
-    <dimen name="date_separator_corners">24dp</dimen>
+
+    <dimen name="date_separator_corners">58dp</dimen>
+    <dimen name="date_separator_spacing">20dp</dimen>
+    <dimen name="date_separator_height">22dp</dimen>
+
     <dimen name="bottom_navigation_height">48dp</dimen>
 
     <dimen name="bottom_sheet_corner_size">8dp</dimen>
