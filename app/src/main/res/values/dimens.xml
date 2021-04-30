@@ -29,7 +29,11 @@
 
     <dimen name="send_button_start_offset">4dp</dimen>
     <dimen name="send_button_size">40dp</dimen>
-    <dimen name="message_input_bar_height">48dp</dimen>
+    <dimen name="message_edit_text_height">48dp</dimen>
+    <dimen name="message_edit_text_corners_radius">90dp</dimen>
+    <dimen name="message_edit_text_margin_end">66dp</dimen>
+
+    <dimen name="chat_topic_title_height">40dp</dimen>
 
     <dimen name="date_separator_corners">58dp</dimen>
     <dimen name="date_separator_spacing">10dp</dimen>
