@@ -47,4 +47,7 @@
     <dimen name="bottom_sheet_rect_view_margin_top">8dp</dimen>
     <dimen name="bottom_sheet_recycler_margin_top">24dp</dimen>
 
+    <dimen name="stream_list_item_height">64dp</dimen>
+    <dimen name="topic_list_item_height">40dp</dimen>
+
 </resources>

@@ -121,7 +121,6 @@ class EmojiView @JvmOverloads constructor(
         return super.performClick()
     }
 
-
     companion object {
         private const val DEF_REACTION_COUNT = 5
         private const val DEF_CONTENT_SIZE = 35

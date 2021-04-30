@@ -11,13 +11,15 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
-private const val TAG = "ChatPresenter"
-private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
-private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
-private const val INITIAL_PAGE_SIZE = 50
-private const val NEXT_PAGE_SIZE = 30
-private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 300L
+
+ private const val TAG = "ChatPresenter"
+ private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
+ private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
+ private const val INITIAL_PAGE_SIZE = 50
+ private const val NEXT_PAGE_SIZE = 30
+ private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 100L
 
 
 class ChatPresenter @Inject constructor(
@@ -26,21 +28,19 @@ class ChatPresenter @Inject constructor(
 
     var hasMoreMessages = true
 
-    private var isOnline = NetworkChecker.isConnected()
     private var isNextPageLoading = false
     private val compositeDisposable = CompositeDisposable()
     private val viewDisposable = CompositeDisposable()
 
     private lateinit var topicTitle: String
     private lateinit var streamTitle: String
-    private var streamIdNullable: Int? = null
-    private val streamId get() = streamIdNullable!!
+    private var streamId by Delegates.notNull<Int>()
 
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         getMessages()
-        if (isOnline) updateMessages()
+        if (NetworkChecker.isConnected()) updateMessages()
     }
 
     override fun onDestroy() {
@@ -51,7 +51,7 @@ class ChatPresenter @Inject constructor(
     fun initParameters(_topicTitle: String, _streamTitle: String, _streamId: Int) {
         topicTitle = _topicTitle
         streamTitle = _streamTitle
-        streamIdNullable = _streamId
+        streamId = _streamId
     }
 
     fun subscribeOnSendingMessages(sendObservable: Observable<String>) {
@@ -97,7 +97,6 @@ class ChatPresenter @Inject constructor(
     }
 
     fun updateMessages() {
-        isOnline = true
         compositeDisposable.add(
             repository.updateMessages(streamTitle, topicTitle, streamId, NEWEST_ANCHOR_MESSAGE, count = INITIAL_PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
@@ -179,6 +178,7 @@ class ChatPresenter @Inject constructor(
                 viewState.showEmojiBottomSheet(click.item.message.id)
             }
             is ChatClickTypes.ReactionClick -> {
+
                 if (click.isSelected) {
                     addReactionInMessage(click.messageId, click.emojiName)
                 } else {

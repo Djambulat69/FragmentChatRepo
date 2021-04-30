@@ -185,7 +185,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                 if (recyclerView.adapter != null) {
 
                     val itemsRemaining = (recyclerView.layoutManager as LinearLayoutManager)
-                        .findFirstCompletelyVisibleItemPosition()
+                        .findFirstVisibleItemPosition()
 
                     if (itemsRemaining < MESSAGES_PREFETCH_DISTANCE && itemsRemaining != RecyclerView.NO_POSITION) {
                         val lastLoadedMessageId =

@@ -76,11 +76,13 @@ constructor(
     fun unsubscribeFromViews() = viewDisposable.clear()
 
     private fun toggleStreamItem(isChecked: Boolean, topicUIs: List<TopicUI>, position: Int) {
+        val topics = topicUIs.map { it.topic }
+
         recyclerUiItems = recyclerUiItems.toMutableList().apply {
             if (isChecked) {
+                removeAll { itemUi -> itemUi is TopicUI && itemUi.topic in topics }
                 addAll(position + 1, topicUIs)
             } else {
-                val topics = topicUIs.map { it.topic }
                 removeAll { itemUi -> itemUi is TopicUI && itemUi.topic in topics }
             }
         }
