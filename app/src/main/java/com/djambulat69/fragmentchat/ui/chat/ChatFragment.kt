@@ -83,7 +83,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         val streamTitle = requireArguments().getString(ARG_STREAM_TITLE)
 
         with(binding) {
-            toolbar.title = getString(R.string.sharp_placeholder, streamTitle)
+            chatToolbar.title = getString(R.string.sharp_placeholder, streamTitle)
             chatRecyclerView.adapter =
                 AsyncAdapter(
                     ChatHolderFactory(Glide.with(this@ChatFragment)),
@@ -104,7 +104,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                 }
 
             chatTopicTitle.text = getString(R.string.topic_title, topicTitle)
-            toolbar.setNavigationOnClickListener {
+            chatToolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
             }
 
