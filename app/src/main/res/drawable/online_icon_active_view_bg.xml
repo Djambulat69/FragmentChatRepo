@@ -3,6 +3,6 @@
     android:shape="oval">
     <solid android:color="@color/lime_green" />
     <stroke
-        android:width="1dp"
+        android:width="@dimen/online_icon_stroke_width"
         android:color="?android:attr/windowBackground" />
 </shape>
