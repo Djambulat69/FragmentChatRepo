@@ -41,7 +41,7 @@
     <dimen name="date_separator_spacing">10dp</dimen>
     <dimen name="date_separator_text_size">14sp</dimen>
 
-    <dimen name="bottom_navigation_height">48dp</dimen>
+    <dimen name="bottom_navigation_height">60dp</dimen>
 
     <dimen name="bottom_sheet_corner_size">8dp</dimen>
     <dimen name="bottom_sheet_rect_view_width">62dp</dimen>
