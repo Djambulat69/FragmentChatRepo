@@ -10,7 +10,7 @@
 
     <style name="roundRectImageViewShape" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">5%</item>
+        <item name="cornerSize">16dp</item>
     </style>
 
     <style name="Widget.FragmentChat.EmojiView">

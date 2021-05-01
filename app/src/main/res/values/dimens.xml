@@ -52,4 +52,7 @@
     <dimen name="stream_list_item_height">64dp</dimen>
     <dimen name="topic_list_item_height">40dp</dimen>
 
+    <dimen name="profile_avatar_size">186dp</dimen>
+    <dimen name="profile_avatar_margin_top">126dp</dimen>
+
 </resources>

@@ -75,13 +75,12 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
         with(binding) {
             profileName.isVisible = isVisible
             profileOnlineStatus.isVisible = isVisible
-            logoutButton.isVisible = isVisible
             profileAvatar.isVisible = isVisible
         }
     }
 
     private fun setLoading(isLoadingVisible: Boolean) {
-        binding.shimmerProfile.isVisible = isLoadingVisible
+        binding.includeShimmerProfile.shimmerProfile.isVisible = isLoadingVisible
     }
 
     companion object {
