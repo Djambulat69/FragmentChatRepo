@@ -55,10 +55,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         if (context is FragmentInteractor) {
             fragmentInteractor = context
         }
-
         (context.applicationContext as FragmentChatApplication).daggerAppComponent.inject(this)
-
-
     }
 
     override fun onCreateView(
@@ -124,13 +121,14 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     override fun showMessages(messages: List<Message>) {
-        val uiItemsToAdd: MutableList<ViewTyped> =
+        val uiItems: List<ViewTyped> =
             messagesToMessageUIs(messages).groupBy { it.date }.flatMap { (date: String, messageUIsByDate: List<MessageUI>) ->
                 listOf(DateSeparatorUI(date)) + messageUIsByDate
-            } as MutableList<ViewTyped>
+            }
 
-        if (presenter.hasMoreMessages) uiItemsToAdd.add(0, SpinnerUI())
-        (binding.chatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items = uiItemsToAdd
+        (binding.chatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items =
+            if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
+            else uiItems
 
         setLoading(false)
         setChatVisibility(true)

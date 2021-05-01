@@ -48,10 +48,10 @@ class ChatPresenter @Inject constructor(
         compositeDisposable.dispose()
     }
 
-    fun initParameters(_topicTitle: String, _streamTitle: String, _streamId: Int) {
-        topicTitle = _topicTitle
-        streamTitle = _streamTitle
-        streamId = _streamId
+    fun initParameters(topicTitle: String, streamTitle: String, streamId: Int) {
+        this.topicTitle = topicTitle
+        this.streamTitle = streamTitle
+        this.streamId = streamId
     }
 
     fun subscribeOnSendingMessages(sendObservable: Observable<String>) {
