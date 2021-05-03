@@ -23,8 +23,8 @@ import kotlin.properties.Delegates
 
 
 class ChatPresenter @Inject constructor(
-    private val repository: ChatRepository
-) : MvpPresenter<ChatView>() {
+    private val repository: TopicChatRepository
+) : MvpPresenter<TopicChatView>() {
 
     var hasMoreMessages = true
 

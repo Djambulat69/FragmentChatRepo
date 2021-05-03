@@ -10,7 +10,10 @@ import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 
-class ChatRepository @Inject constructor(private val messagesDao: MessagesDao, private val zulipService: ZulipServiceHelper) {
+class TopicChatRepository @Inject constructor(
+    private val messagesDao: MessagesDao,
+    private val zulipService: ZulipServiceHelper
+) {
 
     fun getMessages(topicTitle: String, streamId: Int): Flowable<List<Message>> =
         messagesDao.getMessages(topicTitle, streamId)

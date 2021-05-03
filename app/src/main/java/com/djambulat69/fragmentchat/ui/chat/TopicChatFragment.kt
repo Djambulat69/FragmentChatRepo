@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.databinding.FragmentChatBinding
+import com.djambulat69.fragmentchat.databinding.FragmentTopicChatBinding
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
@@ -37,11 +37,12 @@ private const val ARG_STREAM_ID = "stream_id"
 private const val MESSAGES_PREFETCH_DISTANCE = 5
 private const val MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL = 2
 
-class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener, NetworkListener {
+class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener,
+    NetworkListener {
 
     private var fragmentInteractor: FragmentInteractor? = null
 
-    private var _binding: FragmentChatBinding? = null
+    private var _binding: FragmentTopicChatBinding? = null
     private val binding get() = _binding!!
 
     @Inject
@@ -62,7 +63,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentChatBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentTopicChatBinding.inflate(layoutInflater, container, false)
 
         presenter.initParameters(
             requireArguments().getString(ARG_TOPIC) as String,
@@ -80,10 +81,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
         val streamTitle = requireArguments().getString(ARG_STREAM_TITLE)
 
         with(binding) {
-            chatToolbar.title = getString(R.string.sharp_placeholder, streamTitle)
-            chatRecyclerView.adapter =
+            topicChatToolbar.title = getString(R.string.sharp_placeholder, streamTitle)
+            topicChatRecyclerView.adapter =
                 AsyncAdapter(
-                    ChatHolderFactory(Glide.with(this@ChatFragment)),
+                    ChatHolderFactory(Glide.with(this@TopicChatFragment)),
                     ChatDiffCallback,
                     ChatClickMapper()
                 ).apply {
@@ -91,9 +92,9 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                             super.onItemRangeInserted(positionStart, itemCount)
 
-                            chatRecyclerView.adapter?.let {
+                            topicChatRecyclerView.adapter?.let {
                                 if (positionStart > MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL) {
-                                    chatRecyclerView.scrollToPosition(it.itemCount - 1)
+                                    topicChatRecyclerView.scrollToPosition(it.itemCount - 1)
                                 }
                             }
                         }
@@ -101,12 +102,12 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                 }
 
             chatTopicTitle.text = getString(R.string.topic_title, topicTitle)
-            chatToolbar.setNavigationOnClickListener {
+            topicChatToolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
             }
 
             presenter.subscribeOnClicks(
-                (chatRecyclerView.adapter as AsyncAdapter<*>).getClicks()
+                (topicChatRecyclerView.adapter as AsyncAdapter<*>).getClicks()
             )
         }
         presenter.subscribeOnSendingMessages(getSendButtonObservable())
@@ -126,7 +127,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
                 listOf(DateSeparatorUI(date)) + messageUIsByDate
             }
 
-        (binding.chatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items =
+        (binding.topicChatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items =
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
 
@@ -160,19 +161,19 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     private fun setChatVisibility(isVisible: Boolean) {
-        binding.chatRecyclerView.isVisible = isVisible
-        binding.sendButton.isEnabled = isVisible
+        binding.topicChatRecyclerView.isVisible = isVisible
+        binding.topicSendButton.isEnabled = isVisible
     }
 
     private fun getSendButtonObservable(): Observable<String> = Observable.create { emitter ->
-        binding.sendButton.setOnClickListener {
-            emitter.onNext(binding.messageEditText.text.toString().trim())
-            binding.messageEditText.setText("")
+        binding.topicSendButton.setOnClickListener {
+            emitter.onNext(binding.topicMessageEditText.text.toString().trim())
+            binding.topicMessageEditText.setText("")
         }
     }
 
     private fun getScrollObservable(): Observable<Long> = Observable.create { emitter ->
-        binding.chatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.topicChatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -196,10 +197,10 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     private fun setupTextWatcher() {
-        binding.messageEditText.addTextChangedListener(object : TextWatcherAdapter() {
+        binding.topicMessageEditText.addTextChangedListener(object : TextWatcherAdapter() {
             override fun onTextChanged(text: CharSequence, start: Int, before: Int, count: Int) {
-                binding.sendButton.isVisible = text.isNotBlank()
-                binding.addFileButton.isVisible = text.isBlank()
+                binding.topicSendButton.isVisible = text.isNotBlank()
+                binding.topicAddFileButton.isVisible = text.isBlank()
             }
         })
     }
@@ -207,7 +208,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message -> MessageUI(message) }
 
     companion object {
-        fun newInstance(topicTitle: String, streamTitle: String, streamId: Int) = ChatFragment().apply {
+        fun newInstance(topicTitle: String, streamTitle: String, streamId: Int) = TopicChatFragment().apply {
             arguments = bundleOf(
                 ARG_TOPIC to topicTitle,
                 ARG_STREAM_TITLE to streamTitle,

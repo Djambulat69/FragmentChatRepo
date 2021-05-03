@@ -6,7 +6,7 @@ import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.OneExecution
 
 
-interface ChatView : MvpView {
+interface TopicChatView : MvpView {
     @AddToEndSingle
     fun showMessages(messages: List<Message>)
 

@@ -3,7 +3,7 @@ package com.djambulat69.fragmentchat.ui
 import android.os.Bundle
 import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.ui.chat.ChatFragment
+import com.djambulat69.fragmentchat.ui.chat.TopicChatFragment
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -40,7 +40,7 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView, FragmentInteracto
     override fun openTopic(topicTitle: String, streamTitle: String, streamId: Int) {
         supportFragmentManager.commit {
             addToBackStack(null)
-            replace(R.id.fragment_container, ChatFragment.newInstance(topicTitle, streamTitle, streamId))
+            replace(R.id.fragment_container, TopicChatFragment.newInstance(topicTitle, streamTitle, streamId))
         }
     }
 }
