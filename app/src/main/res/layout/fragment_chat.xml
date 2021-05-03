@@ -46,9 +46,7 @@
         app:layout_constraintTop_toBottomOf="@+id/chat_topic_title"
         app:stackFromEnd="true"
         tools:itemCount="4"
-        tools:listitem="@layout/incoming_message_layout">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        tools:listitem="@layout/incoming_message_layout" />
 
     <EditText
         android:id="@+id/message_edit_text"
@@ -102,8 +100,8 @@
         app:layout_constraintBottom_toTopOf="@id/message_edit_text" />
 
     <include
-        layout="@layout/shimmer_chat"
         android:id="@+id/include_topic_messages_shimmer"
+        layout="@layout/shimmer_chat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="gone"
