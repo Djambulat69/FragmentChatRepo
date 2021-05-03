@@ -156,7 +156,7 @@ class ChatFragment : MvpAppCompatFragment(), ChatView, EmojiBottomSheetDialog.Em
     }
 
     private fun setLoading(isVisible: Boolean) {
-        binding.messagesShimmer.isVisible = isVisible
+        binding.includeTopicMessagesShimmer.messagesShimmer.isVisible = isVisible
     }
 
     private fun setChatVisibility(isVisible: Boolean) {
