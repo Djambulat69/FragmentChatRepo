@@ -67,7 +67,7 @@
         tools:visibility="visible" />
 
     <ImageButton
-        android:id="@+id/add_file_button"
+        android:id="@+id/stream_add_file_button"
         android:layout_width="@dimen/send_button_size"
         android:layout_height="@dimen/send_button_size"
         android:layout_marginEnd="@dimen/margin_medium"

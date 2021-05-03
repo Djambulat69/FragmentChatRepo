@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/chat_toolbar"
+        android:id="@+id/topic_chat_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorSecondary"
@@ -15,12 +15,12 @@
         tools:title="#general" />
 
     <View
-        android:id="@+id/group"
+        android:id="@+id/topic_group"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/helper_view" />
+        app:layout_constraintTop_toBottomOf="@id/topic_helper_view" />
 
     <TextView
         android:id="@+id/chat_topic_title"
@@ -31,16 +31,16 @@
         android:padding="@dimen/padding_small"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:layout_constraintTop_toBottomOf="@+id/chat_toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/topic_chat_toolbar"
         tools:layout_editor_absoluteX="0dp"
         tools:text="Topic: #testing" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chat_recycler_view"
+        android:id="@+id/topic_chat_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/group"
+        app:layout_constraintBottom_toTopOf="@id/topic_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chat_topic_title"
@@ -49,7 +49,7 @@
         tools:listitem="@layout/incoming_message_layout" />
 
     <EditText
-        android:id="@+id/message_edit_text"
+        android:id="@+id/topic_message_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
@@ -66,7 +66,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/send_button"
+        android:id="@+id/topic_send_button"
         android:layout_width="@dimen/send_button_size"
         android:layout_height="@dimen/send_button_size"
         android:layout_marginEnd="@dimen/margin_medium"
@@ -74,30 +74,30 @@
         android:background="@drawable/send_button_bg"
         android:paddingStart="@dimen/send_button_start_offset"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/message_edit_text"
+        app:layout_constraintBottom_toBottomOf="@+id/topic_message_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_baseline_send"
         tools:visibility="visible" />
 
     <ImageButton
-        android:id="@+id/add_file_button"
+        android:id="@+id/topic_add_file_button"
         android:layout_width="@dimen/send_button_size"
         android:layout_height="@dimen/send_button_size"
         android:layout_marginEnd="@dimen/margin_medium"
         android:background="@null"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/message_edit_text"
+        app:layout_constraintBottom_toBottomOf="@+id/topic_message_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/message_edit_text"
+        app:layout_constraintTop_toTopOf="@+id/topic_message_edit_text"
         app:srcCompat="@drawable/ic_vector_add"
         tools:visibility="gone" />
 
     <View
-        android:id="@+id/helper_view"
+        android:id="@+id/topic_helper_view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="@dimen/margin_small"
-        app:layout_constraintBottom_toTopOf="@id/message_edit_text" />
+        app:layout_constraintBottom_toTopOf="@id/topic_message_edit_text" />
 
     <include
         android:id="@+id/include_topic_messages_shimmer"
@@ -105,7 +105,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/group"
+        app:layout_constraintBottom_toTopOf="@id/topic_group"
         app:layout_constraintTop_toBottomOf="@+id/chat_topic_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
