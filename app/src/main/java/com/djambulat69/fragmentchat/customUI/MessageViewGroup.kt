@@ -46,7 +46,7 @@ class MessageViewGroup @JvmOverloads constructor(
         authorText = findViewById(R.id.profile_name_text_view)
         messageText = findViewById(R.id.message_text_incoming)
         flexBox = findViewById(R.id.flex_box)
-        addReactionButton = findViewById(R.id.add_reaction_button_outcoming)
+        addReactionButton = findViewById(R.id.add_reaction_button_incoming)
 
         context.obtainStyledAttributes(
             attrs,

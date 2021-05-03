@@ -13,6 +13,7 @@ class ChatClickMapper : ClickMapper<ChatClickTypes>() {
 
             R.id.outcoming_message_layout,
             R.id.message_viewgroup_incoming,
+            R.id.add_reaction_button_incoming,
             R.id.add_reaction_button_outcoming -> ChatClickTypes.AddEmojiClick(items[itemClick.position] as MessageUI)
 
             R.id.emoji_view -> ChatClickTypes.ReactionClick(

@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat
+package com.djambulat69.fragmentchat.ui.chat.topic
 
 import android.content.Context
 import android.os.Bundle
@@ -7,8 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentTopicChatBinding
@@ -17,7 +15,10 @@ import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.NetworkListener
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.EmojiBottomSheetDialog
+import com.djambulat69.fragmentchat.ui.chat.getScrollObservable
+import com.djambulat69.fragmentchat.ui.chat.messagesToMessageUIs
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
+import com.djambulat69.fragmentchat.ui.chat.registerAutoScrollAdapterDataObserver
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
@@ -34,9 +35,6 @@ private const val ARG_TOPIC = "topic"
 private const val ARG_STREAM_TITLE = "stream_title"
 private const val ARG_STREAM_ID = "stream_id"
 
-private const val MESSAGES_PREFETCH_DISTANCE = 5
-private const val MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL = 2
-
 class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener,
     NetworkListener {
 
@@ -46,9 +44,9 @@ class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomShee
     private val binding get() = _binding!!
 
     @Inject
-    lateinit var presenterProvider: Provider<ChatPresenter>
+    lateinit var presenterProvider: Provider<TopicChatPresenter>
 
-    private val presenter: ChatPresenter by moxyPresenter { presenterProvider.get() }
+    private val presenter: TopicChatPresenter by moxyPresenter { presenterProvider.get() }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -56,7 +54,7 @@ class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomShee
         if (context is FragmentInteractor) {
             fragmentInteractor = context
         }
-        (context.applicationContext as FragmentChatApplication).daggerAppComponent.inject(this)
+        FragmentChatApplication.INSTANCE.daggerAppComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -88,17 +86,7 @@ class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomShee
                     ChatDiffCallback,
                     ChatClickMapper()
                 ).apply {
-                    registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-                        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                            super.onItemRangeInserted(positionStart, itemCount)
-
-                            topicChatRecyclerView.adapter?.let {
-                                if (positionStart > MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL) {
-                                    topicChatRecyclerView.scrollToPosition(it.itemCount - 1)
-                                }
-                            }
-                        }
-                    })
+                    registerAutoScrollAdapterDataObserver(binding.topicChatRecyclerView)
                 }
 
             chatTopicTitle.text = getString(R.string.topic_title, topicTitle)
@@ -111,7 +99,7 @@ class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomShee
             )
         }
         presenter.subscribeOnSendingMessages(getSendButtonObservable())
-        presenter.subscribeOnScrolling(getScrollObservable())
+        presenter.subscribeOnScrolling(getScrollObservable(binding.topicChatRecyclerView))
         setupTextWatcher()
     }
 
@@ -172,30 +160,6 @@ class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomShee
         }
     }
 
-    private fun getScrollObservable(): Observable<Long> = Observable.create { emitter ->
-        binding.topicChatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                loadNextPage(recyclerView)
-            }
-
-            private fun loadNextPage(recyclerView: RecyclerView) {
-                if (recyclerView.adapter != null) {
-
-                    val itemsRemaining = (recyclerView.layoutManager as LinearLayoutManager)
-                        .findFirstVisibleItemPosition()
-
-                    if (itemsRemaining < MESSAGES_PREFETCH_DISTANCE && itemsRemaining != RecyclerView.NO_POSITION) {
-                        val lastLoadedMessageId =
-                            (recyclerView.adapter as AsyncAdapter<ViewTyped>).items.first { uiItem -> uiItem is MessageUI }.id.toLong()
-                        emitter.onNext(lastLoadedMessageId)
-                    }
-                }
-            }
-        })
-    }
-
     private fun setupTextWatcher() {
         binding.topicMessageEditText.addTextChangedListener(object : TextWatcherAdapter() {
             override fun onTextChanged(text: CharSequence, start: Int, before: Int, count: Int) {
@@ -204,8 +168,6 @@ class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomShee
             }
         })
     }
-
-    private fun messagesToMessageUIs(messages: List<Message>) = messages.map { message -> MessageUI(message) }
 
     companion object {
         fun newInstance(topicTitle: String, streamTitle: String, streamId: Int) = TopicChatFragment().apply {

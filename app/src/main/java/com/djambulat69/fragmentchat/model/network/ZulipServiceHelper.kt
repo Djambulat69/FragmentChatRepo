@@ -25,8 +25,20 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
             MESSAGES_COUNT_AFTER_ANCHOR,
             Json.encodeToString(
                 listOf(
-                    NarrowSearchOperator("stream", streamTitle),
-                    NarrowSearchOperator("topic", topicTitle)
+                    NarrowSearchOperator(NarrowSearchOperator.STREAM_OPERATOR, streamTitle),
+                    NarrowSearchOperator(NarrowSearchOperator.TOPIC_OPERATOR, topicTitle)
+                )
+            )
+        )
+
+    fun getStreamMessagesSingle(streamTitle: String, anchor: Long, count: Int): Single<MessagesResponse> =
+        zulipService.getMessages(
+            anchor,
+            count,
+            MESSAGES_COUNT_AFTER_ANCHOR,
+            Json.encodeToString(
+                listOf(
+                    NarrowSearchOperator(NarrowSearchOperator.STREAM_OPERATOR, streamTitle)
                 )
             )
         )

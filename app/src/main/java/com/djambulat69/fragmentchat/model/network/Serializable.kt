@@ -32,7 +32,12 @@ data class Topic(
 class NarrowSearchOperator(
     @SerialName("operator") val operator: String,
     @SerialName("operand") val operand: String
-)
+) {
+    companion object {
+        const val STREAM_OPERATOR = "stream"
+        const val TOPIC_OPERATOR = "topic"
+    }
+}
 
 @Serializable
 class MessagesResponse(

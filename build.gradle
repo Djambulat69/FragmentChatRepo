@@ -46,5 +46,4 @@ ext {
     room_version = '2.3.0-rc01'
     rxrelay_version = '3.0.0'
     dagger_version = '2.35'
-    expand_layout_version = '2.9.2'
 }

@@ -106,6 +106,10 @@ constructor(
                 click.topicUI.streamTitle,
                 click.topicUI.streamId
             )
+            is StreamsClickTypes.OpenStreamClick -> viewState.openStreamFragment(
+                click.streamUI.stream.name,
+                click.streamUI.stream.streamId
+            )
         }
     }
 

@@ -105,6 +105,10 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
         fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
     }
 
+    override fun openStreamFragment(streamTitle: String, streamId: Int) {
+        fragmentInteractor?.openStream(streamTitle, streamId)
+    }
+
     override fun makeSearch(query: String) {
         presenter.searchStreams(query)
     }

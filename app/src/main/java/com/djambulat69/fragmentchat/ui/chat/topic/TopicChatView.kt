@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat
+package com.djambulat69.fragmentchat.ui.chat.topic
 
 import com.djambulat69.fragmentchat.model.network.Message
 import moxy.MvpView

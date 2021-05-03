@@ -3,7 +3,8 @@ package com.djambulat69.fragmentchat.ui
 import android.os.Bundle
 import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
-import com.djambulat69.fragmentchat.ui.chat.TopicChatFragment
+import com.djambulat69.fragmentchat.ui.chat.stream.StreamChatFragment
+import com.djambulat69.fragmentchat.ui.chat.topic.TopicChatFragment
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -41,6 +42,13 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView, FragmentInteracto
         supportFragmentManager.commit {
             addToBackStack(null)
             replace(R.id.fragment_container, TopicChatFragment.newInstance(topicTitle, streamTitle, streamId))
+        }
+    }
+
+    override fun openStream(streamTitle: String, streamId: Int) {
+        supportFragmentManager.commit {
+            addToBackStack(null)
+            replace(R.id.fragment_container, StreamChatFragment.newInstance(streamTitle, streamId))
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat
+package com.djambulat69.fragmentchat.ui.chat.stream
 
 import com.djambulat69.fragmentchat.model.db.MessagesDao
 import com.djambulat69.fragmentchat.model.network.Message
@@ -9,34 +9,31 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
-
-class TopicChatRepository @Inject constructor(
+class StreamChatRepository @Inject constructor(
     private val messagesDao: MessagesDao,
     private val zulipService: ZulipServiceHelper
 ) {
 
-    fun getMessages(topicTitle: String, streamId: Int): Flowable<List<Message>> =
-        messagesDao.getMessages(topicTitle, streamId)
+    fun getMessages(streamId: Int): Flowable<List<Message>> =
+        messagesDao.getStreamMessages(streamId)
 
     fun updateMessages(
         streamTitle: String,
-        topicTitle: String,
         streamId: Int,
         anchor: Long,
         count: Int
     ): Single<MessagesResponse> =
-        zulipService.getTopicMessagesSingle(streamTitle, topicTitle, anchor, count)
+        zulipService.getStreamMessagesSingle(streamTitle, anchor, count)
             .flatMap { messagesResponse ->
-                clearAndLoadNewMessages(topicTitle, streamId, messagesResponse)
+                clearAndLoadNewMessages(streamId, messagesResponse)
             }
 
     fun getNextPageMessages(
         streamTitle: String,
-        topicTitle: String,
         anchor: Long,
         count: Int
     ): Single<MessagesResponse> =
-        zulipService.getTopicMessagesSingle(streamTitle, topicTitle, anchor, count)
+        zulipService.getStreamMessagesSingle(streamTitle, anchor, count)
             .flatMap { messagesResponse ->
                 messagesDao.saveMessages(messagesResponse.messages).andThen(Single.just(messagesResponse))
             }
@@ -51,11 +48,11 @@ class TopicChatRepository @Inject constructor(
         zulipService.deleteReaction(messageId, emojiName)
 
     private fun clearAndLoadNewMessages(
-        topicTitle: String,
         streamId: Int,
         messagesResponse: MessagesResponse
     ) =
-        messagesDao.deleteTopicMessages(topicTitle, streamId)
+        messagesDao.deleteStreamMessages(streamId)
             .andThen(messagesDao.saveMessages(messagesResponse.messages))
             .andThen(Single.just(messagesResponse))
+
 }

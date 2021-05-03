@@ -1,6 +1,7 @@
 package com.djambulat69.fragmentchat.ui.channels.streams.recyclerview
 
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.djambulat69.fragmentchat.R
@@ -13,9 +14,13 @@ class StreamViewHolder(private val streamView: View, private val clicks: Publish
 
     private val streamTitleTextView = streamView.findViewById<TextView>(R.id.stream_title)
     private val streamExpandImageView = streamView.findViewById<ImageView>(R.id.checked_image)
+    private val openStreamButton = streamView.findViewById<Button>(R.id.open_stream_button)
 
     init {
         streamView.setOnClickListener {
+            clicks.accept(ItemClick(bindingAdapterPosition, it))
+        }
+        openStreamButton.setOnClickListener {
             clicks.accept(ItemClick(bindingAdapterPosition, it))
         }
     }

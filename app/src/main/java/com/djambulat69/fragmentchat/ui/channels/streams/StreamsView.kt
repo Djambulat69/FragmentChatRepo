@@ -23,4 +23,7 @@ interface StreamsView : MvpView {
     @Skip
     fun openTopicFragment(topicTitle: String, streamTitle: String, streamId: Int)
 
+    @Skip
+    fun openStreamFragment(streamTitle: String, streamId: Int)
+
 }

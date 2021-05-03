@@ -63,6 +63,10 @@ class MainFragment : Fragment(), FragmentInteractor {
         fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
     }
 
+    override fun openStream(streamTitle: String, streamId: Int) {
+        fragmentInteractor?.openStream(streamTitle, streamId)
+    }
+
     private fun openFragment(fragment: Fragment): Boolean {
         childFragmentManager.commit {
             replace(R.id.main_fragment_container, fragment)

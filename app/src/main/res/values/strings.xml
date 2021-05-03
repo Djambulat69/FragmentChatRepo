@@ -19,4 +19,6 @@
 
     <string name="sharp_placeholder">#%1$s</string>
     <string name="topic_title">Topic: #%1$s</string>
+
+    <string name="open_text">Open</string>
 </resources>

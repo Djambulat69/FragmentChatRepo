@@ -15,6 +15,7 @@ class StreamsClickMapper : ClickMapper<StreamsClickTypes>() {
                 itemClick.view.findViewById(R.id.checked_image)
             )
             R.id.topic_list_item -> StreamsClickTypes.TopicClick(items[itemClick.position] as TopicUI)
+            R.id.open_stream_button -> StreamsClickTypes.OpenStreamClick(items[itemClick.position] as StreamUI)
             else -> throw IllegalStateException("Unknown viewId of itemClick: $itemClick")
         }
 }

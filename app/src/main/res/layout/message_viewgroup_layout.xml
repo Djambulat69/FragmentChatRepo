@@ -55,7 +55,7 @@
         android:layout_height="wrap_content">
 
         <include
-            android:id="@+id/add_reaction_button_outcoming"
+            android:id="@+id/add_reaction_button_incoming"
             layout="@layout/add_reaction_button" />
 
 
