@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import androidx.core.graphics.withTranslation
+import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
@@ -46,17 +47,41 @@ class TopicHeadersDecoration(
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
 
-        for (i in parent.childCount - 1 downTo 0) {
-            val view = parent.getChildAt(i) ?: return
+        var earliestFoundHeaderPosition = -1
+        var prevHeaderTop = Int.MAX_VALUE
 
-            if (view.bottom > 0 && view.top < parent.height) {
+        for (i in parent.childCount - 1 downTo 0) {
+            val view = parent.getChildAt(i) ?: continue
+
+            val viewTop = view.top + view.translationY.toInt()
+            if (view.bottom > 0 && viewTop < parent.height) {
                 val position = parent.getChildAdapterPosition(view)
                 headerTopicNames[position]?.let { topicName ->
-                    c.withTranslation(y = view.top.toFloat()) {
+                    val top = viewTop.coerceAtLeast(0).coerceAtMost(prevHeaderTop - rect.height())
+                    c.withTranslation(y = top.toFloat()) {
+                        drawRect(rect, paint)
+                        drawText(topicName, 0f, 50f, textPaint)
+                    }
+                    earliestFoundHeaderPosition = position
+                    prevHeaderTop = viewTop
+                }
+            }
+        }
+
+        if (earliestFoundHeaderPosition < 0) {
+            earliestFoundHeaderPosition = parent.getChildAdapterPosition(parent[0]) + 1
+        }
+
+        for (headerPos in headerTopicNames.keys.reversed()) {
+            if (headerPos < earliestFoundHeaderPosition) {
+                headerTopicNames[headerPos]?.let { topicName ->
+                    val top = (prevHeaderTop - rect.height()).coerceAtMost(0)
+                    c.withTranslation(y = top.toFloat()) {
                         drawRect(rect, paint)
                         drawText(topicName, 0f, 50f, textPaint)
                     }
                 }
+                break
             }
         }
     }
