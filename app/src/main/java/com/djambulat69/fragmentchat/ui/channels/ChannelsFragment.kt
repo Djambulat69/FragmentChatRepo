@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChannelsBinding
@@ -24,7 +25,7 @@ import javax.inject.Provider
 
 private const val SEARCH_DEBOUNCE_MILLIS = 400L
 
-class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
+class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialogFragment.CreateStreamListener {
 
     private var _binding: FragmentChannelsBinding? = null
     private val binding get() = _binding!!
@@ -67,6 +68,9 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
             )
         }.attach()
 
+        binding.createStreamButton.setOnClickListener {
+            CreateStreamDialogFragment.newInstance().show(childFragmentManager, null)
+        }
         subscribeOnSearching()
     }
 
@@ -82,6 +86,10 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
                 it.makeSearch(query)
             }
         }
+    }
+
+    override fun createStream(name: String, description: String, inviteOnly: Boolean) {
+        Toast.makeText(requireContext(), "Stream created", Toast.LENGTH_SHORT).show()
     }
 
     private fun getSearchBarObservable(): Observable<String> = Observable.create { emitter ->

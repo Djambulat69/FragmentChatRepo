@@ -23,5 +23,6 @@
         <item name="shimmer_highlight_color">?attr/colorPrimaryDark</item>
 
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.FragmentChat.BottomSheetDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.FragmentChat.Dialog.Alert</item>
     </style>
 </resources>

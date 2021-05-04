@@ -121,3 +121,9 @@ data class Event(
     @SerialName("flags") val flags: List<String>? = null,
     @SerialName("id") val id: Int
 )
+
+@Serializable
+class Subscribtion(
+    @SerialName("name") val name: String,
+    @SerialName("description") val description: String
+)

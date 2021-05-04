@@ -59,6 +59,9 @@ interface ZulipChatService {
         @Query("emoji_name") emojiName: String
     ): Completable
 
+    @POST("users/me/subscribtions")
+    fun subscribeOnStreams(subscribtions: List<Subscribtion>, inviteOnly: Boolean): Completable
+
     @POST("register")
     fun registerEventsQueue(
         @Query("event_types") events: String = Json.encodeToString(arrayOf("message"))
