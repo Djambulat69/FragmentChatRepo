@@ -47,6 +47,21 @@ constructor(
         compositeDisposable.dispose()
     }
 
+    fun updateStreams() {
+        compositeDisposable.add(
+            updateStreamsbyTabPosition()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    Functions.EMPTY_ACTION,
+                    { exception ->
+                        viewState.showToastError()
+                        Log.e(TAG, exception.stackTraceToString())
+                    }
+                )
+        )
+    }
+
     fun searchStreams(query: String) {
         compositeDisposable.add(
             Single.fromCallable { streams.filter { it.name.startsWith(query, ignoreCase = true) } }
@@ -115,21 +130,6 @@ constructor(
 
     private fun showStreams() {
         viewState.showStreams(recyclerUiItems)
-    }
-
-    private fun updateStreams() {
-        compositeDisposable.add(
-            updateStreamsbyTabPosition()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    Functions.EMPTY_ACTION,
-                    { exception ->
-                        viewState.showToastError()
-                        Log.e(TAG, exception.stackTraceToString())
-                    }
-                )
-        )
     }
 
     private fun getStreams() {

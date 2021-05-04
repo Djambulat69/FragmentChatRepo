@@ -5,21 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChannelsBinding
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
-import com.djambulat69.fragmentchat.ui.SearchQueryListener
 import com.djambulat69.fragmentchat.utils.getCurrentFragments
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import io.reactivex.rxjava3.core.Observable
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
-
-private const val SEARCH_DEBOUNCE_MILLIS = 400L
 
 class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialogFragment.CreateStreamListener {
 
@@ -82,8 +79,24 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialo
         }
     }
 
+    override fun showStreamCreatedSnackbar() {
+        Snackbar.make(binding.root, R.string.stream_created, Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun showError() {
+        Snackbar.make(binding.root, R.string.check_connection_text, Snackbar.LENGTH_SHORT).show()
+    }
+
     override fun createStream(name: String, description: String, inviteOnly: Boolean) {
-        Toast.makeText(requireContext(), "Stream created", Toast.LENGTH_SHORT).show()
+        presenter.createStream(name, description, inviteOnly)
+    }
+
+    override fun updateStreams() {
+        binding.channelsViewPager.getCurrentFragments(childFragmentManager).forEach {
+            if (it is StreamCreateListener) {
+                it.updateStreams()
+            }
+        }
     }
 
     private fun getSearchBarObservable(): Observable<String> = Observable.create { emitter ->

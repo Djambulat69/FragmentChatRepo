@@ -59,8 +59,11 @@ interface ZulipChatService {
         @Query("emoji_name") emojiName: String
     ): Completable
 
-    @POST("users/me/subscribtions")
-    fun subscribeOnStreams(subscribtions: List<Subscribtion>, inviteOnly: Boolean): Completable
+    @POST("users/me/subscriptions")
+    fun subscribeOnStreams(
+        @Query("subscriptions") subscribtions: String,
+        @Query("inviteOnly") inviteOnly: Boolean
+    ): Completable
 
     @POST("register")
     fun registerEventsQueue(

@@ -1,5 +1,9 @@
 package com.djambulat69.fragmentchat.ui.channels
 
+import android.util.Log
+import com.djambulat69.fragmentchat.model.db.StreamsDao
+import com.djambulat69.fragmentchat.model.network.Subscribtion
+import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -8,12 +12,23 @@ import moxy.MvpPresenter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+private const val TAG = "ChannelsPresenter"
 private const val SEARCH_DEBOUNCE_MILLIS = 300L
 
-class ChannelsPresenter @Inject constructor() : MvpPresenter<ChannelsView>() {
+class ChannelsPresenter @Inject constructor(
+    private val zulipServiceHelper: ZulipServiceHelper,
+    private val streamsDao: StreamsDao
+) : MvpPresenter<ChannelsView>() {
 
     private var lastSearchQuery = ""
+
+    private var compositeDisposable = CompositeDisposable()
     private var viewDisposable = CompositeDisposable()
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
+    }
 
     fun susbcribeOnSearching(searchObservable: Observable<String>) {
         viewDisposable.add(
@@ -27,6 +42,24 @@ class ChannelsPresenter @Inject constructor() : MvpPresenter<ChannelsView>() {
                 .subscribe { query ->
                     searchStreams(query)
                 }
+        )
+    }
+
+    fun createStream(name: String, description: String, inviteOnly: Boolean) {
+        compositeDisposable.add(
+            zulipServiceHelper.subscribeOnStream(Subscribtion(name, description), inviteOnly)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        viewState.showStreamCreatedSnackbar()
+                        viewState.updateStreams()
+                    },
+                    { e ->
+                        viewState.showError()
+                        Log.d(TAG, e.stackTraceToString())
+                    }
+                )
         )
     }
 

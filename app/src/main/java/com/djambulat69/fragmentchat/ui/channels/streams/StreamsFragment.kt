@@ -13,7 +13,8 @@ import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentStreamsBinding
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
-import com.djambulat69.fragmentchat.ui.SearchQueryListener
+import com.djambulat69.fragmentchat.ui.channels.SearchQueryListener
+import com.djambulat69.fragmentchat.ui.channels.StreamCreateListener
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamDiffCallback
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsClickMapper
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsHolderFactory
@@ -26,7 +27,7 @@ import javax.inject.Provider
 
 private const val ARG_TAB_POSITION = "tab_position"
 
-class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener {
+class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener, StreamCreateListener {
 
     private var fragmentInteractor: FragmentInteractor? = null
 
@@ -111,6 +112,10 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
     override fun makeSearch(query: String) {
         presenter.searchStreams(query)
+    }
+
+    override fun updateStreams() {
+        presenter.updateStreams()
     }
 
     private fun setUiVisibility(isVisible: Boolean) {
