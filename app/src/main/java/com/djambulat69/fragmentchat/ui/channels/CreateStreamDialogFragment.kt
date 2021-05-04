@@ -49,7 +49,7 @@ class CreateStreamDialogFragment : DialogFragment() {
 
     private fun createStream() {
         listener?.createStream(
-            binding.nameEditText.text.toString(),
+            binding.nameEditText.text.toString().trim(),
             binding.descriptionEditText.text.toString(),
             binding.inviteOnlySwitch.isChecked
         )

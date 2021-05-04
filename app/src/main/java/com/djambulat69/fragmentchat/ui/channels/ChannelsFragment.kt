@@ -13,13 +13,9 @@ import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.SearchQueryListener
 import com.djambulat69.fragmentchat.utils.getCurrentFragments
 import com.google.android.material.tabs.TabLayoutMediator
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -35,12 +31,10 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialo
 
     private val presenter: ChannelsPresenter by moxyPresenter { presenterProvider.get() }
 
-    private val compositeDisposable = CompositeDisposable()
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        (context.applicationContext as FragmentChatApplication).daggerAppComponent.inject(this)
+        FragmentChatApplication.INSTANCE.daggerAppComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -71,13 +65,13 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialo
         binding.createStreamButton.setOnClickListener {
             CreateStreamDialogFragment.newInstance().show(childFragmentManager, null)
         }
-        subscribeOnSearching()
+        presenter.susbcribeOnSearching(getSearchBarObservable())
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        compositeDisposable.clear()
+        presenter.unsubscribeFromViews()
     }
 
     override fun makeSearch(query: String) {
@@ -104,18 +98,6 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialo
                 }
 
             }
-        )
-    }
-
-    private fun subscribeOnSearching() {
-        compositeDisposable.add(
-            getSearchBarObservable()
-                .subscribeOn(Schedulers.io())
-                .debounce(SEARCH_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { query ->
-                    presenter.searchStreams(query)
-                }
         )
     }
 
