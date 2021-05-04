@@ -136,6 +136,7 @@ constructor(
         compositeDisposable.add(
             getStreamsbyTabPosition()
                 .subscribeOn(Schedulers.io())
+                .distinctUntilChanged()
                 .map { streams ->
                     this.streams = streams
                     streamsToStreamUIs(streams)

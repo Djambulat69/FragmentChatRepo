@@ -1,7 +1,6 @@
 package com.djambulat69.fragmentchat.ui.channels
 
 import android.util.Log
-import com.djambulat69.fragmentchat.model.db.StreamsDao
 import com.djambulat69.fragmentchat.model.network.Subscribtion
 import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -16,8 +15,7 @@ private const val TAG = "ChannelsPresenter"
 private const val SEARCH_DEBOUNCE_MILLIS = 300L
 
 class ChannelsPresenter @Inject constructor(
-    private val zulipServiceHelper: ZulipServiceHelper,
-    private val streamsDao: StreamsDao
+    private val zulipServiceHelper: ZulipServiceHelper
 ) : MvpPresenter<ChannelsView>() {
 
     private var lastSearchQuery = ""
