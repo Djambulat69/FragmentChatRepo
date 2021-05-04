@@ -100,6 +100,8 @@ class StreamChatFragment : MvpAppCompatFragment(), StreamChatView, EmojiBottomSh
         super.onDestroyView()
     }
 
+    private var lastDecoration: TopicHeadersDecoration? = null
+
     override fun showMessages(messages: List<Message>) {
         val uiItems: List<ViewTyped> =
             messagesToMessageUIs(messages).groupBy { it.date }.flatMap { (date: String, messageUIsByDate: List<MessageUI>) ->
@@ -109,6 +111,15 @@ class StreamChatFragment : MvpAppCompatFragment(), StreamChatView, EmojiBottomSh
         (binding.streamChatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items =
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
+
+        lastDecoration?.let { binding.streamChatRecyclerView.removeItemDecoration(it) }
+        val currentDecoration = TopicHeadersDecoration(
+            requireContext(),
+            if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
+            else uiItems
+        )
+        binding.streamChatRecyclerView.addItemDecoration(currentDecoration)
+        lastDecoration = currentDecoration
 
         setLoading(false)
         setChatVisibility(true)
