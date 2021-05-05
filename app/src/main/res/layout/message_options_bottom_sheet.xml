@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="@dimen/bottom_sheet_rect_view_width"
+        android:layout_height="@dimen/bottom_sheet_rect_view_height"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="@dimen/margin_medium"
+        android:background="@drawable/bottom_sheet_rect_bg" />
+
+    <TextView
+        android:id="@+id/add_reaction_option"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/message_option_height"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/padding_medium"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/padding_medium"
+        android:text="@string/add_reaction"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:drawableStartCompat="@drawable/ic_baseline_emoji_emotions_24" />
+
+    <TextView
+        android:id="@+id/delete_message_option"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/message_option_height"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/padding_medium"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/padding_medium"
+        android:text="@string/delete_message"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:drawableStartCompat="@drawable/ic_baseline_delete_24" />
+
+    <TextView
+        android:id="@+id/edit_message_option"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/message_option_height"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/padding_medium"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/padding_medium"
+        android:text="@string/edit_message"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:drawableStartCompat="@drawable/ic_baseline_edit_24" />
+
+    <TextView
+        android:id="@+id/change_topic_option"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/message_option_height"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/padding_medium"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/padding_medium"
+        android:text="@string/change_topic"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:drawableStartCompat="@drawable/ic_baseline_edit_24" />
+
+    <TextView
+        android:id="@+id/copy_option"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/message_option_height"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawablePadding="@dimen/padding_medium"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/padding_medium"
+        android:text="@string/copy"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:drawableStartCompat="@drawable/ic_baseline_content_copy_24" />
+
+
+</LinearLayout>

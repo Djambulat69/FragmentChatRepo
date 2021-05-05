@@ -185,6 +185,9 @@ import kotlin.properties.Delegates
                     removeReactionInMessage(click.messageId, click.emojiName)
                 }
             }
+            is ChatClickTypes.MessageLongClick -> {
+                viewState.showMessageOptions()
+            }
         }
     }
 

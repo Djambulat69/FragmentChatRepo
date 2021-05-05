@@ -9,7 +9,7 @@
         android:id="@+id/view"
         android:layout_width="@dimen/bottom_sheet_rect_view_width"
         android:layout_height="@dimen/bottom_sheet_rect_view_height"
-        android:layout_marginTop="@dimen/bottom_sheet_rect_view_margin_top"
+        android:layout_marginTop="@dimen/margin_medium"
         android:background="@drawable/bottom_sheet_rect_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

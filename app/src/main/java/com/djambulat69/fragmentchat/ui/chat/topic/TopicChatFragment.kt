@@ -15,6 +15,7 @@ import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.NetworkListener
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.EmojiBottomSheetDialog
+import com.djambulat69.fragmentchat.ui.chat.bottomsheet.MessageOptionsBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.getScrollObservable
 import com.djambulat69.fragmentchat.ui.chat.messagesToMessageUIs
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
@@ -134,6 +135,10 @@ class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomShee
 
     override fun showEmojiBottomSheet(messageId: Int) {
         EmojiBottomSheetDialog.newInstance(messageId).show(childFragmentManager, null)
+    }
+
+    override fun showMessageOptions() {
+        MessageOptionsBottomSheetDialog.newInstance().show(childFragmentManager, null)
     }
 
     override fun addReaction(messageId: Int, emojiName: String) {

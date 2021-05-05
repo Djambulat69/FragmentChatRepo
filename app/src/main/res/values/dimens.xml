@@ -35,6 +35,7 @@
     <dimen name="message_edit_text_corners_radius">90dp</dimen>
     <dimen name="message_edit_text_margin_end">66dp</dimen>
     <dimen name="topic_edit_text_height">40dp</dimen>
+    <dimen name="message_option_height">60dp</dimen>
 
     <dimen name="chat_topic_title_height">40dp</dimen>
 
@@ -47,7 +48,6 @@
     <dimen name="bottom_sheet_corner_size">8dp</dimen>
     <dimen name="bottom_sheet_rect_view_width">62dp</dimen>
     <dimen name="bottom_sheet_rect_view_height">8dp</dimen>
-    <dimen name="bottom_sheet_rect_view_margin_top">8dp</dimen>
     <dimen name="bottom_sheet_recycler_margin_top">24dp</dimen>
 
     <dimen name="stream_list_item_height">64dp</dimen>

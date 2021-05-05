@@ -18,4 +18,7 @@ interface TopicChatView : MvpView {
 
     @OneExecution
     fun showError()
+
+    @OneExecution
+    fun showMessageOptions()
 }

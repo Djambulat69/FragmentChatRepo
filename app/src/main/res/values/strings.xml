@@ -27,4 +27,10 @@
     <string name="invite_only">Invite only</string>
     <string name="stream_created">Stream created!</string>
     <string name="topic_hint">#topic</string>
+
+    <string name="add_reaction">Add reaction</string>
+    <string name="delete_message">Delete message</string>
+    <string name="edit_message">Edit message</string>
+    <string name="change_topic">Change topic</string>
+    <string name="copy">Copy</string>
 </resources>

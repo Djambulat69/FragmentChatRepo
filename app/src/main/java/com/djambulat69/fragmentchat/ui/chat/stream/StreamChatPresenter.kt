@@ -190,6 +190,9 @@ class StreamChatPresenter @Inject constructor(
                     removeReactionInMessage(click.messageId, click.emojiName)
                 }
             }
+            is ChatClickTypes.MessageLongClick -> {
+                viewState.showMessageOptions()
+            }
         }
     }
 
