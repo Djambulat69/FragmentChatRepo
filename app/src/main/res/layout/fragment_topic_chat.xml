@@ -28,7 +28,6 @@
         android:layout_height="@dimen/chat_topic_title_height"
         android:background="?attr/colorPrimary"
         android:gravity="center"
-        android:padding="@dimen/padding_small"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintTop_toBottomOf="@+id/topic_chat_toolbar"
