@@ -115,7 +115,6 @@ class StreamChatFragment : MvpAppCompatFragment(), StreamChatView, EmojiBottomSh
         lastDecoration?.let { binding.streamChatRecyclerView.removeItemDecoration(it) }
         val currentDecoration = TopicHeadersDecoration(
             binding.streamChatRecyclerView,
-            requireContext(),
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
         )
