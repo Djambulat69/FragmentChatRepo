@@ -50,11 +50,11 @@ class StreamChatPresenter @Inject constructor(
         this.streamId = streamId
     }
 
-    fun subscribeOnSendingMessages(sendObservable: Observable<String>) {
+    fun subscribeOnSendingMessages(sendObservable: Observable<Pair<String, String>>) {
         viewDisposable.add(
             sendObservable
                 .subscribeOn(Schedulers.io())
-                .subscribe { messageText -> /*sendMessage(messageText)*/ } //TODO
+                .subscribe { textAndTopic -> sendMessage(textAndTopic.first, textAndTopic.second) }
         )
     }
 
@@ -92,7 +92,9 @@ class StreamChatPresenter @Inject constructor(
         )
     }
 
-    fun updateMessages() {
+    fun unsubscribeFromViews() = viewDisposable.clear()
+
+    private fun updateMessages() {
         compositeDisposable.add(
             repository.updateMessages(
                 streamTitle,
@@ -112,8 +114,6 @@ class StreamChatPresenter @Inject constructor(
                 )
         )
     }
-
-    fun unsubscribeFromViews() = viewDisposable.clear()
 
     private fun sendMessage(messageText: String, topicTitle: String) {
         compositeDisposable.add(

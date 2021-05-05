@@ -34,6 +34,7 @@
     <dimen name="message_edit_text_height">48dp</dimen>
     <dimen name="message_edit_text_corners_radius">90dp</dimen>
     <dimen name="message_edit_text_margin_end">66dp</dimen>
+    <dimen name="topic_edit_text_height">40dp</dimen>
 
     <dimen name="chat_topic_title_height">40dp</dimen>
 

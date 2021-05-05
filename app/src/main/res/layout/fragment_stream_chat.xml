@@ -36,6 +36,19 @@
         tools:listitem="@layout/incoming_message_layout" />
 
     <EditText
+        android:id="@+id/stream_topic_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/topic_edit_text_height"
+        android:layout_marginBottom="@dimen/margin_medium"
+        android:layout_marginHorizontal="@dimen/margin_medium"
+        android:background="@drawable/message_edit_text_bg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingHorizontal="@dimen/padding_medium"
+        android:hint="@string/topic_hint"
+        app:layout_constraintBottom_toTopOf="@id/stream_message_edit_text" />
+
+    <EditText
         android:id="@+id/stream_message_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -84,7 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="@dimen/margin_small"
-        app:layout_constraintBottom_toTopOf="@id/stream_message_edit_text" />
+        app:layout_constraintBottom_toTopOf="@id/stream_topic_edit_text" />
 
     <include
         android:id="@+id/include_stream_messages_shimmer"

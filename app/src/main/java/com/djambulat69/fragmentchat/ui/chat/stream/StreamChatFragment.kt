@@ -151,10 +151,15 @@ class StreamChatFragment : MvpAppCompatFragment(), StreamChatView, EmojiBottomSh
         binding.streamSendButton.isEnabled = isVisible
     }
 
-    private fun getSendButtonObservable(): Observable<String> = Observable.create { emitter ->
-        binding.streamSendButton.setOnClickListener {
-            emitter.onNext(binding.streamMessageEditText.text.toString().trim())
-            binding.streamMessageEditText.setText("")
+    private fun getSendButtonObservable(): Observable<Pair<String, String>> = Observable.create { emitter ->
+        with(binding) {
+            streamSendButton.setOnClickListener {
+                emitter.onNext(
+                    streamMessageEditText.text.toString().trim() to
+                            streamTopicEditText.text.toString().trim()
+                )
+                streamMessageEditText.setText("")
+            }
         }
     }
 

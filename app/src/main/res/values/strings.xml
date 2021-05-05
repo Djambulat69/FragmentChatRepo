@@ -26,4 +26,5 @@
     <string name="description">Description</string>
     <string name="invite_only">Invite only</string>
     <string name="stream_created">Stream created!</string>
+    <string name="topic_hint">#topic</string>
 </resources>
