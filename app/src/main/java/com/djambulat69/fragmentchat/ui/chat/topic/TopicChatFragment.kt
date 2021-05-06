@@ -16,13 +16,10 @@ import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.NetworkListener
-import com.djambulat69.fragmentchat.ui.chat.EditMessageDialogFragment
+import com.djambulat69.fragmentchat.ui.chat.*
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.EmojiBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.MessageOptionsBottomSheetDialog
-import com.djambulat69.fragmentchat.ui.chat.getScrollObservable
-import com.djambulat69.fragmentchat.ui.chat.messagesToMessageUIs
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
-import com.djambulat69.fragmentchat.ui.chat.registerAutoScrollAdapterDataObserver
 import com.djambulat69.fragmentchat.utils.copyText
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
@@ -45,6 +42,7 @@ class TopicChatFragment :
     TopicChatView,
     EmojiBottomSheetDialog.EmojiBottomDialogListener,
     MessageOptionsBottomSheetDialog.MessageOptionsListener,
+    ChangeTopicDialogFragment.ChangeTopicListener,
     EditMessageDialogFragment.EditMessageDialogListener,
     NetworkListener {
 
@@ -134,7 +132,7 @@ class TopicChatFragment :
     }
 
     override fun showError() {
-        Snackbar.make(requireContext(), binding.root, getString(R.string.check_connection_text), Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(requireContext(), binding.root, getString(R.string.error_text), Snackbar.LENGTH_SHORT).show()
     }
 
     override fun showLoading() {
@@ -175,6 +173,18 @@ class TopicChatFragment :
         clipBoard.copyText(text)
 
         Toast.makeText(requireContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun deleteMessage(id: Int) {
+        presenter.deleteMessage(id)
+    }
+
+    override fun showChangeTopicDialog(id: Int, oldTopic: String) {
+        ChangeTopicDialogFragment.newInstance(id, oldTopic).show(childFragmentManager, null)
+    }
+
+    override fun changeMessageTopic(messageId: Int, newTopic: String) {
+        presenter.changeMessageTopic(messageId, newTopic)
     }
 
     private fun setLoading(isVisible: Boolean) {

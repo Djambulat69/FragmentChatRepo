@@ -71,6 +71,11 @@ interface ZulipChatService {
     ): Single<RegisterEventResponse>
 
 
+    @DELETE("messages/{msg_id}")
+    fun deleteMessage(
+        @Path("msg_id") id: Int
+    ): Completable
+
     @DELETE("messages/{message_id}/reactions")
     fun deleteReaction(
         @Path("message_id") messageId: Int,
@@ -82,6 +87,12 @@ interface ZulipChatService {
     fun editMessageText(
         @Path("msgId") id: Int,
         @Query("content") newText: String
+    ): Completable
+
+    @PATCH("messages/{msgId}")
+    fun changeMessageTopic(
+        @Path("msgId") id: Int,
+        @Query("topic") newTopic: String
     ): Completable
 
 }

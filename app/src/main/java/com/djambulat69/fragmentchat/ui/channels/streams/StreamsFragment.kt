@@ -93,7 +93,7 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     }
 
     override fun showToastError() {
-        Toast.makeText(requireContext(), getString(R.string.check_connection_text), Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.error_text), Toast.LENGTH_SHORT).show()
     }
 
     override fun showLoading() {

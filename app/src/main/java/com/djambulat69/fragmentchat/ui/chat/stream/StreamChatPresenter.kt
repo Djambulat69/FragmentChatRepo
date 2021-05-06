@@ -82,6 +82,30 @@ class StreamChatPresenter @Inject constructor(
         )
     }
 
+    fun deleteMessage(id: Int) {
+        compositeDisposable.add(
+            repository.deleteMessage(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { updateMessages() },
+                    { e -> showError(e) }
+                )
+        )
+    }
+
+    fun changeMessageTopic(id: Int, newTopic: String) {
+        compositeDisposable.add(
+            repository.changeMessageTopic(id, newTopic)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { updateMessages() },
+                    { e -> showError(e) }
+                )
+        )
+    }
+
     fun subscribeOnScrolling(scrollObservable: Observable<Long>) {
         viewDisposable.add(
             scrollObservable

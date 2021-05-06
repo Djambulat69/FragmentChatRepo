@@ -8,7 +8,7 @@
         android:id="@+id/check_connection_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/check_connection_text"
+        android:text="@string/error_text"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/retry_button"
         app:layout_constraintEnd_toEndOf="parent"

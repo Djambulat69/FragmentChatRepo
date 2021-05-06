@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import com.djambulat69.fragmentchat.databinding.MessageOptionsBottomSheetBinding
+import com.djambulat69.fragmentchat.model.MyUser
 import com.djambulat69.fragmentchat.model.network.Message
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -34,7 +36,7 @@ class MessageOptionsBottomSheetDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val message = requireArguments().getSerializable(ARG_MESSAGE) as Message
-
+        val isMyMessage = message.senderId == MyUser.getId()
 
         with(binding) {
             addReactionOption.setOnClickListener {
@@ -42,8 +44,20 @@ class MessageOptionsBottomSheetDialog : BottomSheetDialogFragment() {
                 dismiss()
             }
 
+            deleteMessageOption.isVisible = isMyMessage
+            deleteMessageOption.setOnClickListener {
+                listener?.deleteMessage(message.id)
+                dismiss()
+            }
+
+            editMessageOption.isVisible = isMyMessage
             editMessageOption.setOnClickListener {
                 listener?.showEditMessageDialog(message.id, message.content)
+                dismiss()
+            }
+
+            changeTopicOption.setOnClickListener {
+                listener?.showChangeTopicDialog(message.id, message.topicName)
                 dismiss()
             }
 
@@ -57,7 +71,9 @@ class MessageOptionsBottomSheetDialog : BottomSheetDialogFragment() {
 
     interface MessageOptionsListener {
         fun showEmojiBottomSheetFromMessageOptions(messageId: Int)
+        fun deleteMessage(id: Int)
         fun showEditMessageDialog(messageId: Int, messageOldText: String)
+        fun showChangeTopicDialog(id: Int, oldTopic: String)
         fun copyToClipBoard(text: String)
     }
 

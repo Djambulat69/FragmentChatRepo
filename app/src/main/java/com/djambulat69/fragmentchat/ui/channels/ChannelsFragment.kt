@@ -84,7 +84,7 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialo
     }
 
     override fun showError() {
-        Snackbar.make(binding.root, R.string.check_connection_text, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(binding.root, R.string.error_text, Snackbar.LENGTH_SHORT).show()
     }
 
     override fun createStream(name: String, description: String, inviteOnly: Boolean) {

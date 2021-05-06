@@ -54,6 +54,8 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
 
     fun addReaction(messageId: Int, emojiName: String): Completable = zulipService.addReaction(messageId, emojiName)
 
+    fun deleteMessage(id: Int): Completable = zulipService.deleteMessage(id)
+
     fun deleteReaction(messageId: Int, emojiName: String): Completable = zulipService.deleteReaction(messageId, emojiName)
 
     fun subscribeOnStream(subscribtion: Subscribtion, inviteOnly: Boolean): Completable =
@@ -63,6 +65,8 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
         )
 
     fun editMessageText(id: Int, newText: String): Completable = zulipService.editMessageText(id, newText)
+
+    fun changeMessageTopic(id: Int, newTopic: String): Completable = zulipService.changeMessageTopic(id, newTopic)
 
     fun registerEventQueue(): Single<RegisterEventResponse> = zulipService.registerEventsQueue()
 
