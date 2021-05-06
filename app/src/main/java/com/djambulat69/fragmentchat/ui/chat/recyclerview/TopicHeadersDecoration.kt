@@ -16,42 +16,20 @@ import kotlin.math.roundToInt
 
 class TopicHeadersDecoration(
     private val root: ViewGroup,
-    private val items: List<ViewTyped>,
+    _items: List<ViewTyped>,
 ) : RecyclerView.ItemDecoration() {
+
+    var items = _items
+        set(newItems) {
+            field = newItems
+            headerTopicViewsIndexed = getHeaderTopicViews()
+        }
 
     private val context = root.context
     private val layoutInflater = LayoutInflater.from(context)
 
-    private val headerTopicViewsIndexed: Map<Int, TextView>
+    private var headerTopicViewsIndexed: Map<Int, TextView> = getHeaderTopicViews()
     private val headerHeight = context.resources.getDimension(R.dimen.chat_topic_title_height).roundToInt()
-
-    init {
-        val topicsIndexed = items
-            .withIndex()
-            .filter { pair ->
-                pair.value is MessageUI
-            }
-            .map { pair ->
-                pair.index to (pair.value as MessageUI).message.topicName
-            }
-
-        headerTopicViewsIndexed =
-            topicsIndexed
-                .filterIndexed { i, pair ->
-                    if (i == 0) true
-                    else {
-                        topicsIndexed[i - 1].second != pair.second
-                    }
-                }
-                .map { pair ->
-                    val topicView = (layoutInflater.inflate(R.layout.topic_title_view, root, false) as TextView)
-                        .apply {
-                            text = context.resources.getString(R.string.topic_title, pair.second)
-                        }
-                    pair.first to topicView
-                }
-                .toMap()
-    }
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
@@ -117,6 +95,33 @@ class TopicHeadersDecoration(
         withTranslation(y = translationY) {
             topicView.draw(this)
         }
+    }
+
+    private fun getHeaderTopicViews(): Map<Int, TextView> {
+        val topicsIndexed = items
+            .withIndex()
+            .filter { pair ->
+                pair.value is MessageUI
+            }
+            .map { pair ->
+                pair.index to (pair.value as MessageUI).message.topicName
+            }
+
+        return topicsIndexed
+            .filterIndexed { i, pair ->
+                if (i == 0) true
+                else {
+                    topicsIndexed[i - 1].second != pair.second
+                }
+            }
+            .map { pair ->
+                val topicView = (layoutInflater.inflate(R.layout.topic_title_view, root, false) as TextView)
+                    .apply {
+                        text = context.resources.getString(R.string.topic_title, pair.second)
+                    }
+                pair.first to topicView
+            }
+            .toMap()
     }
 
 }

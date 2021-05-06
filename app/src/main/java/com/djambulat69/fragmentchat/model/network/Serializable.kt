@@ -58,7 +58,7 @@ data class Message(
     @SerialName("timestamp") val timestamp: Int,
     @SerialName("stream_id") val streamId: Int,
     @SerialName("subject") val topicName: String
-)
+) : java.io.Serializable
 
 @Serializable
 data class Reaction(

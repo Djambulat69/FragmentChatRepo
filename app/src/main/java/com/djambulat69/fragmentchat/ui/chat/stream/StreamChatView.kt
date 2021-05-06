@@ -19,5 +19,5 @@ interface StreamChatView : MvpView {
     fun showError()
 
     @OneExecution
-    fun showMessageOptions()
+    fun showMessageOptions(message: Message)
 }

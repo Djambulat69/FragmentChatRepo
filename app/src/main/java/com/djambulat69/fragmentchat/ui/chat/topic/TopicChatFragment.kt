@@ -1,10 +1,12 @@
 package com.djambulat69.fragmentchat.ui.chat.topic
 
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -14,12 +16,14 @@ import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.NetworkListener
+import com.djambulat69.fragmentchat.ui.chat.EditMessageDialogFragment
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.EmojiBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.MessageOptionsBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.getScrollObservable
 import com.djambulat69.fragmentchat.ui.chat.messagesToMessageUIs
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
 import com.djambulat69.fragmentchat.ui.chat.registerAutoScrollAdapterDataObserver
+import com.djambulat69.fragmentchat.utils.copyText
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
@@ -36,7 +40,12 @@ private const val ARG_TOPIC = "topic"
 private const val ARG_STREAM_TITLE = "stream_title"
 private const val ARG_STREAM_ID = "stream_id"
 
-class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener,
+class TopicChatFragment :
+    MvpAppCompatFragment(),
+    TopicChatView,
+    EmojiBottomSheetDialog.EmojiBottomDialogListener,
+    MessageOptionsBottomSheetDialog.MessageOptionsListener,
+    EditMessageDialogFragment.EditMessageDialogListener,
     NetworkListener {
 
     private var fragmentInteractor: FragmentInteractor? = null
@@ -137,16 +146,35 @@ class TopicChatFragment : MvpAppCompatFragment(), TopicChatView, EmojiBottomShee
         EmojiBottomSheetDialog.newInstance(messageId).show(childFragmentManager, null)
     }
 
-    override fun showMessageOptions() {
-        MessageOptionsBottomSheetDialog.newInstance().show(childFragmentManager, null)
+    override fun showMessageOptions(message: Message) {
+        MessageOptionsBottomSheetDialog.newInstance(message).show(childFragmentManager, null)
     }
 
     override fun addReaction(messageId: Int, emojiName: String) {
         presenter.addReactionInMessage(messageId, emojiName)
     }
 
+    override fun editMessage(messageId: Int, newText: String) {
+        presenter.editMessageText(messageId, newText)
+    }
+
+    override fun showEmojiBottomSheetFromMessageOptions(messageId: Int) {
+        showEmojiBottomSheet(messageId)
+    }
+
+    override fun showEditMessageDialog(messageId: Int, messageOldText: String) {
+        EditMessageDialogFragment.newInstance(messageId, messageOldText).show(childFragmentManager, null)
+    }
+
     override fun onAvailable() {
         presenter.updateMessages()
+    }
+
+    override fun copyToClipBoard(text: String) {
+        val clipBoard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipBoard.copyText(text)
+
+        Toast.makeText(requireContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
     }
 
     private fun setLoading(isVisible: Boolean) {

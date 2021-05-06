@@ -62,6 +62,8 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
             inviteOnly
         )
 
+    fun editMessageText(id: Int, newText: String): Completable = zulipService.editMessageText(id, newText)
+
     fun registerEventQueue(): Single<RegisterEventResponse> = zulipService.registerEventsQueue()
 
     fun getEventQueue(queueId: String, lastEventId: Int): Single<GetEventsResponse> =

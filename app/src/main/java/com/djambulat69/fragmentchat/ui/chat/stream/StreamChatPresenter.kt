@@ -70,6 +70,18 @@ class StreamChatPresenter @Inject constructor(
         )
     }
 
+    fun editMessageText(id: Int, newText: String) {
+        compositeDisposable.add(
+            repository.editMessageText(id, newText)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { updateMessages() },
+                    { e -> showError(e) }
+                )
+        )
+    }
+
     fun subscribeOnScrolling(scrollObservable: Observable<Long>) {
         viewDisposable.add(
             scrollObservable
@@ -191,7 +203,7 @@ class StreamChatPresenter @Inject constructor(
                 }
             }
             is ChatClickTypes.MessageLongClick -> {
-                viewState.showMessageOptions()
+                viewState.showMessageOptions(click.message)
             }
         }
     }

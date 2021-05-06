@@ -77,4 +77,11 @@ interface ZulipChatService {
         @Query("emoji_name") emojiName: String
     ): Completable
 
+
+    @PATCH("messages/{msgId}")
+    fun editMessageText(
+        @Path("msgId") id: Int,
+        @Query("content") newText: String
+    ): Completable
+
 }

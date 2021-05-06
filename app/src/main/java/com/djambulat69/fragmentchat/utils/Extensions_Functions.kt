@@ -1,5 +1,7 @@
 package com.djambulat69.fragmentchat.utils
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +46,11 @@ fun ViewPager2.getCurrentFragments(fragmentManager: FragmentManager): List<Fragm
         fragments[i] = fragmentManager.findFragmentByTag("f$i")
     }
     return fragments
+}
+
+fun ClipboardManager.copyText(text: String) {
+    val clip = ClipData.newPlainText(null, text)
+    setPrimaryClip(clip)
 }
 
 // Functions

@@ -47,6 +47,8 @@ class TopicChatRepository @Inject constructor(
     fun addReaction(messageId: Int, emojiName: String): Completable =
         zulipService.addReaction(messageId, emojiName)
 
+    fun editMessageText(id: Int, newText: String): Completable = zulipService.editMessageText(id, newText)
+
     fun deleteReaction(messageId: Int, emojiName: String): Completable =
         zulipService.deleteReaction(messageId, emojiName)
 

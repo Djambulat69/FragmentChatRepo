@@ -1,4 +1,4 @@
- package com.djambulat69.fragmentchat.ui.chat.topic
+package com.djambulat69.fragmentchat.ui.chat.topic
 
 import android.util.Log
 import com.djambulat69.fragmentchat.model.network.NetworkChecker
@@ -14,25 +14,25 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 
- private const val TAG = "TopicChatPresenter"
- private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
- private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
- private const val INITIAL_PAGE_SIZE = 50
- private const val NEXT_PAGE_SIZE = 30
- private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 100L
+private const val TAG = "TopicChatPresenter"
+private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
+private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
+private const val INITIAL_PAGE_SIZE = 50
+private const val NEXT_PAGE_SIZE = 30
+private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 100L
 
 
- class TopicChatPresenter @Inject constructor(
-     private val repository: TopicChatRepository
- ) : MvpPresenter<TopicChatView>() {
+class TopicChatPresenter @Inject constructor(
+    private val repository: TopicChatRepository
+) : MvpPresenter<TopicChatView>() {
 
-     var hasMoreMessages = true
+    var hasMoreMessages = true
 
-     private var isNextPageLoading = false
-     private val compositeDisposable = CompositeDisposable()
-     private val viewDisposable = CompositeDisposable()
+    private var isNextPageLoading = false
+    private val compositeDisposable = CompositeDisposable()
+    private val viewDisposable = CompositeDisposable()
 
-     private lateinit var topicTitle: String
+    private lateinit var topicTitle: String
     private lateinit var streamTitle: String
     private var streamId by Delegates.notNull<Int>()
 
@@ -70,6 +70,18 @@ import kotlin.properties.Delegates
                 .subscribe(
                     { updateMessages() },
                     { exception -> showError(exception) }
+                )
+        )
+    }
+
+    fun editMessageText(id: Int, newText: String) {
+        compositeDisposable.add(
+            repository.editMessageText(id, newText)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { updateMessages() },
+                    { e -> showError(e) }
                 )
         )
     }
@@ -186,7 +198,7 @@ import kotlin.properties.Delegates
                 }
             }
             is ChatClickTypes.MessageLongClick -> {
-                viewState.showMessageOptions()
+                viewState.showMessageOptions(click.message)
             }
         }
     }

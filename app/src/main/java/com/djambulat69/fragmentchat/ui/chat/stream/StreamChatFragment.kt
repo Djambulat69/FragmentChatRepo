@@ -1,10 +1,12 @@
 package com.djambulat69.fragmentchat.ui.chat.stream
 
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -13,12 +15,14 @@ import com.djambulat69.fragmentchat.databinding.FragmentStreamChatBinding
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
+import com.djambulat69.fragmentchat.ui.chat.EditMessageDialogFragment
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.EmojiBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.MessageOptionsBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.getScrollObservable
 import com.djambulat69.fragmentchat.ui.chat.messagesToMessageUIs
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
 import com.djambulat69.fragmentchat.ui.chat.registerAutoScrollAdapterDataObserver
+import com.djambulat69.fragmentchat.utils.copyText
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
@@ -33,7 +37,14 @@ import javax.inject.Provider
 private const val ARG_STREAM_TITLE = "stream_title"
 private const val ARG_STREAM_ID = "stream_id"
 
-class StreamChatFragment : MvpAppCompatFragment(), StreamChatView, EmojiBottomSheetDialog.EmojiBottomDialogListener {
+private const val TOPIC_HEADERS_ITEM_DECORATION_POSITION = 0
+
+class StreamChatFragment :
+    MvpAppCompatFragment(),
+    StreamChatView,
+    EmojiBottomSheetDialog.EmojiBottomDialogListener,
+    EditMessageDialogFragment.EditMessageDialogListener,
+    MessageOptionsBottomSheetDialog.MessageOptionsListener {
 
     private var fragmentInteractor: FragmentInteractor? = null
 
@@ -80,6 +91,7 @@ class StreamChatFragment : MvpAppCompatFragment(), StreamChatView, EmojiBottomSh
                 ).apply {
                     registerAutoScrollAdapterDataObserver(binding.streamChatRecyclerView)
                 }
+            streamChatRecyclerView.addItemDecoration(TopicHeadersDecoration(streamChatRecyclerView, emptyList()))
 
             streamChatToolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
@@ -101,8 +113,6 @@ class StreamChatFragment : MvpAppCompatFragment(), StreamChatView, EmojiBottomSh
         super.onDestroyView()
     }
 
-    private var lastDecoration: TopicHeadersDecoration? = null
-
     override fun showMessages(messages: List<Message>) {
         val uiItems: List<ViewTyped> =
             messagesToMessageUIs(messages).groupBy { it.date }.flatMap { (date: String, messageUIsByDate: List<MessageUI>) ->
@@ -113,14 +123,9 @@ class StreamChatFragment : MvpAppCompatFragment(), StreamChatView, EmojiBottomSh
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
 
-        lastDecoration?.let { binding.streamChatRecyclerView.removeItemDecoration(it) }
-        val currentDecoration = TopicHeadersDecoration(
-            binding.streamChatRecyclerView,
+        (binding.streamChatRecyclerView.getItemDecorationAt(TOPIC_HEADERS_ITEM_DECORATION_POSITION) as TopicHeadersDecoration).items =
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
-        )
-        binding.streamChatRecyclerView.addItemDecoration(currentDecoration)
-        lastDecoration = currentDecoration
 
         setLoading(false)
         setChatVisibility(true)
@@ -139,12 +144,31 @@ class StreamChatFragment : MvpAppCompatFragment(), StreamChatView, EmojiBottomSh
         EmojiBottomSheetDialog.newInstance(messageId).show(childFragmentManager, null)
     }
 
-    override fun showMessageOptions() {
-        MessageOptionsBottomSheetDialog.newInstance().show(childFragmentManager, null)
+    override fun showMessageOptions(message: Message) {
+        MessageOptionsBottomSheetDialog.newInstance(message).show(childFragmentManager, null)
     }
 
     override fun addReaction(messageId: Int, emojiName: String) {
         presenter.addReactionInMessage(messageId, emojiName)
+    }
+
+    override fun showEmojiBottomSheetFromMessageOptions(messageId: Int) {
+        showEmojiBottomSheet(messageId)
+    }
+
+    override fun showEditMessageDialog(messageId: Int, messageOldText: String) {
+        EditMessageDialogFragment.newInstance(messageId, messageOldText).show(childFragmentManager, null)
+    }
+
+    override fun editMessage(messageId: Int, newText: String) {
+        presenter.editMessageText(messageId, newText)
+    }
+
+    override fun copyToClipBoard(text: String) {
+        val clipBoard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipBoard.copyText(text)
+
+        Toast.makeText(requireContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
     }
 
     private fun setLoading(isVisible: Boolean) {
