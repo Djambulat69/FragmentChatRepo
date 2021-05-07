@@ -198,7 +198,6 @@ class TopicChatPresenter @Inject constructor(
             repository.getMessages(topicTitle, streamId)
                 .subscribeOn(Schedulers.io())
                 .debounce(DB_MESSAGES_LOAD_DEBOUNCE, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { viewState.showLoading() }
                 .filter { it.isNotEmpty() }

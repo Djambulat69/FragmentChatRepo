@@ -4,7 +4,7 @@ import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.model.network.Stream
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 
-data class StreamUI(
+class StreamUI(
     val stream: Stream
 ) : ViewTyped {
 

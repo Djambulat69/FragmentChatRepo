@@ -204,7 +204,6 @@ class StreamChatPresenter @Inject constructor(
             repository.getMessages(streamId)
                 .subscribeOn(Schedulers.io())
                 .debounce(DB_MESSAGES_LOAD_DEBOUNCE, TimeUnit.MILLISECONDS)
-                .distinctUntilChanged()
                 .map { messages ->
                     messagesByDate(messages, true)
                 }

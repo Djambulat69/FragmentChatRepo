@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 
 @Entity(tableName = "streams_table", primaryKeys = ["streamId", "isSubscribed"])
 @Serializable
-class Stream(
+data class Stream(
     @SerialName("name") val name: String,
     @SerialName("stream_id") val streamId: Int
 ) {
