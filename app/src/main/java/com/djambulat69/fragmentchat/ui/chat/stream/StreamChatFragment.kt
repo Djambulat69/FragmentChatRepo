@@ -194,7 +194,7 @@ class StreamChatFragment :
 
     private fun setEmojiBottomSheetResultListener() {
         setChildFragmentResultListener(EmojiBottomSheetDialog.EMOJI_REQUEST_KEY) { _: String, bundle: Bundle ->
-            val messageId = bundle.getInt(EmojiBottomSheetDialog.EMOJI_RESULT_KEY)
+        val messageId = bundle.getInt(EmojiBottomSheetDialog.MESSAGE_ID_RESULT_KEY)
             val emojiName = bundle.getString(EmojiBottomSheetDialog.EMOJI_RESULT_KEY) as String
 
             presenter.addReactionInMessage(messageId, emojiName)
