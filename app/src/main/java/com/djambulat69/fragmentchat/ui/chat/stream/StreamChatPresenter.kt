@@ -2,6 +2,7 @@ package com.djambulat69.fragmentchat.ui.chat.stream
 
 import android.util.Log
 import com.djambulat69.fragmentchat.model.network.NetworkChecker
+import com.djambulat69.fragmentchat.ui.chat.NO_TOPIC_TITLE
 import com.djambulat69.fragmentchat.ui.chat.messagesByDate
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatClickTypes
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -95,7 +96,9 @@ class StreamChatPresenter @Inject constructor(
         )
     }
 
-    fun changeMessageTopic(id: Int, newTopic: String) {
+    fun changeMessageTopic(id: Int, _newTopic: String) {
+        val newTopic = if (_newTopic.isBlank()) NO_TOPIC_TITLE else _newTopic
+
         compositeDisposable.add(
             repository.changeMessageTopic(id, newTopic)
                 .subscribeOn(Schedulers.io())
@@ -152,7 +155,9 @@ class StreamChatPresenter @Inject constructor(
         )
     }
 
-    private fun sendMessage(messageText: String, topicTitle: String) {
+    private fun sendMessage(messageText: String, _topicTitle: String) {
+        val topicTitle = if (_topicTitle.isBlank()) NO_TOPIC_TITLE else _topicTitle
+
         compositeDisposable.add(
             repository.sendMessage(streamId, messageText, topicTitle)
                 .subscribeOn(Schedulers.io())

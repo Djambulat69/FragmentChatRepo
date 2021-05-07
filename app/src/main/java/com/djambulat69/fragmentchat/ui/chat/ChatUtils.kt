@@ -11,6 +11,8 @@ import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import com.djambulat69.fragmentchat.utils.secondsToDateString
 import io.reactivex.rxjava3.core.Observable
 
+const val NO_TOPIC_TITLE = "(no topic)"
+
 private const val MESSAGES_PREFETCH_DISTANCE = 5
 private const val MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL = 3
 
