@@ -2,6 +2,7 @@ package com.djambulat69.fragmentchat.ui.chat.stream
 
 import android.util.Log
 import com.djambulat69.fragmentchat.model.network.NetworkChecker
+import com.djambulat69.fragmentchat.ui.chat.messagesByDate
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatClickTypes
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -203,6 +204,10 @@ class StreamChatPresenter @Inject constructor(
             repository.getMessages(streamId)
                 .subscribeOn(Schedulers.io())
                 .debounce(DB_MESSAGES_LOAD_DEBOUNCE, TimeUnit.MILLISECONDS)
+                .distinctUntilChanged()
+                .map { messages ->
+                    messagesByDate(messages, true)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { viewState.showLoading() }
                 .filter { it.isNotEmpty() }

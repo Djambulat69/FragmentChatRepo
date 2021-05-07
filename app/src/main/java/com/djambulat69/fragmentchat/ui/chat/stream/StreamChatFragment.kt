@@ -35,8 +35,6 @@ import javax.inject.Provider
 private const val ARG_STREAM_TITLE = "stream_title"
 private const val ARG_STREAM_ID = "stream_id"
 
-private const val TOPIC_HEADERS_ITEM_DECORATION_POSITION = 0
-
 class StreamChatFragment :
     MvpAppCompatFragment(),
     StreamChatView,
@@ -91,7 +89,6 @@ class StreamChatFragment :
                 ).apply {
                     registerAutoScrollAdapterDataObserver(binding.streamChatRecyclerView)
                 }
-            streamChatRecyclerView.addItemDecoration(TopicHeadersDecoration(streamChatRecyclerView, emptyList()))
 
             streamChatToolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
@@ -113,19 +110,13 @@ class StreamChatFragment :
         super.onDestroyView()
     }
 
-    override fun showMessages(messages: List<Message>) {
-        val uiItems: List<ViewTyped> =
-            messagesToMessageUIs(messages).groupBy { it.date }.flatMap { (date: String, messageUIsByDate: List<MessageUI>) ->
-                listOf(DateSeparatorUI(date)) + messageUIsByDate
-            }
+    override fun showMessages(uiItems: List<ViewTyped>) {
 
         (binding.streamChatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items =
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
 
-        (binding.streamChatRecyclerView.getItemDecorationAt(TOPIC_HEADERS_ITEM_DECORATION_POSITION) as TopicHeadersDecoration).items =
-            if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
-            else uiItems
+
 
         setLoading(false)
         setChatVisibility(true)

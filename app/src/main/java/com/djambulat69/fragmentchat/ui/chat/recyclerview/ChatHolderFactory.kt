@@ -2,6 +2,7 @@ package com.djambulat69.fragmentchat.ui.chat.recyclerview
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.bumptech.glide.RequestManager
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.IncomingMessageLayoutBinding
@@ -30,6 +31,7 @@ class ChatHolderFactory(private val glide: RequestManager) : HolderFactory<ViewT
                 OutComingMessageViewHolder(binding, clicks)
             }
             R.layout.date_separator -> DateSeparatorViewHolder(view)
+            R.layout.topic_title_view -> TopicTitleViewHolder(view as TextView)
             else ->
                 throw Exception("Unknown ViewType ${parent.resources.getResourceName(viewType)}")
         } as BaseViewHolder<ViewTyped>

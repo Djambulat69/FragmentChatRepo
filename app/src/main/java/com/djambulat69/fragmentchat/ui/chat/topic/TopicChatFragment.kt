@@ -120,10 +120,7 @@ class TopicChatFragment :
     }
 
     override fun showMessages(messages: List<Message>) {
-        val uiItems: List<ViewTyped> =
-            messagesToMessageUIs(messages).groupBy { it.date }.flatMap { (date: String, messageUIsByDate: List<MessageUI>) ->
-                listOf(DateSeparatorUI(date)) + messageUIsByDate
-            }
+        val uiItems: List<ViewTyped> = messagesByDate(messages, false)
 
         (binding.topicChatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items =
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
