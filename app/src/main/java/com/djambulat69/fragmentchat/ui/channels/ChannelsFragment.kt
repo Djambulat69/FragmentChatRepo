@@ -10,6 +10,7 @@ import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentChannelsBinding
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.utils.getCurrentFragments
+import com.djambulat69.fragmentchat.utils.setChildFragmentResultListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import io.reactivex.rxjava3.core.Observable
@@ -18,7 +19,7 @@ import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
 
-class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialogFragment.CreateStreamListener {
+class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
 
     private var _binding: FragmentChannelsBinding? = null
     private val binding get() = _binding!!
@@ -44,6 +45,8 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setCreateStreamFragmentResultListener()
 
         binding.channelsViewPager.apply {
             adapter = ChannelsViewPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
@@ -87,10 +90,6 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialo
         Snackbar.make(binding.root, R.string.error_text, Snackbar.LENGTH_SHORT).show()
     }
 
-    override fun createStream(name: String, description: String, inviteOnly: Boolean) {
-        presenter.createStream(name, description, inviteOnly)
-    }
-
     override fun updateStreams() {
         binding.channelsViewPager.getCurrentFragments(childFragmentManager).forEach {
             if (it is StreamCreateListener) {
@@ -112,6 +111,17 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView, CreateStreamDialo
 
             }
         )
+    }
+
+    private fun setCreateStreamFragmentResultListener() {
+        setChildFragmentResultListener(CreateStreamDialogFragment.CREATE_STREAM_REQUEST_KEY) { _: String, bundle: Bundle ->
+
+            val streamName = bundle.getString(CreateStreamDialogFragment.NAME_RESULT_KEY) as String
+            val streamDescription = bundle.getString(CreateStreamDialogFragment.DESCRIPTION_RESULT_KEY) as String
+            val streamInviteOnly = bundle.getBoolean(CreateStreamDialogFragment.INVITE_ONLY_RESULT_KEY)
+
+            presenter.createStream(streamName, streamDescription, streamInviteOnly)
+        }
     }
 
     companion object {

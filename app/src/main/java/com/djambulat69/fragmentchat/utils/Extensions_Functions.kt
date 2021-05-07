@@ -10,6 +10,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.Px
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentResultListener
 import androidx.viewpager2.widget.ViewPager2
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -51,6 +52,10 @@ fun ViewPager2.getCurrentFragments(fragmentManager: FragmentManager): List<Fragm
 fun ClipboardManager.copyText(text: String) {
     val clip = ClipData.newPlainText(null, text)
     setPrimaryClip(clip)
+}
+
+fun Fragment.setChildFragmentResultListener(requestKey: String, listener: FragmentResultListener) {
+    childFragmentManager.setFragmentResultListener(requestKey, this, listener)
 }
 
 // Functions
