@@ -56,7 +56,7 @@ fun RecyclerView.Adapter<*>.registerAutoScrollAdapterDataObserver(chatRecyclerVi
             super.onItemRangeInserted(positionStart, itemCount)
 
             chatRecyclerView.adapter?.let {
-                if (positionStart > MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL) {
+                if (positionStart > it.itemCount - MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL) {
                     chatRecyclerView.scrollToPosition(it.itemCount - 1)
                 }
             }
