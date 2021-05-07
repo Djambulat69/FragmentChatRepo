@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat.bottomsheet
+package com.djambulat69.fragmentchat.ui.chat.bottomsheet.emoji
 
 import com.djambulat69.fragmentchat.utils.recyclerView.ClickTypes
 

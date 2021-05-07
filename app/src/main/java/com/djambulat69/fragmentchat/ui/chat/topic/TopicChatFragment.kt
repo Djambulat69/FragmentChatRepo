@@ -17,8 +17,8 @@ import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.NetworkListener
 import com.djambulat69.fragmentchat.ui.chat.*
-import com.djambulat69.fragmentchat.ui.chat.bottomsheet.EmojiBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.MessageOptionsBottomSheetDialog
+import com.djambulat69.fragmentchat.ui.chat.bottomsheet.emoji.EmojiBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
 import com.djambulat69.fragmentchat.utils.copyText
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter

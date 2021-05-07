@@ -7,6 +7,7 @@ import moxy.viewstate.strategy.alias.OneExecution
 
 
 interface TopicChatView : MvpView {
+
     @AddToEndSingle
     fun showMessages(messages: List<Message>)
 

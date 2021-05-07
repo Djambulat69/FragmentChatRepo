@@ -1,5 +1,6 @@
-package com.djambulat69.fragmentchat.ui.chat.bottomsheet
+package com.djambulat69.fragmentchat.ui.chat.bottomsheet.emoji
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +10,29 @@ import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.R
+import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.utils.EmojiEnum
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import moxy.MvpBottomSheetDialogFragment
+import moxy.ktx.moxyPresenter
+import javax.inject.Inject
+import javax.inject.Provider
 import kotlin.math.roundToInt
 
 private const val ARG_MESSAGE_ID = "message_id"
 
-class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
+class EmojiBottomSheetDialog : MvpBottomSheetDialogFragment(), EmojiDialogView {
+
+    @Inject
+    lateinit var presenterProvider: Provider<EmojiDialogPresenter>
+
+    private val presenter: EmojiDialogPresenter by moxyPresenter { presenterProvider.get() }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        FragmentChatApplication.INSTANCE.daggerAppComponent.inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.emoji_bottom_sheet_layout, container, false)
@@ -31,21 +46,7 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
         recyclerView?.adapter =
             AsyncAdapter(EmojiHolderFactory(), EmojiDiffCallback, EmojiClickMapper()).apply {
                 items = createEmojiList()
-                getClicks<EmojiClickTypes>()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        when (it) {
-                            is EmojiClickTypes.EmojiClick -> {
-                                setFragmentResult(
-                                    EMOJI_REQUEST_KEY, bundleOf(
-                                        MESSAGE_ID_RESULT_KEY to requireArguments().getInt(ARG_MESSAGE_ID),
-                                        EMOJI_RESULT_KEY to it.emojiUI.emoji.nameInZulip
-                                    )
-                                )
-                                dismiss()
-                            }
-                        }
-                    }
+                presenter.subscribeOnClicks(getClicks())
             }
 
         with(recyclerView) {
@@ -54,6 +55,21 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
             addItemDecoration(EmojiGridItemDecoration(spanCount, spacing))
         }
 
+    }
+
+    override fun onDestroyView() {
+        presenter.unsubscribeFromViews()
+        super.onDestroyView()
+    }
+
+    override fun setResultAndClose(emojiName: String) {
+        setFragmentResult(
+            EMOJI_REQUEST_KEY, bundleOf(
+                MESSAGE_ID_RESULT_KEY to requireArguments().getInt(ARG_MESSAGE_ID),
+                EMOJI_RESULT_KEY to emojiName
+            )
+        )
+        dismiss()
     }
 
     private fun createEmojiList(): List<EmojiUI> =

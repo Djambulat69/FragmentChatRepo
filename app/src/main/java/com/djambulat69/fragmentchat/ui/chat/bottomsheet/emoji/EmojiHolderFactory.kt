@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat.bottomsheet
+package com.djambulat69.fragmentchat.ui.chat.bottomsheet.emoji
 
 import android.view.View
 import android.view.ViewGroup
