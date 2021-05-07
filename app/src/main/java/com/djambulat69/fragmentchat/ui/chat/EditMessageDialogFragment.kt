@@ -1,11 +1,11 @@
 package com.djambulat69.fragmentchat.ui.chat
 
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.DialogEditMessageBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -18,16 +18,8 @@ class EditMessageDialogFragment : DialogFragment() {
     private var _binding: DialogEditMessageBinding? = null
     private val binding get() = _binding!!
 
-    private var listener: EditMessageDialogListener? = null
-
     private val oldText: String by lazy { requireArguments().getString(ARG_MESSAGE_OLD_TEXT) as String }
 
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        listener = parentFragment as EditMessageDialogListener
-    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogEditMessageBinding.inflate(layoutInflater)
@@ -37,9 +29,11 @@ class EditMessageDialogFragment : DialogFragment() {
             .setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _: Int ->
                 val newText = binding.editMessageEditText.text.toString()
                 if (oldText != newText) {
-                    listener?.editMessage(
-                        requireArguments().getInt(ARG_MESSAGE_ID),
-                        binding.editMessageEditText.text.toString()
+                    setFragmentResult(
+                        EDIT_MESSAGE_REQUEST_KEY, bundleOf(
+                            MESSAGE_ID_RESULT_KEY to requireArguments().getInt(ARG_MESSAGE_ID),
+                            NEW_TEXT_RESULT_KEY to newText
+                        )
                     )
                 }
                 dialog.dismiss()
@@ -51,10 +45,6 @@ class EditMessageDialogFragment : DialogFragment() {
             .create()
     }
 
-    interface EditMessageDialogListener {
-        fun editMessage(messageId: Int, newText: String)
-    }
-
     companion object {
         fun newInstance(messageId: Int, messageOldText: String) = EditMessageDialogFragment().apply {
             arguments = bundleOf(
@@ -62,6 +52,11 @@ class EditMessageDialogFragment : DialogFragment() {
                 ARG_MESSAGE_OLD_TEXT to messageOldText
             )
         }
+
+        const val EDIT_MESSAGE_REQUEST_KEY = "edit_message_request"
+
+        const val MESSAGE_ID_RESULT_KEY = "message_id_result"
+        const val NEW_TEXT_RESULT_KEY = "new_text_result"
     }
 
 }

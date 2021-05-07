@@ -3,6 +3,7 @@ package com.djambulat69.fragmentchat.utils
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,6 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.Px
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentResultListener
 import androidx.viewpager2.widget.ViewPager2
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -54,7 +54,7 @@ fun ClipboardManager.copyText(text: String) {
     setPrimaryClip(clip)
 }
 
-fun Fragment.setChildFragmentResultListener(requestKey: String, listener: FragmentResultListener) {
+fun Fragment.setChildFragmentResultListener(requestKey: String, listener: (String, Bundle) -> Unit) {
     childFragmentManager.setFragmentResultListener(requestKey, this, listener)
 }
 

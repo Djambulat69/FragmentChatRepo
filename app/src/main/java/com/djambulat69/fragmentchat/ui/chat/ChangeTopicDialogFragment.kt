@@ -1,11 +1,11 @@
 package com.djambulat69.fragmentchat.ui.chat
 
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.DialogChangeTopicBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -20,13 +20,6 @@ class ChangeTopicDialogFragment : DialogFragment() {
 
     private val oldTopic: String by lazy { requireArguments().getString(ARG_OLD_TOPIC) as String }
 
-    private var listener: ChangeTopicListener? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        listener = parentFragment as ChangeTopicListener
-    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
@@ -40,16 +33,17 @@ class ChangeTopicDialogFragment : DialogFragment() {
             .setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _: Int ->
                 val newTopic = binding.changeTopicEditText.text.toString()
                 if (oldTopic != newTopic) {
-                    listener?.changeMessageTopic(requireArguments().getInt(ARG_MESSAGE_ID), newTopic)
+                    setFragmentResult(
+                        CHANGE_TOPIC_REQUEST_KEY, bundleOf(
+                            MESSAGE_ID_RESULT_KEY to requireArguments().getInt(ARG_MESSAGE_ID),
+                            NEW_TOPIC_RESULT_KEY to newTopic
+                        )
+                    )
                 }
                 dialog.dismiss()
             }
             .setView(binding.root)
             .create()
-    }
-
-    interface ChangeTopicListener {
-        fun changeMessageTopic(messageId: Int, newTopic: String)
     }
 
     companion object {
@@ -59,5 +53,10 @@ class ChangeTopicDialogFragment : DialogFragment() {
                 ARG_OLD_TOPIC to oldTopic
             )
         }
+
+        const val CHANGE_TOPIC_REQUEST_KEY = "change_topic_request"
+
+        const val MESSAGE_ID_RESULT_KEY = "message_id_result"
+        const val NEW_TOPIC_RESULT_KEY = "new_topic_result"
     }
 }

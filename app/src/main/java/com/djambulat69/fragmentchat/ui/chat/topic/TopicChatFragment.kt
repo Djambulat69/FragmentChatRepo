@@ -24,6 +24,7 @@ import com.djambulat69.fragmentchat.utils.copyText
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
+import com.djambulat69.fragmentchat.utils.setChildFragmentResultListener
 import com.google.android.material.internal.TextWatcherAdapter
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.core.Observable
@@ -40,10 +41,7 @@ private const val ARG_STREAM_ID = "stream_id"
 class TopicChatFragment :
     MvpAppCompatFragment(),
     TopicChatView,
-    EmojiBottomSheetDialog.EmojiBottomDialogListener,
     MessageOptionsBottomSheetDialog.MessageOptionsListener,
-    ChangeTopicDialogFragment.ChangeTopicListener,
-    EditMessageDialogFragment.EditMessageDialogListener,
     NetworkListener {
 
     private var fragmentInteractor: FragmentInteractor? = null
@@ -85,6 +83,10 @@ class TopicChatFragment :
 
         val topicTitle = requireArguments().getString(ARG_TOPIC)
         val streamTitle = requireArguments().getString(ARG_STREAM_TITLE)
+
+        setEmojiBottomSheetResultListener()
+        setEditMessageTextResultListener()
+        setChangeMessageTopicResultListener()
 
         with(binding) {
             topicChatToolbar.title = getString(R.string.sharp_placeholder, streamTitle)
@@ -148,14 +150,6 @@ class TopicChatFragment :
         MessageOptionsBottomSheetDialog.newInstance(message).show(childFragmentManager, null)
     }
 
-    override fun addReaction(messageId: Int, emojiName: String) {
-        presenter.addReactionInMessage(messageId, emojiName)
-    }
-
-    override fun editMessage(messageId: Int, newText: String) {
-        presenter.editMessageText(messageId, newText)
-    }
-
     override fun showEmojiBottomSheetFromMessageOptions(messageId: Int) {
         showEmojiBottomSheet(messageId)
     }
@@ -183,10 +177,6 @@ class TopicChatFragment :
         ChangeTopicDialogFragment.newInstance(id, oldTopic).show(childFragmentManager, null)
     }
 
-    override fun changeMessageTopic(messageId: Int, newTopic: String) {
-        presenter.changeMessageTopic(messageId, newTopic)
-    }
-
     private fun setLoading(isVisible: Boolean) {
         binding.includeTopicMessagesShimmer.messagesShimmer.isVisible = isVisible
     }
@@ -210,6 +200,33 @@ class TopicChatFragment :
                 binding.topicAddFileButton.isVisible = text.isBlank()
             }
         })
+    }
+
+    private fun setEmojiBottomSheetResultListener() {
+        setChildFragmentResultListener(EmojiBottomSheetDialog.EMOJI_REQUEST_KEY) { _: String, bundle: Bundle ->
+            val messageId = bundle.getInt(EmojiBottomSheetDialog.EMOJI_RESULT_KEY)
+            val emojiName = bundle.getString(EmojiBottomSheetDialog.EMOJI_RESULT_KEY) as String
+
+            presenter.addReactionInMessage(messageId, emojiName)
+        }
+    }
+
+    private fun setEditMessageTextResultListener() {
+        setChildFragmentResultListener(EditMessageDialogFragment.EDIT_MESSAGE_REQUEST_KEY) { _: String, bundle: Bundle ->
+            val messageId = bundle.getInt(EditMessageDialogFragment.MESSAGE_ID_RESULT_KEY)
+            val newText = bundle.getString(EditMessageDialogFragment.NEW_TEXT_RESULT_KEY) as String
+
+            presenter.editMessageText(messageId, newText)
+        }
+    }
+
+    private fun setChangeMessageTopicResultListener() {
+        setChildFragmentResultListener(ChangeTopicDialogFragment.CHANGE_TOPIC_REQUEST_KEY) { _: String, bundle: Bundle ->
+            val messageId = bundle.getInt(ChangeTopicDialogFragment.MESSAGE_ID_RESULT_KEY)
+            val newTopic = bundle.getString(ChangeTopicDialogFragment.NEW_TOPIC_RESULT_KEY) as String
+
+            presenter.changeMessageTopic(messageId, newTopic)
+        }
     }
 
     companion object {

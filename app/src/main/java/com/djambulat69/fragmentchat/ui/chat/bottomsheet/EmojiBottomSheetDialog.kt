@@ -1,11 +1,11 @@
 package com.djambulat69.fragmentchat.ui.chat.bottomsheet
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.R
@@ -18,14 +18,6 @@ import kotlin.math.roundToInt
 private const val ARG_MESSAGE_ID = "message_id"
 
 class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
-
-    private var listener: EmojiBottomDialogListener? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        listener = parentFragment as EmojiBottomDialogListener
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.emoji_bottom_sheet_layout, container, false)
@@ -44,7 +36,12 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
                     .subscribe {
                         when (it) {
                             is EmojiClickTypes.EmojiClick -> {
-                                listener?.addReaction(requireArguments().getInt(ARG_MESSAGE_ID), it.emojiUI.emoji.nameInZulip)
+                                setFragmentResult(
+                                    EMOJI_REQUEST_KEY, bundleOf(
+                                        MESSAGE_ID_RESULT_KEY to requireArguments().getInt(ARG_MESSAGE_ID),
+                                        EMOJI_RESULT_KEY to it.emojiUI.emoji.nameInZulip
+                                    )
+                                )
                                 dismiss()
                             }
                         }
@@ -63,13 +60,14 @@ class EmojiBottomSheetDialog : BottomSheetDialogFragment() {
         EmojiEnum.values().distinctBy { it.unicode }.sortedByDescending { it.unicodeCodePoint }.map { EmojiUI(it) }
 
 
-    interface EmojiBottomDialogListener {
-        fun addReaction(messageId: Int, emojiName: String)
-    }
-
     companion object {
         fun newInstance(messageId: Int) = EmojiBottomSheetDialog().apply {
             arguments = bundleOf(ARG_MESSAGE_ID to messageId)
         }
+
+        const val EMOJI_REQUEST_KEY = "emoji_request"
+
+        const val MESSAGE_ID_RESULT_KEY = "message_id_result"
+        const val EMOJI_RESULT_KEY = "emoji_result"
     }
 }
