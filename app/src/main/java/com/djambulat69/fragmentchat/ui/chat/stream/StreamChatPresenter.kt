@@ -52,28 +52,6 @@ class StreamChatPresenter @Inject constructor(
         this.streamId = streamId
     }
 
-    fun updateMessages() {
-        compositeDisposable.add(
-            repository.updateMessages(
-                streamTitle,
-                streamId,
-                NEWEST_ANCHOR_MESSAGE,
-                count = INITIAL_PAGE_SIZE
-            )
-                .subscribeOn(Schedulers.io())
-                .map { messagesResponse ->
-                    hasMoreMessages = !messagesResponse.foundOldest
-                    messagesResponse.messages
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    Functions.emptyConsumer(),
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-
     fun addReactionInMessage(messageId: Int, emojiName: String) {
         compositeDisposable.add(
             repository.addReaction(messageId, emojiName)
@@ -177,6 +155,27 @@ class StreamChatPresenter @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { updateMessages() },
+                    { exception -> showError(exception) }
+                )
+        )
+    }
+
+    private fun updateMessages() {
+        compositeDisposable.add(
+            repository.updateMessages(
+                streamTitle,
+                streamId,
+                NEWEST_ANCHOR_MESSAGE,
+                count = INITIAL_PAGE_SIZE
+            )
+                .subscribeOn(Schedulers.io())
+                .map { messagesResponse ->
+                    hasMoreMessages = !messagesResponse.foundOldest
+                    messagesResponse.messages
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    Functions.emptyConsumer(),
                     { exception -> showError(exception) }
                 )
         )

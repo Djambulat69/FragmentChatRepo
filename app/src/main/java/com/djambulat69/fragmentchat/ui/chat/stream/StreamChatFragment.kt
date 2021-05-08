@@ -103,7 +103,6 @@ class StreamChatFragment :
         presenter.subscribeOnSendingMessages(getSendButtonObservable())
         presenter.subscribeOnScrolling(getScrollObservable(binding.streamChatRecyclerView))
         setupTextWatcher()
-        presenter.updateMessages()
     }
 
     override fun onDestroyView() {
@@ -140,6 +139,7 @@ class StreamChatFragment :
     }
 
     override fun openTopicChat(topicTitle: String) {
+        fragmentInteractor?.back()
         fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
     }
 
