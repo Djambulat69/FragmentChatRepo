@@ -47,7 +47,7 @@ fun messagesByDate(messages: List<Message>, diffTopics: Boolean): List<ViewTyped
                     if (diffTopics) {
                         messagesToMessageUIsDiffTopics(messagesByDate)
                     } else {
-                        messagesToMessageUIsSameTopic(messages)
+                        messagesToMessageUIsSameTopic(messagesByDate)
                     }
         }
 
