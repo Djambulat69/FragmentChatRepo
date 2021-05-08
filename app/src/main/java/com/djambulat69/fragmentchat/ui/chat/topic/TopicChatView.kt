@@ -5,7 +5,6 @@ import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.OneExecution
 
-
 interface TopicChatView : MvpView {
 
     @AddToEndSingle

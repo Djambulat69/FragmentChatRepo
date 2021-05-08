@@ -20,7 +20,7 @@ private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
 private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
 private const val INITIAL_PAGE_SIZE = 50
 private const val NEXT_PAGE_SIZE = 30
-private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 100L
+private const val SCROLL_EMIT_THROTTLE_MILLIS = 100L
 
 class StreamChatPresenter @Inject constructor(
     private val repository: StreamChatRepository
@@ -114,7 +114,7 @@ class StreamChatPresenter @Inject constructor(
         viewDisposable.add(
             scrollObservable
                 .subscribeOn(Schedulers.io())
-                .debounce(SCROLL_EMIT_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS)
+                .throttleFirst(SCROLL_EMIT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
                 .subscribe { anchor ->
                     getNextMessages(anchor)
