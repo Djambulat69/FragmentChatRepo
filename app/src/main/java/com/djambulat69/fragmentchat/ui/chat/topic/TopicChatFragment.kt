@@ -54,6 +54,9 @@ class TopicChatFragment :
 
     private val presenter: TopicChatPresenter by moxyPresenter { presenterProvider.get() }
 
+    private val topicTitle: String by lazy { requireArguments().getString(ARG_TOPIC) as String }
+    private val streamTitle: String by lazy { requireArguments().getString(ARG_STREAM_TITLE) as String }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
@@ -81,9 +84,6 @@ class TopicChatFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val topicTitle = requireArguments().getString(ARG_TOPIC)
-        val streamTitle = requireArguments().getString(ARG_STREAM_TITLE)
-
         setEmojiBottomSheetResultListener()
         setEditMessageTextResultListener()
         setChangeMessageTopicResultListener()
@@ -99,7 +99,7 @@ class TopicChatFragment :
                     registerAutoScrollAdapterDataObserver(binding.topicChatRecyclerView)
                 }
 
-            chatTopicTitle.text = getString(R.string.topic_title, topicTitle)
+            includeChatTopicTitle.chatTopicTitle.text = getString(R.string.topic_title, topicTitle)
             topicChatToolbar.setNavigationOnClickListener {
                 fragmentInteractor?.back()
             }

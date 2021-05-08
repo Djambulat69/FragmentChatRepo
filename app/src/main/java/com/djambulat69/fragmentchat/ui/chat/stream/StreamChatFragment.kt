@@ -50,6 +50,9 @@ class StreamChatFragment :
 
     private val presenter: StreamChatPresenter by moxyPresenter { presenterProvider.get() }
 
+    private val streamTitle: String by lazy { requireArguments().getString(ARG_STREAM_TITLE) as String }
+    private val streamId: Int by lazy { requireArguments().getInt(ARG_STREAM_ID) }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
@@ -72,8 +75,6 @@ class StreamChatFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val streamTitle = requireArguments().getString(ARG_STREAM_TITLE)
 
         setEmojiBottomSheetResultListener()
         setEditMessageTextResultListener()
@@ -102,6 +103,7 @@ class StreamChatFragment :
         presenter.subscribeOnSendingMessages(getSendButtonObservable())
         presenter.subscribeOnScrolling(getScrollObservable(binding.streamChatRecyclerView))
         setupTextWatcher()
+        presenter.updateMessages()
     }
 
     override fun onDestroyView() {
@@ -116,14 +118,8 @@ class StreamChatFragment :
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
 
-
-
         setLoading(false)
         setChatVisibility(true)
-    }
-
-    override fun showError() {
-        Snackbar.make(requireContext(), binding.root, getString(R.string.error_text), Snackbar.LENGTH_SHORT).show()
     }
 
     override fun showLoading() {
@@ -135,8 +131,16 @@ class StreamChatFragment :
         EmojiBottomSheetDialog.newInstance(messageId).show(childFragmentManager, null)
     }
 
+    override fun showError() {
+        Snackbar.make(requireContext(), binding.root, getString(R.string.error_text), Snackbar.LENGTH_SHORT).show()
+    }
+
     override fun showMessageOptions(message: Message) {
         MessageOptionsBottomSheetDialog.newInstance(message).show(childFragmentManager, null)
+    }
+
+    override fun openTopicChat(topicTitle: String) {
+        fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
     }
 
     override fun showEmojiBottomSheetFromMessageOptions(messageId: Int) {

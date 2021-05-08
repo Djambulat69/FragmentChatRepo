@@ -52,13 +52,27 @@ class StreamChatPresenter @Inject constructor(
         this.streamId = streamId
     }
 
-    fun subscribeOnSendingMessages(sendObservable: Observable<Pair<String, String>>) {
-        viewDisposable.add(
-            sendObservable
+    fun updateMessages() {
+        compositeDisposable.add(
+            repository.updateMessages(
+                streamTitle,
+                streamId,
+                NEWEST_ANCHOR_MESSAGE,
+                count = INITIAL_PAGE_SIZE
+            )
                 .subscribeOn(Schedulers.io())
-                .subscribe { textAndTopic -> sendMessage(textAndTopic.first, textAndTopic.second) }
+                .map { messagesResponse ->
+                    hasMoreMessages = !messagesResponse.foundOldest
+                    messagesResponse.messages
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    Functions.emptyConsumer(),
+                    { exception -> showError(exception) }
+                )
         )
     }
+
 
     fun addReactionInMessage(messageId: Int, emojiName: String) {
         compositeDisposable.add(
@@ -110,6 +124,14 @@ class StreamChatPresenter @Inject constructor(
         )
     }
 
+    fun subscribeOnSendingMessages(sendObservable: Observable<Pair<String, String>>) {
+        viewDisposable.add(
+            sendObservable
+                .subscribeOn(Schedulers.io())
+                .subscribe { textAndTopic -> sendMessage(textAndTopic.first, textAndTopic.second) }
+        )
+    }
+
     fun subscribeOnScrolling(scrollObservable: Observable<Long>) {
         viewDisposable.add(
             scrollObservable
@@ -133,27 +155,6 @@ class StreamChatPresenter @Inject constructor(
     }
 
     fun unsubscribeFromViews() = viewDisposable.clear()
-
-    private fun updateMessages() {
-        compositeDisposable.add(
-            repository.updateMessages(
-                streamTitle,
-                streamId,
-                NEWEST_ANCHOR_MESSAGE,
-                count = INITIAL_PAGE_SIZE
-            )
-                .subscribeOn(Schedulers.io())
-                .map { messagesResponse ->
-                    hasMoreMessages = !messagesResponse.foundOldest
-                    messagesResponse.messages
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    Functions.emptyConsumer(),
-                    { exception -> showError(exception) }
-                )
-        )
-    }
 
     private fun sendMessage(messageText: String, _topicTitle: String) {
         val topicTitle = if (_topicTitle.isBlank()) NO_TOPIC_TITLE else _topicTitle
@@ -237,6 +238,9 @@ class StreamChatPresenter @Inject constructor(
             }
             is ChatClickTypes.MessageLongClick -> {
                 viewState.showMessageOptions(click.message)
+            }
+            is ChatClickTypes.TopicTitleClick -> {
+                viewState.openTopicChat(click.topicName)
             }
         }
     }

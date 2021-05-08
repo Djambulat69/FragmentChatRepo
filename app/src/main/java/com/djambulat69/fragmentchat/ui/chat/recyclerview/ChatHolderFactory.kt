@@ -31,7 +31,7 @@ class ChatHolderFactory(private val glide: RequestManager) : HolderFactory<ViewT
                 OutComingMessageViewHolder(binding, clicks)
             }
             R.layout.date_separator -> DateSeparatorViewHolder(view)
-            R.layout.topic_title_view -> TopicTitleViewHolder(view as TextView)
+            R.layout.topic_title_view -> TopicTitleViewHolder(view as TextView, clicks)
             else ->
                 throw Exception("Unknown ViewType ${parent.resources.getResourceName(viewType)}")
         } as BaseViewHolder<ViewTyped>

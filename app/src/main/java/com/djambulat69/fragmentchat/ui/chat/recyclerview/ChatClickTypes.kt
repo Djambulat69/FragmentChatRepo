@@ -7,4 +7,5 @@ sealed class ChatClickTypes : ClickTypes() {
     class AddEmojiClick(val item: MessageUI) : ChatClickTypes()
     class ReactionClick(val messageId: Int, val emojiName: String, val isSelected: Boolean) : ChatClickTypes()
     class MessageLongClick(val message: Message) : ChatClickTypes()
+    class TopicTitleClick(val topicName: String) : ChatClickTypes()
 }

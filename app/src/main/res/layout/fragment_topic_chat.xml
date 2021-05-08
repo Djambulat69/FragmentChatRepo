@@ -22,16 +22,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topic_helper_view" />
 
-    <TextView
-        android:id="@+id/chat_topic_title"
+    <include
+        android:id="@+id/include_chat_topic_title"
+        layout="@layout/topic_title_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/chat_topic_title_height"
-        android:background="?attr/colorPrimary"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintTop_toBottomOf="@+id/topic_chat_toolbar"
-        tools:layout_editor_absoluteX="0dp"
         tools:text="Topic: #testing" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -42,7 +38,7 @@
         app:layout_constraintBottom_toTopOf="@id/topic_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chat_topic_title"
+        app:layout_constraintTop_toBottomOf="@+id/include_chat_topic_title"
         app:stackFromEnd="true"
         tools:itemCount="4"
         tools:listitem="@layout/incoming_message_layout" />
@@ -105,7 +101,7 @@
         android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/topic_group"
-        app:layout_constraintTop_toBottomOf="@+id/chat_topic_title" />
+        app:layout_constraintTop_toBottomOf="@+id/include_chat_topic_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

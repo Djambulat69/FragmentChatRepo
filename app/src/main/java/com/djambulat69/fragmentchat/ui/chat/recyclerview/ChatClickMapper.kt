@@ -23,6 +23,8 @@ class ChatClickMapper : ClickMapper<ChatClickTypes>() {
                 itemClick.view.isSelected
             )
 
+            R.id.chat_topic_title -> ChatClickTypes.TopicTitleClick((items[itemClick.position] as TopicTitleUI).topicTitle)
+
             else -> throw IllegalArgumentException("Unknow viewId of itemClick: $itemClick")
         }
 

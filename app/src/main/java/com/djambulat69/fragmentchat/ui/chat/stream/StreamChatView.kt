@@ -21,4 +21,7 @@ interface StreamChatView : MvpView {
 
     @OneExecution
     fun showMessageOptions(message: Message)
+
+    @OneExecution
+    fun openTopicChat(topicTitle: String)
 }
