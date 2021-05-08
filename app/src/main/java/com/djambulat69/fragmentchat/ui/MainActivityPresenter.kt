@@ -13,6 +13,10 @@ class MainActivityPresenter @Inject constructor() : MvpPresenter<MainActivityVie
             override fun onAvailable(network: Network) {
                 viewState.onNetworkAvailable()
             }
+
+            override fun onLost(network: Network) {
+                viewState.onNetworkLost()
+            }
         }
     }
 

@@ -15,7 +15,6 @@ import com.djambulat69.fragmentchat.databinding.FragmentTopicChatBinding
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
-import com.djambulat69.fragmentchat.ui.NetworkListener
 import com.djambulat69.fragmentchat.ui.chat.*
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.MessageOptionsBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.emoji.EmojiBottomSheetDialog
@@ -41,8 +40,7 @@ private const val ARG_STREAM_ID = "stream_id"
 class TopicChatFragment :
     MvpAppCompatFragment(),
     TopicChatView,
-    MessageOptionsBottomSheetDialog.MessageOptionsListener,
-    NetworkListener {
+    MessageOptionsBottomSheetDialog.MessageOptionsListener {
 
     private var fragmentInteractor: FragmentInteractor? = null
 
@@ -153,10 +151,6 @@ class TopicChatFragment :
 
     override fun showEditMessageDialog(messageId: Int, messageOldText: String) {
         EditMessageDialogFragment.newInstance(messageId, messageOldText).show(childFragmentManager, null)
-    }
-
-    override fun onAvailable() {
-        presenter.updateMessages()
     }
 
     override fun copyToClipBoard(text: String) {

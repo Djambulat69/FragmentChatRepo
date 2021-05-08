@@ -35,4 +35,5 @@
     <string name="edit_message">Edit message</string>
     <string name="change_topic">Change topic</string>
     <string name="copy">Copy</string>
+    <string name="offline">Offline</string>
 </resources>

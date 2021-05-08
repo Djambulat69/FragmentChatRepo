@@ -8,4 +8,7 @@ interface MainActivityView : MvpView {
     @OneExecution
     fun onNetworkAvailable()
 
+    @OneExecution
+    fun onNetworkLost()
+
 }

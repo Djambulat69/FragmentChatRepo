@@ -90,7 +90,7 @@ class TopicChatPresenter @Inject constructor(
         viewDisposable.add(
             scrollObservable
                 .subscribeOn(Schedulers.io())
-                .throttleFirst(SCROLL_EMIT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
+                .debounce(SCROLL_EMIT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
                 .subscribe { anchor ->
                     getNextMessages(anchor)
