@@ -5,7 +5,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.ActivityMainBinding
-import com.djambulat69.fragmentchat.model.network.NetworkChecker
 import com.djambulat69.fragmentchat.ui.chat.stream.StreamChatFragment
 import com.djambulat69.fragmentchat.ui.chat.topic.TopicChatFragment
 import moxy.MvpAppCompatActivity
@@ -35,23 +34,12 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView, FragmentInteracto
                 add(R.id.fragment_container, MainFragment.newInstance())
             }
         }
-
-        val isConnected = NetworkChecker.isConnected()
-        binding.networkTextDivider.isVisible = !isConnected
-        binding.networkText.isVisible = !isConnected
     }
 
-    override fun onNetworkAvailable() {
+    override fun onNetwork(isAvailable: Boolean) {
         runOnUiThread {
-            binding.networkTextDivider.isVisible = false
-            binding.networkText.isVisible = false
-        }
-    }
-
-    override fun onNetworkLost() {
-        runOnUiThread {
-            binding.networkTextDivider.isVisible = true
-            binding.networkText.isVisible = true
+            binding.networkTextDivider.isVisible = !isAvailable
+            binding.networkText.isVisible = !isAvailable
         }
     }
 

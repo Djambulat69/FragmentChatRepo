@@ -11,11 +11,11 @@ class MainActivityPresenter @Inject constructor() : MvpPresenter<MainActivityVie
     private val networkCallback: ConnectivityManager.NetworkCallback by lazy {
         object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
-                viewState.onNetworkAvailable()
+                viewState.onNetwork(true)
             }
 
             override fun onLost(network: Network) {
-                viewState.onNetworkLost()
+                viewState.onNetwork(false)
             }
         }
     }

@@ -108,22 +108,6 @@ class TopicChatPresenter @Inject constructor(
         )
     }
 
-    fun updateMessages() {
-        compositeDisposable.add(
-            repository.updateMessages(streamTitle, topicTitle, streamId, NEWEST_ANCHOR_MESSAGE, count = INITIAL_PAGE_SIZE)
-                .subscribeOn(Schedulers.io())
-                .map { messagesResponse ->
-                    hasMoreMessages = !messagesResponse.foundOldest
-                    messagesResponse.messages
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    Functions.emptyConsumer(),
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
     fun deleteMessage(id: Int) {
         compositeDisposable.add(
             repository.deleteMessage(id)
@@ -169,6 +153,22 @@ class TopicChatPresenter @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { updateMessages() },
+                    { exception -> showError(exception) }
+                )
+        )
+    }
+
+    private fun updateMessages() {
+        compositeDisposable.add(
+            repository.updateMessages(streamTitle, topicTitle, streamId, NEWEST_ANCHOR_MESSAGE, count = INITIAL_PAGE_SIZE)
+                .subscribeOn(Schedulers.io())
+                .map { messagesResponse ->
+                    hasMoreMessages = !messagesResponse.foundOldest
+                    messagesResponse.messages
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    Functions.emptyConsumer(),
                     { exception -> showError(exception) }
                 )
         )

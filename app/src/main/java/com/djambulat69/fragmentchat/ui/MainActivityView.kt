@@ -1,14 +1,11 @@
 package com.djambulat69.fragmentchat.ui
 
 import moxy.MvpView
-import moxy.viewstate.strategy.alias.OneExecution
+import moxy.viewstate.strategy.alias.AddToEndSingle
 
 interface MainActivityView : MvpView {
 
-    @OneExecution
-    fun onNetworkAvailable()
-
-    @OneExecution
-    fun onNetworkLost()
+    @AddToEndSingle
+    fun onNetwork(isAvailable: Boolean)
 
 }
