@@ -139,7 +139,7 @@ class StreamChatFragment :
     }
 
     override fun openTopicChat(topicTitle: String) {
-        fragmentInteractor?.back()
+//        fragmentInteractor?.back()
         fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
     }
 

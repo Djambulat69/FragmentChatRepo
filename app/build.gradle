@@ -51,6 +51,7 @@ dependencies {
     implementation "androidx.emoji:emoji-bundled:$emoji_bundled_version"
     //KTX
     implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
+    implementation "androidx.activity:activity-ktx:$activity_ktx_version"
     //Rx
     implementation "io.reactivex.rxjava3:rxjava:$rxjava3_version"
     implementation "io.reactivex.rxjava3:rxandroid:$rxandroid_version"

@@ -67,6 +67,10 @@ class MainFragment : Fragment(), FragmentInteractor {
         fragmentInteractor?.openStream(streamTitle, streamId)
     }
 
+    override fun popStream() {
+        fragmentInteractor?.popStream()
+    }
+
     private fun openFragment(fragment: Fragment): Boolean {
         childFragmentManager.commit {
             replace(R.id.main_fragment_container, fragment)

@@ -2,6 +2,7 @@ package com.djambulat69.fragmentchat.ui
 
 import android.os.Bundle
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.ActivityMainBinding
@@ -56,8 +57,20 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView, FragmentInteracto
 
     override fun openStream(streamTitle: String, streamId: Int) {
         supportFragmentManager.commit {
-            addToBackStack(null)
-            replace(R.id.fragment_container, StreamChatFragment.newInstance(streamTitle, streamId))
+            addToBackStack(OPEN_STREAM_BACKSTACK_NAME)
+            replace(
+                R.id.fragment_container,
+                StreamChatFragment.newInstance(streamTitle, streamId),
+                StreamChatFragment::class.simpleName
+            )
         }
+    }
+
+    override fun popStream() {
+        supportFragmentManager.popBackStack(OPEN_STREAM_BACKSTACK_NAME, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    }
+
+    companion object {
+        private const val OPEN_STREAM_BACKSTACK_NAME = "stream"
     }
 }

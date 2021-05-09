@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -19,6 +20,7 @@ import com.djambulat69.fragmentchat.ui.chat.*
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.MessageOptionsBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.emoji.EmojiBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
+import com.djambulat69.fragmentchat.ui.chat.stream.StreamChatFragment
 import com.djambulat69.fragmentchat.utils.copyText
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
@@ -98,14 +100,14 @@ class TopicChatFragment :
                 }
 
             includeChatTopicTitle.chatTopicTitle.text = getString(R.string.topic_title, topicTitle)
-            topicChatToolbar.setNavigationOnClickListener {
-                fragmentInteractor?.back()
-            }
 
             presenter.subscribeOnClicks(
                 (topicChatRecyclerView.adapter as AsyncAdapter<*>).getClicks()
             )
         }
+
+        setUpAndBackNavigation()
+
         presenter.subscribeOnSendingMessages(getSendButtonObservable())
         presenter.subscribeOnScrolling(getScrollObservable(binding.topicChatRecyclerView))
         setupTextWatcher()
@@ -217,6 +219,27 @@ class TopicChatFragment :
             val newTopic = bundle.getString(ChangeTopicDialogFragment.NEW_TOPIC_RESULT_KEY) as String
 
             presenter.changeMessageTopic(messageId, newTopic)
+        }
+    }
+
+    private fun setUpAndBackNavigation() {
+        val openedFromStreamChat =
+            requireActivity().supportFragmentManager.findFragmentByTag(StreamChatFragment::class.simpleName) != null
+
+        binding.topicChatToolbar.setNavigationOnClickListener {
+            if (openedFromStreamChat) {
+                fragmentInteractor?.popStream()
+            } else {
+                fragmentInteractor?.back()
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
+            if (openedFromStreamChat) {
+                fragmentInteractor?.popStream()
+            } else {
+                fragmentInteractor?.back()
+            }
         }
     }
 
