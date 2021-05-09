@@ -123,7 +123,7 @@ data class Event(
 )
 
 @Serializable
-class Subscribtion(
+class Subscription(
     @SerialName("name") val name: String,
     @SerialName("description") val description: String
 )

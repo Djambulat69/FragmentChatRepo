@@ -1,8 +1,7 @@
 package com.djambulat69.fragmentchat.ui.channels
 
 import android.util.Log
-import com.djambulat69.fragmentchat.model.network.Subscribtion
-import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
+import com.djambulat69.fragmentchat.model.network.Subscription
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -15,7 +14,7 @@ private const val TAG = "ChannelsPresenter"
 private const val SEARCH_DEBOUNCE_MILLIS = 300L
 
 class ChannelsPresenter @Inject constructor(
-    private val zulipServiceHelper: ZulipServiceHelper
+    private val repository: ChannelsRepository
 ) : MvpPresenter<ChannelsView>() {
 
     private var lastSearchQuery = ""
@@ -45,7 +44,7 @@ class ChannelsPresenter @Inject constructor(
 
     fun createStream(name: String, description: String, inviteOnly: Boolean) {
         compositeDisposable.add(
-            zulipServiceHelper.subscribeOnStream(Subscribtion(name, description), inviteOnly)
+            repository.subscribeOnStream(Subscription(name, description), inviteOnly)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

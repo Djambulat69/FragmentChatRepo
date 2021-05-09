@@ -58,9 +58,9 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
 
     fun deleteReaction(messageId: Int, emojiName: String): Completable = zulipService.deleteReaction(messageId, emojiName)
 
-    fun subscribeOnStream(subscribtion: Subscribtion, inviteOnly: Boolean): Completable =
+    fun subscribeOnStream(subscription: Subscription, inviteOnly: Boolean): Completable =
         zulipService.subscribeOnStreams(
-            Json.encodeToString(listOf(subscribtion)),
+            Json.encodeToString(listOf(subscription)),
             inviteOnly
         )
 

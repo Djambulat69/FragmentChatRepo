@@ -1,6 +1,5 @@
 package com.djambulat69.fragmentchat.ui.profile
 
-import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -9,7 +8,7 @@ import javax.inject.Inject
 
 private const val TAG = "ProfilePresenter"
 
-class ProfilePresenter @Inject constructor(private val zulipService: ZulipServiceHelper) : MvpPresenter<ProfileView>() {
+class ProfilePresenter @Inject constructor(private val repository: ProfileRepository) : MvpPresenter<ProfileView>() {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -26,7 +25,7 @@ class ProfilePresenter @Inject constructor(private val zulipService: ZulipServic
 
     private fun showProfile() {
         compositeDisposable.add(
-            zulipService.getOwnUser()
+            repository.getProfile()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { viewState.showLoading() }
                 .observeOn(AndroidSchedulers.mainThread())

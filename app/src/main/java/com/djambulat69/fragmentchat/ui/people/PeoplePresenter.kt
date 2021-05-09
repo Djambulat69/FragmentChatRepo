@@ -1,11 +1,8 @@
 package com.djambulat69.fragmentchat.ui.people
 
 import android.util.Log
-import com.djambulat69.fragmentchat.model.network.User
-import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UserUI
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
@@ -13,7 +10,7 @@ import javax.inject.Inject
 
 private const val TAG = "PeoplePresenter"
 
-class PeoplePresenter @Inject constructor(private val zulipService: ZulipServiceHelper) : MvpPresenter<PeopleView>() {
+class PeoplePresenter @Inject constructor(private val repository: PeopleRepository) : MvpPresenter<PeopleView>() {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -29,14 +26,9 @@ class PeoplePresenter @Inject constructor(private val zulipService: ZulipService
 
     private fun getUsers() {
         compositeDisposable.add(
-            zulipService.getUsers()
+            repository.getUsers()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe { viewState.showLoading() }
-                .flattenAsObservable { allUsersResponse -> allUsersResponse.users.filter { !it.isBot } }
-                .flatMapSingle { user ->
-                    zipUserWithUserPresence(user).subscribeOn(Schedulers.io()).retry()
-                }
-                .toList()
                 .observeOn(Schedulers.computation())
                 .map { userUIs: List<UserUI> -> userUIs.sortedBy { it.user.fullName } }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -50,9 +42,4 @@ class PeoplePresenter @Inject constructor(private val zulipService: ZulipService
         )
     }
 
-    private fun zipUserWithUserPresence(user: User): Single<UserUI> {
-        return zulipService.getUserPresence(user.email).zipWith(Single.just(user)) { userPresenceResponse, _ ->
-            UserUI(user, userPresenceResponse.presence.aggregated)
-        }
-    }
 }
