@@ -47,6 +47,9 @@ class TopicChatRepository @Inject constructor(
     fun addReaction(messageId: Int, emojiName: String): Completable =
         zulipService.addReaction(messageId, emojiName)
 
+    fun markTopicAsRead(streamId: Int, topicTitle: String): Completable =
+        zulipService.markTopicAsRead(streamId, topicTitle)
+
     fun editMessageText(id: Int, newText: String): Completable = zulipService.editMessageText(id, newText)
 
     fun changeMessageTopic(id: Int, newTopic: String): Completable = zulipService.changeMessageTopic(id, newTopic)

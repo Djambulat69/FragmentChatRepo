@@ -166,9 +166,10 @@ class TopicChatPresenter @Inject constructor(
                     hasMoreMessages = !messagesResponse.foundOldest
                     messagesResponse.messages
                 }
+                .flatMapCompletable { repository.markTopicAsRead(streamId, topicTitle) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    Functions.emptyConsumer(),
+                    Functions.EMPTY_ACTION,
                     { exception -> showError(exception) }
                 )
         )

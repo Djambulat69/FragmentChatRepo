@@ -44,6 +44,8 @@ class StreamChatRepository @Inject constructor(
     fun addReaction(messageId: Int, emojiName: String): Completable =
         zulipService.addReaction(messageId, emojiName)
 
+    fun markStreamAsRead(id: Int): Completable = zulipService.markStreamAsRead(id)
+
     fun editMessageText(id: Int, newText: String): Completable = zulipService.editMessageText(id, newText)
 
     fun changeMessageTopic(id: Int, newTopic: String): Completable = zulipService.changeMessageTopic(id, newTopic)

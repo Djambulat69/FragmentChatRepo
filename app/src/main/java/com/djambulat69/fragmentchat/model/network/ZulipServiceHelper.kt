@@ -47,16 +47,23 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
 
     fun getUsers(): Single<AllUsersResponse> = zulipService.getUsers()
 
+    fun getUserPresence(idOrEmail: String): Single<UserPresenceResponse> = zulipService.getUserPresence(idOrEmail)
+
+
     fun sendMessageCompletable(streamId: Int, text: String, topicTitle: String): Completable =
         zulipService.sendMessage(MESSAGE_TYPE, streamId, text, topicTitle)
 
-    fun getUserPresence(idOrEmail: String): Single<UserPresenceResponse> = zulipService.getUserPresence(idOrEmail)
-
     fun addReaction(messageId: Int, emojiName: String): Completable = zulipService.addReaction(messageId, emojiName)
+
 
     fun deleteMessage(id: Int): Completable = zulipService.deleteMessage(id)
 
     fun deleteReaction(messageId: Int, emojiName: String): Completable = zulipService.deleteReaction(messageId, emojiName)
+
+
+    fun markStreamAsRead(id: Int): Completable = zulipService.markStreamAsRead(id)
+
+    fun markTopicAsRead(streamId: Int, topicTitle: String): Completable = zulipService.markTopicAsRead(streamId, topicTitle)
 
     fun subscribeOnStream(subscription: Subscription, inviteOnly: Boolean): Completable =
         zulipService.subscribeOnStreams(
@@ -68,8 +75,4 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
 
     fun changeMessageTopic(id: Int, newTopic: String): Completable = zulipService.changeMessageTopic(id, newTopic)
 
-    fun registerEventQueue(): Single<RegisterEventResponse> = zulipService.registerEventsQueue()
-
-    fun getEventQueue(queueId: String, lastEventId: Int): Single<GetEventsResponse> =
-        zulipService.getEventsQueue(queueId, lastEventId)
 }
