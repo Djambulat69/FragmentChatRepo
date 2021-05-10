@@ -2,17 +2,21 @@ package com.djambulat69.fragmentchat.ui.chat.stream
 
 import android.content.ClipboardManager
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentStreamChatBinding
 import com.djambulat69.fragmentchat.model.network.Message
+import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.chat.*
@@ -44,6 +48,9 @@ class StreamChatFragment :
 
     private var _binding: FragmentStreamChatBinding? = null
     private val binding: FragmentStreamChatBinding get() = _binding!!
+
+    @Inject
+    lateinit var zulipServiceHelper: ZulipServiceHelper
 
     @Inject
     lateinit var presenterProvider: Provider<StreamChatPresenter>
@@ -103,7 +110,14 @@ class StreamChatFragment :
         presenter.subscribeOnSendingMessages(getSendButtonObservable())
         presenter.subscribeOnScrolling(getScrollObservable(binding.streamChatRecyclerView))
         setupTextWatcher()
+
+        val getContent = registerUploadFileActivityLauncher()
+
+        binding.streamAddFileButton.setOnClickListener {
+            getContent.launch(ALL_FILES_TYPE)
+        }
     }
+
 
     override fun onDestroyView() {
         presenter.unsubscribeFromViews()
@@ -140,6 +154,10 @@ class StreamChatFragment :
 
     override fun openTopicChat(topicTitle: String) {
         fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
+    }
+
+    override fun attachUriToMessage(uri: String) {
+        binding.streamMessageEditText.append(makeAttachFileString(uri))
     }
 
     override fun showEmojiBottomSheetFromMessageOptions(messageId: Int) {
@@ -197,7 +215,7 @@ class StreamChatFragment :
 
     private fun setEmojiBottomSheetResultListener() {
         setChildFragmentResultListener(EmojiBottomSheetDialog.EMOJI_REQUEST_KEY) { _: String, bundle: Bundle ->
-        val messageId = bundle.getInt(EmojiBottomSheetDialog.MESSAGE_ID_RESULT_KEY)
+            val messageId = bundle.getInt(EmojiBottomSheetDialog.MESSAGE_ID_RESULT_KEY)
             val emojiName = bundle.getString(EmojiBottomSheetDialog.EMOJI_RESULT_KEY) as String
 
             presenter.addReactionInMessage(messageId, emojiName)
@@ -219,6 +237,26 @@ class StreamChatFragment :
             val newTopic = bundle.getString(ChangeTopicDialogFragment.NEW_TOPIC_RESULT_KEY) as String
 
             presenter.changeMessageTopic(messageId, newTopic)
+        }
+    }
+
+    private fun registerUploadFileActivityLauncher(): ActivityResultLauncher<String> =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { data ->
+            data?.let { uri ->
+                uploadFile(uri)
+            }
+        }
+
+    private fun uploadFile(uri: Uri) {
+        val contentResolver = FragmentChatApplication.contentResolver()
+        val type = contentResolver.getType(uri)
+
+        contentResolver.queryNameAndSize(uri) { name: String, size: Int ->
+            if (size > MEGABYTES_25_IN_BYTES) {
+                Toast.makeText(requireContext(), R.string.too_big_file, Toast.LENGTH_SHORT).show()
+            } else if (type != null) {
+                presenter.uploadFile(uri, type, name)
+            }
         }
     }
 

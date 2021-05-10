@@ -24,4 +24,7 @@ interface StreamChatView : MvpView {
 
     @OneExecution
     fun openTopicChat(topicTitle: String)
+
+    @OneExecution
+    fun attachUriToMessage(uri: String)
 }

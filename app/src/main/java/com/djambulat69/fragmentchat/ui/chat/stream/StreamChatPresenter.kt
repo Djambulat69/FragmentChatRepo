@@ -1,5 +1,6 @@
 package com.djambulat69.fragmentchat.ui.chat.stream
 
+import android.net.Uri
 import android.util.Log
 import com.djambulat69.fragmentchat.model.network.NetworkChecker
 import com.djambulat69.fragmentchat.ui.chat.NO_TOPIC_TITLE
@@ -100,6 +101,19 @@ class StreamChatPresenter @Inject constructor(
                     { e -> showError(e) }
                 )
         )
+    }
+
+    fun uploadFile(uri: Uri, type: String, fileName: String) {
+        compositeDisposable.add(
+            repository.uploadFile(uri, type, fileName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { fileResponse -> viewState.attachUriToMessage(fileResponse.uri) },
+                    { e -> showError(e) }
+                )
+        )
+
     }
 
     fun subscribeOnSendingMessages(sendObservable: Observable<Pair<String, String>>) {

@@ -1,5 +1,8 @@
 package com.djambulat69.fragmentchat.ui.chat
 
+import android.content.ContentResolver
+import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.djambulat69.fragmentchat.model.network.Message
@@ -15,6 +18,9 @@ const val NO_TOPIC_TITLE = "(no topic)"
 
 private const val MESSAGES_PREFETCH_DISTANCE = 5
 private const val MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL = 3
+
+const val MEGABYTES_25_IN_BYTES = 26_214_400
+const val ALL_FILES_TYPE = "*/*"
 
 fun getScrollObservable(recyclerView: RecyclerView): Observable<Long> = Observable.create { emitter ->
     recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -58,12 +64,30 @@ fun RecyclerView.Adapter<*>.registerAutoScrollAdapterDataObserver(chatRecyclerVi
             super.onItemRangeInserted(positionStart, itemCount)
 
             chatRecyclerView.adapter?.let {
-                if (positionStart > it.itemCount - MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL) {
+                if (positionStart >= it.itemCount - MIN_INSERTED_ITEMS_POSITION_TO_AUTOSCROLL) {
                     chatRecyclerView.scrollToPosition(it.itemCount - 1)
                 }
             }
         }
     })
+
+fun makeAttachFileString(uri: String): String {
+    return "[${uri.split("/").last()}]($uri)"
+}
+
+fun ContentResolver.queryNameAndSize(uri: Uri, callBack: (String, Int) -> Unit) {
+    query(uri, null, null, null, null)
+        ?.use { cursor ->
+            val nameColumn = cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
+            val sizeColumn = cursor.getColumnIndexOrThrow(OpenableColumns.SIZE)
+
+            cursor.moveToFirst()
+            val name = cursor.getString(nameColumn)
+            val size = cursor.getInt(sizeColumn)
+
+            callBack(name, size)
+        }
+}
 
 private fun messagesToMessageUIsDiffTopics(messages: List<Message>): List<ViewTyped> {
 

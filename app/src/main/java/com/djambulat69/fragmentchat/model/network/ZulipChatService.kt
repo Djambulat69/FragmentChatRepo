@@ -3,6 +3,7 @@ package com.djambulat69.fragmentchat.model.network
 import com.djambulat69.fragmentchat.ui.channels.streams.StreamsResponseSealed
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface ZulipChatService {
@@ -62,6 +63,12 @@ interface ZulipChatService {
 
     @POST("mark_topic_as_read")
     fun markTopicAsRead(@Query("stream_id") streamId: Int, @Query("topic_name") topicTitle: String): Completable
+
+    @Multipart
+    @POST("user_uploads")
+    fun uploadFile(
+        @Part file: MultipartBody.Part
+    ): Single<FileResponse>
 
 
     @DELETE("messages/{msg_id}")

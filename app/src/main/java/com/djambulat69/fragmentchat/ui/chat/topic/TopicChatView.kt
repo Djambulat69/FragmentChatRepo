@@ -21,4 +21,7 @@ interface TopicChatView : MvpView {
 
     @OneExecution
     fun showMessageOptions(message: Message)
+
+    @OneExecution
+    fun attachUriToMessage(uri: String)
 }

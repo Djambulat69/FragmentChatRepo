@@ -101,29 +101,12 @@ class PresenceClient(
 )
 
 @Serializable
-data class RegisterEventResponse(
-    @SerialName("queue_id") val queueId: String,
-    @SerialName("last_event_id") val lastEventId: Int
-)
-
-@Serializable
-data class GetEventsResponse(
-    @SerialName("result") val result: String,
-    @SerialName("msg") val msg: String,
-    @SerialName("events") val events: List<Event>,
-    @SerialName("queue_id") val queueId: String? = null
-)
-
-@Serializable
-data class Event(
-    @SerialName("type") val type: String,
-    @SerialName("message") val message: Message? = null,
-    @SerialName("flags") val flags: List<String>? = null,
-    @SerialName("id") val id: Int
-)
-
-@Serializable
 class Subscription(
     @SerialName("name") val name: String,
     @SerialName("description") val description: String
+)
+
+@Serializable
+class FileResponse(
+    @SerialName("uri") val uri: String
 )

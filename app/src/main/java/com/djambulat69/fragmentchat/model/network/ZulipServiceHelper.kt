@@ -5,6 +5,9 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 private const val MESSAGE_TYPE = "stream"
@@ -64,6 +67,13 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
     fun markStreamAsRead(id: Int): Completable = zulipService.markStreamAsRead(id)
 
     fun markTopicAsRead(streamId: Int, topicTitle: String): Completable = zulipService.markTopicAsRead(streamId, topicTitle)
+
+    fun uploadFile(bytes: ByteArray, type: String, fileName: String): Single<FileResponse> {
+        val body = bytes.toRequestBody(type.toMediaType())
+        val part = MultipartBody.Part.createFormData("file", fileName, body)
+
+        return zulipService.uploadFile(part)
+    }
 
     fun subscribeOnStream(subscription: Subscription, inviteOnly: Boolean): Completable =
         zulipService.subscribeOnStreams(

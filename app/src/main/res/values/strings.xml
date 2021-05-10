@@ -36,4 +36,5 @@
     <string name="change_topic">Change topic</string>
     <string name="copy">Copy</string>
     <string name="offline">Offline</string>
+    <string name="too_big_file">File is too big</string>
 </resources>

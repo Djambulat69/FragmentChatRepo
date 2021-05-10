@@ -2,12 +2,14 @@ package com.djambulat69.fragmentchat.ui.chat.topic
 
 import android.content.ClipboardManager
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -106,6 +108,12 @@ class TopicChatFragment :
             )
         }
 
+        val getContent = registerUploadFileActivityLauncher()
+
+        binding.topicAddFileButton.setOnClickListener {
+            getContent.launch(ALL_FILES_TYPE)
+        }
+
         setUpAndBackNavigation()
 
         presenter.subscribeOnSendingMessages(getSendButtonObservable())
@@ -137,6 +145,10 @@ class TopicChatFragment :
     override fun showLoading() {
         setLoading(true)
         setChatVisibility(false)
+    }
+
+    override fun attachUriToMessage(uri: String) {
+        binding.topicMessageEditText.append(makeAttachFileString(uri))
     }
 
     override fun showEmojiBottomSheet(messageId: Int) {
@@ -239,6 +251,26 @@ class TopicChatFragment :
                 fragmentInteractor?.popStream()
             } else {
                 fragmentInteractor?.back()
+            }
+        }
+    }
+
+    private fun registerUploadFileActivityLauncher() =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { data ->
+            data?.let { uri ->
+                uploadFile(uri)
+            }
+        }
+
+    private fun uploadFile(uri: Uri) {
+        val contentResolver = FragmentChatApplication.contentResolver()
+        val type = contentResolver.getType(uri)
+
+        contentResolver.queryNameAndSize(uri) { name: String, size: Int ->
+            if (size > MEGABYTES_25_IN_BYTES) {
+                Toast.makeText(requireContext(), R.string.too_big_file, Toast.LENGTH_SHORT).show()
+            } else if (type != null) {
+                presenter.uploadFile(uri, type, name)
             }
         }
     }

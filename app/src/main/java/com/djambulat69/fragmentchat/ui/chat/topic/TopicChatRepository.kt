@@ -1,6 +1,9 @@
 package com.djambulat69.fragmentchat.ui.chat.topic
 
+import android.net.Uri
+import com.djambulat69.fragmentchat.model.UriReader
 import com.djambulat69.fragmentchat.model.db.MessagesDao
+import com.djambulat69.fragmentchat.model.network.FileResponse
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.MessagesResponse
 import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
@@ -12,7 +15,8 @@ import javax.inject.Inject
 
 class TopicChatRepository @Inject constructor(
     private val messagesDao: MessagesDao,
-    private val zulipService: ZulipServiceHelper
+    private val zulipService: ZulipServiceHelper,
+    private val uriReader: UriReader
 ) {
 
     fun getMessages(topicTitle: String, streamId: Int): Flowable<List<Message>> =
@@ -50,6 +54,13 @@ class TopicChatRepository @Inject constructor(
     fun markTopicAsRead(streamId: Int, topicTitle: String): Completable =
         zulipService.markTopicAsRead(streamId, topicTitle)
 
+    fun uploadFile(uri: Uri, type: String, name: String): Single<FileResponse> {
+        return readUri(uri)
+            .flatMap { bytes ->
+                zulipService.uploadFile(bytes, type, name)
+            }
+    }
+
     fun editMessageText(id: Int, newText: String): Completable = zulipService.editMessageText(id, newText)
 
     fun changeMessageTopic(id: Int, newTopic: String): Completable = zulipService.changeMessageTopic(id, newTopic)
@@ -67,4 +78,8 @@ class TopicChatRepository @Inject constructor(
         messagesDao.deleteTopicMessages(topicTitle, streamId)
             .andThen(messagesDao.saveMessages(messagesResponse.messages))
             .andThen(Single.just(messagesResponse))
+
+    private fun readUri(uri: Uri): Single<ByteArray> {
+        return Single.just(uriReader.readBytes(uri))
+    }
 }

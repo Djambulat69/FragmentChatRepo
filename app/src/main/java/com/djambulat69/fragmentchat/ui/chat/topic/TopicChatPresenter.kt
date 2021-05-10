@@ -1,5 +1,6 @@
 package com.djambulat69.fragmentchat.ui.chat.topic
 
+import android.net.Uri
 import android.util.Log
 import com.djambulat69.fragmentchat.model.network.NetworkChecker
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatClickTypes
@@ -70,6 +71,18 @@ class TopicChatPresenter @Inject constructor(
                 .subscribe(
                     { updateMessages() },
                     { exception -> showError(exception) }
+                )
+        )
+    }
+
+    fun uploadFile(uri: Uri, type: String, name: String) {
+        compositeDisposable.add(
+            repository.uploadFile(uri, type, name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { fileResponse -> viewState.attachUriToMessage(fileResponse.uri) },
+                    { e -> showError(e) }
                 )
         )
     }

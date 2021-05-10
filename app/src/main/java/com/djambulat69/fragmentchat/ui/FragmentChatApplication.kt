@@ -1,6 +1,7 @@
 package com.djambulat69.fragmentchat.ui
 
 import android.app.Application
+import android.content.ContentResolver
 import android.content.Context
 import androidx.emoji.bundled.BundledEmojiCompatConfig
 import androidx.emoji.text.EmojiCompat
@@ -31,5 +32,6 @@ class FragmentChatApplication : Application() {
         lateinit var INSTANCE: FragmentChatApplication
 
         fun applicationContext(): Context = INSTANCE.applicationContext
+        fun contentResolver(): ContentResolver = applicationContext().contentResolver
     }
 }
