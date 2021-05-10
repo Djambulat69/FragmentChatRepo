@@ -43,6 +43,16 @@
         tools:itemCount="4"
         tools:listitem="@layout/incoming_message_layout" />
 
+
+    <ProgressBar
+        android:id="@+id/topic_file_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/topic_helper_view" />
+
     <EditText
         android:id="@+id/topic_message_edit_text"
         android:layout_width="0dp"

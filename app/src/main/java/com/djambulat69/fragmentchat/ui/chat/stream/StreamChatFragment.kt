@@ -140,6 +140,10 @@ class StreamChatFragment :
         setChatVisibility(false)
     }
 
+    override fun setMessageLoading(visible: Boolean) {
+        binding.streamFileProgressBar.isVisible = visible
+    }
+
     override fun showEmojiBottomSheet(messageId: Int) {
         EmojiBottomSheetDialog.newInstance(messageId).show(childFragmentManager, null)
     }

@@ -80,6 +80,8 @@ class TopicChatPresenter @Inject constructor(
             repository.uploadFile(uri, type, name)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { viewState.setMessageLoading(true) }
+                .doFinally { viewState.setMessageLoading(false) }
                 .subscribe(
                     { fileResponse -> viewState.attachUriToMessage(fileResponse.uri) },
                     { e -> showError(e) }

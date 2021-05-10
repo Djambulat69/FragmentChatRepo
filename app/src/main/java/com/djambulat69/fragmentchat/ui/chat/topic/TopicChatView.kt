@@ -13,6 +13,9 @@ interface TopicChatView : MvpView {
     @AddToEndSingle
     fun showLoading()
 
+    @AddToEndSingle
+    fun setMessageLoading(visible: Boolean)
+
     @OneExecution
     fun showEmojiBottomSheet(messageId: Int)
 

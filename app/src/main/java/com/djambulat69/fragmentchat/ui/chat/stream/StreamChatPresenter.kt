@@ -108,6 +108,8 @@ class StreamChatPresenter @Inject constructor(
             repository.uploadFile(uri, type, fileName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { viewState.setMessageLoading(true) }
+                .doFinally { viewState.setMessageLoading(false) }
                 .subscribe(
                     { fileResponse -> viewState.attachUriToMessage(fileResponse.uri) },
                     { e -> showError(e) }

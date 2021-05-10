@@ -147,6 +147,10 @@ class TopicChatFragment :
         setChatVisibility(false)
     }
 
+    override fun setMessageLoading(visible: Boolean) {
+        binding.topicFileProgressBar.isVisible = visible
+    }
+
     override fun attachUriToMessage(uri: String) {
         binding.topicMessageEditText.append(makeAttachFileString(uri))
     }
