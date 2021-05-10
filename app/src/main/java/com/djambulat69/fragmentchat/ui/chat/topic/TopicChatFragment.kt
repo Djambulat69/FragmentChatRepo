@@ -134,17 +134,15 @@ class TopicChatFragment :
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
 
-        setLoading(false)
-        setChatVisibility(true)
     }
 
     override fun showError() {
         Snackbar.make(requireContext(), binding.root, getString(R.string.error_text), Snackbar.LENGTH_SHORT).show()
     }
 
-    override fun showLoading() {
-        setLoading(true)
-        setChatVisibility(false)
+    override fun setLoading(visible: Boolean) {
+        binding.includeTopicMessagesShimmer.messagesShimmer.isVisible = visible
+        setChatVisibility(!visible)
     }
 
     override fun setMessageLoading(visible: Boolean) {
@@ -184,10 +182,6 @@ class TopicChatFragment :
 
     override fun showChangeTopicDialog(id: Int, oldTopic: String) {
         ChangeTopicDialogFragment.newInstance(id, oldTopic).show(childFragmentManager, null)
-    }
-
-    private fun setLoading(isVisible: Boolean) {
-        binding.includeTopicMessagesShimmer.messagesShimmer.isVisible = isVisible
     }
 
     private fun setChatVisibility(isVisible: Boolean) {

@@ -81,25 +81,21 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
     override fun showStreams(streamUIs: List<ViewTyped>) {
         (binding.streamsRecyclerView.adapter as AsyncAdapter<ViewTyped>).items = streamUIs
-        setError(false)
-        setLoading(false)
-        setUiVisibility(true)
     }
 
-    override fun showError() {
-        setLoading(false)
-        setUiVisibility(false)
-        setError(true)
+    override fun setError(visible: Boolean) {
+        errorBinding.checkConnectionTextView.isVisible = visible
+        errorBinding.retryButton.isVisible = visible
+        setUiVisibility(!visible)
     }
 
     override fun showToastError() {
         Toast.makeText(requireContext(), getString(R.string.error_text), Toast.LENGTH_SHORT).show()
     }
 
-    override fun showLoading() {
-        setError(false)
-        setUiVisibility(false)
-        setLoading(true)
+    override fun setLoading(visible: Boolean) {
+        binding.includeShimmerFragmentStreams.shimmerStreamList.isVisible = visible
+        setUiVisibility(!visible)
     }
 
     override fun openTopicFragment(topicTitle: String, streamTitle: String, streamId: Int) {
@@ -120,15 +116,6 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
     private fun setUiVisibility(isVisible: Boolean) {
         binding.streamsRecyclerView.isVisible = isVisible
-    }
-
-    private fun setLoading(isLoadingVisible: Boolean) {
-        binding.includeShimmerFragmentStreams.shimmerStreamList.isVisible = isLoadingVisible
-    }
-
-    private fun setError(isVisible: Boolean) {
-        errorBinding.checkConnectionTextView.isVisible = isVisible
-        errorBinding.retryButton.isVisible = isVisible
     }
 
     companion object {

@@ -28,14 +28,18 @@ class PeoplePresenter @Inject constructor(private val repository: PeopleReposito
         compositeDisposable.add(
             repository.getUsers()
                 .subscribeOn(Schedulers.io())
-                .doOnSubscribe { viewState.showLoading() }
                 .observeOn(Schedulers.computation())
                 .map { userUIs: List<UserUI> -> userUIs.sortedBy { it.user.fullName } }
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { viewState.setLoading(true) }
                 .subscribe(
-                    { userUIs -> viewState.showUsers(userUIs) },
+                    { userUIs ->
+                        viewState.showUsers(userUIs)
+                        viewState.setError(false)
+                        viewState.setLoading(false)
+                    },
                     { exception ->
-                        viewState.showError()
+                        viewState.setError(true)
                         Log.e(TAG, exception.stackTraceToString())
                     }
                 )

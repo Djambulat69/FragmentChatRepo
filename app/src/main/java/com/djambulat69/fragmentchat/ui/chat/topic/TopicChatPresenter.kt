@@ -215,7 +215,8 @@ class TopicChatPresenter @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .debounce(DB_MESSAGES_LOAD_DEBOUNCE, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { viewState.showLoading() }
+                .doOnSubscribe { viewState.setLoading(true) }
+                .doOnNext { viewState.setLoading(false) }
                 .filter { it.isNotEmpty() }
                 .subscribe(
                     { messages -> viewState.showMessages(messages) },

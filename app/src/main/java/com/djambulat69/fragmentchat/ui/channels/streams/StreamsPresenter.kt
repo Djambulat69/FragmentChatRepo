@@ -73,7 +73,7 @@ constructor(
                         this.recyclerUiItems = streamUIs
                         showStreams()
                     },
-                    { viewState.showError() }
+                    { viewState.setError(true) }
                 )
         )
     }
@@ -129,6 +129,7 @@ constructor(
     }
 
     private fun showStreams() {
+        viewState.setError(false)
         viewState.showStreams(recyclerUiItems)
     }
 
@@ -143,14 +144,17 @@ constructor(
                 }
                 .filter { it.isNotEmpty() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { viewState.showLoading() }
+                .doOnSubscribe {
+                    viewState.setLoading(true)
+                }
+                .doOnNext { viewState.setLoading(false) }
                 .subscribe(
                     { streamUIs ->
                         recyclerUiItems = streamUIs
                         showStreams()
                     },
                     { exception ->
-                        viewState.showError()
+                        viewState.setError(true)
                         Log.e(TAG, exception.stackTraceToString())
                     }
                 )

@@ -131,13 +131,11 @@ class StreamChatFragment :
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
 
-        setLoading(false)
-        setChatVisibility(true)
     }
 
-    override fun showLoading() {
-        setLoading(true)
-        setChatVisibility(false)
+    override fun setLoading(visible: Boolean) {
+        binding.includeStreamMessagesShimmer.messagesShimmer.isVisible = visible
+        setChatVisibility(!visible)
     }
 
     override fun setMessageLoading(visible: Boolean) {
@@ -185,10 +183,6 @@ class StreamChatFragment :
 
     override fun showChangeTopicDialog(id: Int, oldTopic: String) {
         ChangeTopicDialogFragment.newInstance(id, oldTopic).show(childFragmentManager, null)
-    }
-
-    private fun setLoading(isVisible: Boolean) {
-        binding.includeStreamMessagesShimmer.messagesShimmer.isVisible = isVisible
     }
 
     private fun setChatVisibility(isVisible: Boolean) {

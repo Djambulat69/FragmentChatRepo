@@ -27,11 +27,15 @@ class ProfilePresenter @Inject constructor(private val repository: ProfileReposi
         compositeDisposable.add(
             repository.getProfile()
                 .subscribeOn(Schedulers.io())
-                .doOnSubscribe { viewState.showLoading() }
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { viewState.setLoading(true) }
                 .subscribe(
-                    { user -> viewState.showProfile(user) },
-                    { viewState.showError() }
+                    { user ->
+                        viewState.showProfile(user)
+                        viewState.setLoading(false)
+                        viewState.setError(false)
+                    },
+                    { viewState.setError(true) }
                 )
         )
     }

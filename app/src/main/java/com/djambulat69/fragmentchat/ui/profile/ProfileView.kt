@@ -9,8 +9,8 @@ interface ProfileView : MvpView {
     fun showProfile(user: User)
 
     @AddToEndSingle
-    fun showError()
+    fun setError(visible: Boolean)
 
     @AddToEndSingle
-    fun showLoading()
+    fun setLoading(visible: Boolean)
 }

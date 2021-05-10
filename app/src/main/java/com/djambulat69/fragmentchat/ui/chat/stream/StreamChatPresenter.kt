@@ -230,7 +230,8 @@ class StreamChatPresenter @Inject constructor(
                     messagesByDate(messages, true)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { viewState.showLoading() }
+                .doOnSubscribe { viewState.setLoading(true) }
+                .doOnNext { viewState.setLoading(false) }
                 .filter { it.isNotEmpty() }
                 .subscribe(
                     { messages -> viewState.showMessages(messages) },

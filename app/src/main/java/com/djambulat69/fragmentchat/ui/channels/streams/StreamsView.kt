@@ -4,7 +4,6 @@ import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.OneExecution
-import moxy.viewstate.strategy.alias.Skip
 
 interface StreamsView : MvpView {
 
@@ -12,18 +11,18 @@ interface StreamsView : MvpView {
     fun showStreams(streamUIs: List<ViewTyped>)
 
     @AddToEndSingle
-    fun showError()
+    fun setError(visible: Boolean)
 
     @OneExecution
     fun showToastError()
 
     @AddToEndSingle
-    fun showLoading()
+    fun setLoading(visible: Boolean)
 
-    @Skip
+    @OneExecution
     fun openTopicFragment(topicTitle: String, streamTitle: String, streamId: Int)
 
-    @Skip
+    @OneExecution
     fun openStreamFragment(streamTitle: String, streamId: Int)
 
 }

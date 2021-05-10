@@ -60,28 +60,22 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
     }
 
     override fun showUsers(userUIs: List<UserUI>) {
-        setUiVisibility(true)
-        setLoading(false)
         (binding.usersRecyclerView.adapter as AsyncAdapter<UserUI>).items = userUIs
     }
 
-    override fun showError() {
-        setUiVisibility(false)
-        setLoading(false)
-        errorBinding.checkConnectionTextView.isVisible = true
-        errorBinding.retryButton.isVisible = true
+    override fun setError(visible: Boolean) {
+        errorBinding.checkConnectionTextView.isVisible = visible
+        errorBinding.retryButton.isVisible = visible
+        setUiVisibility(!visible)
     }
 
-    override fun showLoading() {
-        setLoading(true)
+    override fun setLoading(visible: Boolean) {
+        binding.includeShimmerFragmentPeople.shimmerUserList.isVisible = visible
+        setUiVisibility(!visible)
     }
 
     private fun setUiVisibility(isVisible: Boolean) {
         binding.usersRecyclerView.isVisible = isVisible
-    }
-
-    private fun setLoading(isLoadingVisible: Boolean) {
-        binding.includeShimmerFragmentPeople.shimmerUserList.isVisible = isLoadingVisible
     }
 
     companion object {

@@ -55,20 +55,17 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
             Glide.with(this@ProfileFragment).load(user.avatarUrl).into(profileAvatar)
             profileName.text = user.fullName
         }
-        setLoading(false)
-        setUIVisibility(true)
     }
 
-    override fun showError() {
-        setUIVisibility(false)
-        setLoading(false)
-        errorBinding.retryButton.isVisible = true
-        errorBinding.checkConnectionTextView.isVisible = true
+    override fun setError(visible: Boolean) {
+        setUIVisibility(!visible)
+        errorBinding.retryButton.isVisible = visible
+        errorBinding.checkConnectionTextView.isVisible = visible
     }
 
-    override fun showLoading() {
-        setUIVisibility(false)
-        setLoading(true)
+    override fun setLoading(visible: Boolean) {
+        setUIVisibility(!visible)
+        binding.includeShimmerProfile.shimmerProfile.isVisible = visible
     }
 
     private fun setUIVisibility(isVisible: Boolean) {
@@ -77,10 +74,6 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
             profileOnlineStatus.isVisible = isVisible
             profileAvatar.isVisible = isVisible
         }
-    }
-
-    private fun setLoading(isLoadingVisible: Boolean) {
-        binding.includeShimmerProfile.shimmerProfile.isVisible = isLoadingVisible
     }
 
     companion object {

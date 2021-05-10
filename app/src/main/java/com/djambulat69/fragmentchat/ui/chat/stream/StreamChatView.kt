@@ -11,7 +11,7 @@ interface StreamChatView : MvpView {
     fun showMessages(uiItems: List<ViewTyped>)
 
     @AddToEndSingle
-    fun showLoading()
+    fun setLoading(visible: Boolean)
 
     @AddToEndSingle
     fun setMessageLoading(visible: Boolean)

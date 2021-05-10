@@ -11,7 +11,7 @@ interface TopicChatView : MvpView {
     fun showMessages(messages: List<Message>)
 
     @AddToEndSingle
-    fun showLoading()
+    fun setLoading(visible: Boolean)
 
     @AddToEndSingle
     fun setMessageLoading(visible: Boolean)

@@ -9,8 +9,8 @@ interface PeopleView : MvpView {
     fun showUsers(userUIs: List<UserUI>)
 
     @AddToEndSingle
-    fun showError()
+    fun setError(visible: Boolean)
 
     @AddToEndSingle
-    fun showLoading()
+    fun setLoading(visible: Boolean)
 }
