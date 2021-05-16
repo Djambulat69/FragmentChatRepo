@@ -7,6 +7,7 @@ import com.djambulat69.fragmentchat.model.network.FileResponse
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.MessagesResponse
 import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
+import com.djambulat69.fragmentchat.ui.chat.ChatRepository
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
@@ -16,7 +17,7 @@ class StreamChatRepository @Inject constructor(
     private val messagesDao: MessagesDao,
     private val zulipService: ZulipServiceHelper,
     private val uriReader: UriReader
-) {
+) : ChatRepository {
 
     fun getMessages(streamId: Int): Flowable<List<Message>> =
         messagesDao.getStreamMessages(streamId)
@@ -42,29 +43,34 @@ class StreamChatRepository @Inject constructor(
                 messagesDao.saveMessages(messagesResponse.messages).andThen(Single.just(messagesResponse))
             }
 
-    fun sendMessage(streamId: Int, text: String, topicTitle: String): Completable =
-        zulipService.sendMessageCompletable(streamId, text, topicTitle)
+    override fun sendMessage(streamId: Int, messageText: String, topicName: String): Completable =
+        zulipService.sendMessageCompletable(streamId, messageText, topicName)
 
-    fun addReaction(messageId: Int, emojiName: String): Completable =
+    override fun addReaction(messageId: Int, emojiName: String): Completable =
         zulipService.addReaction(messageId, emojiName)
+
 
     fun markStreamAsRead(id: Int): Completable = zulipService.markStreamAsRead(id)
 
-    fun uploadFile(uri: Uri, type: String, fileName: String): Single<FileResponse> =
+
+    override fun uploadFile(uri: Uri, type: String, name: String): Single<FileResponse> =
         readUri(uri)
             .flatMap { bytes ->
-                zulipService.uploadFile(bytes, type, fileName)
+                zulipService.uploadFile(bytes, type, name)
             }
 
+    override fun editMessageText(id: Int, newText: String): Completable =
+        zulipService.editMessageText(id, newText)
 
-    fun editMessageText(id: Int, newText: String): Completable = zulipService.editMessageText(id, newText)
+    override fun changeMessageTopic(id: Int, newTopic: String): Completable =
+        zulipService.changeMessageTopic(id, newTopic)
 
-    fun changeMessageTopic(id: Int, newTopic: String): Completable = zulipService.changeMessageTopic(id, newTopic)
+    override fun deleteMessage(id: Int): Completable =
+        zulipService.deleteMessage(id)
 
-    fun deleteMessage(id: Int): Completable = zulipService.deleteMessage(id)
-
-    fun deleteReaction(messageId: Int, emojiName: String): Completable =
+    override fun deleteReaction(messageId: Int, emojiName: String): Completable =
         zulipService.deleteReaction(messageId, emojiName)
+
 
     private fun clearAndLoadNewMessages(
         streamId: Int,

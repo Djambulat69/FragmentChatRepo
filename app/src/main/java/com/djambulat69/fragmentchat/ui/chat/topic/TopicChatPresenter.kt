@@ -1,36 +1,30 @@
 package com.djambulat69.fragmentchat.ui.chat.topic
 
-import android.net.Uri
-import android.util.Log
-import com.djambulat69.fragmentchat.model.network.NetworkChecker
+import com.djambulat69.fragmentchat.model.network.Message
+import com.djambulat69.fragmentchat.model.network.MessagesResponse
+import com.djambulat69.fragmentchat.ui.chat.BaseChatPresenter
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatClickTypes
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.internal.functions.Functions
 import io.reactivex.rxjava3.schedulers.Schedulers
-import moxy.MvpPresenter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
 
-private const val TAG = "TopicChatPresenter"
-private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
-private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
-private const val INITIAL_PAGE_SIZE = 50
-private const val NEXT_PAGE_SIZE = 30
 private const val SCROLL_EMIT_THROTTLE_MILLIS = 100L
 
 
 class TopicChatPresenter @Inject constructor(
     private val repository: TopicChatRepository
-) : MvpPresenter<TopicChatView>() {
+) : BaseChatPresenter<TopicChatView, TopicChatRepository>(repository) {
 
-    var hasMoreMessages = true
+    override val diffTopics: Boolean = false
 
-    private var isNextPageLoading = false
-    private val compositeDisposable = CompositeDisposable()
     private val viewDisposable = CompositeDisposable()
 
     private lateinit var topicTitle: String
@@ -38,16 +32,20 @@ class TopicChatPresenter @Inject constructor(
     private var streamId by Delegates.notNull<Int>()
 
 
-    override fun onFirstViewAttach() {
-        super.onFirstViewAttach()
-        getMessages()
-        if (NetworkChecker.isConnected()) updateMessages()
-    }
+    override fun getMessagesFlowable(): Flowable<List<Message>> =
+        repository.getMessages(topicTitle, streamId)
 
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
-    }
+
+    override fun getNextMessagesSingle(anchor: Long, count: Int): Single<MessagesResponse> =
+        repository.getNextPageMessages(streamTitle, topicTitle, anchor, count)
+
+
+    override fun markAsReadCompletable(): Completable =
+        repository.markTopicAsRead(streamId, topicTitle)
+
+    override fun updateMessagesSingle(newestMessageAnchor: Long, initialPageSize: Int): Single<MessagesResponse> =
+        repository.updateMessages(streamTitle, topicTitle, streamId, newestMessageAnchor, initialPageSize)
+
 
     fun initParameters(topicTitle: String, streamTitle: String, streamId: Int) {
         this.topicTitle = topicTitle
@@ -60,44 +58,6 @@ class TopicChatPresenter @Inject constructor(
             sendObservable
                 .subscribeOn(Schedulers.io())
                 .subscribe { messageText -> sendMessage(messageText) }
-        )
-    }
-
-    fun addReactionInMessage(messageId: Int, emojiName: String) {
-        compositeDisposable.add(
-            repository.addReaction(messageId, emojiName)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updateMessages() },
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-    fun uploadFile(uri: Uri, type: String, name: String) {
-        compositeDisposable.add(
-            repository.uploadFile(uri, type, name)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { viewState.setMessageLoading(true) }
-                .doFinally { viewState.setMessageLoading(false) }
-                .subscribe(
-                    { fileResponse -> viewState.attachUriToMessage(fileResponse.uri) },
-                    { e -> showError(e) }
-                )
-        )
-    }
-
-    fun editMessageText(id: Int, newText: String) {
-        compositeDisposable.add(
-            repository.editMessageText(id, newText)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updateMessages() },
-                    { e -> showError(e) }
-                )
         )
     }
 
@@ -123,106 +83,11 @@ class TopicChatPresenter @Inject constructor(
         )
     }
 
-    fun deleteMessage(id: Int) {
-        compositeDisposable.add(
-            repository.deleteMessage(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updateMessages() },
-                    { e -> showError(e) }
-                )
-        )
-    }
-
-    fun changeMessageTopic(id: Int, newTopic: String) {
-        compositeDisposable.add(
-            repository.changeMessageTopic(id, newTopic)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updateMessages() },
-                    { e -> showError(e) }
-                )
-        )
-    }
 
     fun unsubscribeFromViews() = viewDisposable.clear()
 
     private fun sendMessage(messageText: String) {
-        compositeDisposable.add(
-            repository.sendMessage(streamId, messageText, topicTitle)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updateMessages() },
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-    private fun removeReactionInMessage(messageId: Int, emojiName: String) {
-        compositeDisposable.add(
-            repository.deleteReaction(messageId, emojiName)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updateMessages() },
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-    private fun updateMessages() {
-        compositeDisposable.add(
-            repository.updateMessages(streamTitle, topicTitle, streamId, NEWEST_ANCHOR_MESSAGE, count = INITIAL_PAGE_SIZE)
-                .subscribeOn(Schedulers.io())
-                .map { messagesResponse ->
-                    hasMoreMessages = !messagesResponse.foundOldest
-                    messagesResponse.messages
-                }
-                .flatMapCompletable { repository.markTopicAsRead(streamId, topicTitle) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    Functions.EMPTY_ACTION,
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-    private fun getNextMessages(anchor: Long) {
-        if (isNextPageLoading || !hasMoreMessages) return
-        isNextPageLoading = true
-        compositeDisposable.add(
-            repository.getNextPageMessages(streamTitle, topicTitle, anchor, NEXT_PAGE_SIZE)
-                .subscribeOn(Schedulers.io())
-                .map { messagesResponse ->
-                    hasMoreMessages = !messagesResponse.foundOldest
-                    messagesResponse.messages
-                }
-                .doFinally { isNextPageLoading = false }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    Functions.emptyConsumer(),
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-    private fun getMessages() {
-        compositeDisposable.add(
-            repository.getMessages(topicTitle, streamId)
-                .subscribeOn(Schedulers.io())
-                .debounce(DB_MESSAGES_LOAD_DEBOUNCE, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { viewState.setLoading(true) }
-                .doOnNext { viewState.setLoading(false) }
-                .filter { it.isNotEmpty() }
-                .subscribe(
-                    { messages -> viewState.showMessages(messages) },
-                    { exception -> showError(exception) }
-                )
-        )
+        sendMessageSubscribe(streamId, messageText, topicTitle)
     }
 
     private fun handleClick(click: ChatClickTypes) {
@@ -242,11 +107,6 @@ class TopicChatPresenter @Inject constructor(
                 viewState.showMessageOptions(click.message)
             }
         }
-    }
-
-    private fun showError(exception: Throwable) {
-        viewState.showError()
-        Log.d(TAG, exception.stackTraceToString())
     }
 
 }

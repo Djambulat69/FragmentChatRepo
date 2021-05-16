@@ -1,15 +1,11 @@
 package com.djambulat69.fragmentchat.ui.chat.stream
 
-import android.content.ClipboardManager
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.ImageButton
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -23,15 +19,12 @@ import com.djambulat69.fragmentchat.ui.chat.*
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.MessageOptionsBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.emoji.EmojiBottomSheetDialog
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
-import com.djambulat69.fragmentchat.utils.copyText
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
-import com.djambulat69.fragmentchat.utils.setChildFragmentResultListener
 import com.google.android.material.internal.TextWatcherAdapter
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.core.Observable
-import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
@@ -40,9 +33,8 @@ private const val ARG_STREAM_TITLE = "stream_title"
 private const val ARG_STREAM_ID = "stream_id"
 
 class StreamChatFragment :
-    MvpAppCompatFragment(),
-    StreamChatView,
-    MessageOptionsBottomSheetDialog.MessageOptionsListener {
+    BaseChatFragment<StreamChatPresenter>(),
+    StreamChatView {
 
     private var fragmentInteractor: FragmentInteractor? = null
 
@@ -55,7 +47,10 @@ class StreamChatFragment :
     @Inject
     lateinit var presenterProvider: Provider<StreamChatPresenter>
 
-    private val presenter: StreamChatPresenter by moxyPresenter { presenterProvider.get() }
+    override val presenter: StreamChatPresenter by moxyPresenter { presenterProvider.get() }
+
+    override val addFileButton: ImageButton
+        get() = binding.streamAddFileButton
 
     private val streamTitle: String by lazy { requireArguments().getString(ARG_STREAM_TITLE) as String }
     private val streamId: Int by lazy { requireArguments().getInt(ARG_STREAM_ID) }
@@ -83,10 +78,6 @@ class StreamChatFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setEmojiBottomSheetResultListener()
-        setEditMessageTextResultListener()
-        setChangeMessageTopicResultListener()
-
         with(binding) {
             streamChatToolbar.title = getString(R.string.sharp_placeholder, streamTitle)
             streamChatRecyclerView.adapter =
@@ -110,12 +101,6 @@ class StreamChatFragment :
         presenter.subscribeOnSendingMessages(getSendButtonObservable())
         presenter.subscribeOnScrolling(getScrollObservable(binding.streamChatRecyclerView))
         setupTextWatcher()
-
-        val getContent = registerUploadFileActivityLauncher()
-
-        binding.streamAddFileButton.setOnClickListener {
-            getContent.launch(ALL_FILES_TYPE)
-        }
     }
 
 
@@ -162,29 +147,6 @@ class StreamChatFragment :
         binding.streamMessageEditText.append(makeAttachFileString(uri))
     }
 
-    override fun showEmojiBottomSheetFromMessageOptions(messageId: Int) {
-        showEmojiBottomSheet(messageId)
-    }
-
-    override fun showEditMessageDialog(messageId: Int, messageOldText: String) {
-        EditMessageDialogFragment.newInstance(messageId, messageOldText).show(childFragmentManager, null)
-    }
-
-    override fun copyToClipBoard(text: String) {
-        val clipBoard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipBoard.copyText(text)
-
-        Toast.makeText(requireContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun deleteMessage(id: Int) {
-        presenter.deleteMessage(id)
-    }
-
-    override fun showChangeTopicDialog(id: Int, oldTopic: String) {
-        ChangeTopicDialogFragment.newInstance(id, oldTopic).show(childFragmentManager, null)
-    }
-
     private fun setChatVisibility(isVisible: Boolean) {
         binding.streamChatRecyclerView.isVisible = isVisible
         binding.streamSendButton.isEnabled = isVisible
@@ -209,53 +171,6 @@ class StreamChatFragment :
                 binding.streamAddFileButton.isVisible = text.isBlank()
             }
         })
-    }
-
-    private fun setEmojiBottomSheetResultListener() {
-        setChildFragmentResultListener(EmojiBottomSheetDialog.EMOJI_REQUEST_KEY) { _: String, bundle: Bundle ->
-            val messageId = bundle.getInt(EmojiBottomSheetDialog.MESSAGE_ID_RESULT_KEY)
-            val emojiName = bundle.getString(EmojiBottomSheetDialog.EMOJI_RESULT_KEY) as String
-
-            presenter.addReactionInMessage(messageId, emojiName)
-        }
-    }
-
-    private fun setEditMessageTextResultListener() {
-        setChildFragmentResultListener(EditMessageDialogFragment.EDIT_MESSAGE_REQUEST_KEY) { _: String, bundle: Bundle ->
-            val messageId = bundle.getInt(EditMessageDialogFragment.MESSAGE_ID_RESULT_KEY)
-            val newText = bundle.getString(EditMessageDialogFragment.NEW_TEXT_RESULT_KEY) as String
-
-            presenter.editMessageText(messageId, newText)
-        }
-    }
-
-    private fun setChangeMessageTopicResultListener() {
-        setChildFragmentResultListener(ChangeTopicDialogFragment.CHANGE_TOPIC_REQUEST_KEY) { _: String, bundle: Bundle ->
-            val messageId = bundle.getInt(ChangeTopicDialogFragment.MESSAGE_ID_RESULT_KEY)
-            val newTopic = bundle.getString(ChangeTopicDialogFragment.NEW_TOPIC_RESULT_KEY) as String
-
-            presenter.changeMessageTopic(messageId, newTopic)
-        }
-    }
-
-    private fun registerUploadFileActivityLauncher(): ActivityResultLauncher<String> =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { data ->
-            data?.let { uri ->
-                uploadFile(uri)
-            }
-        }
-
-    private fun uploadFile(uri: Uri) {
-        val contentResolver = FragmentChatApplication.contentResolver()
-        val type = contentResolver.getType(uri)
-
-        contentResolver.queryNameAndSize(uri) { name: String, size: Int ->
-            if (size > MEGABYTES_25_IN_BYTES) {
-                Toast.makeText(requireContext(), R.string.too_big_file, Toast.LENGTH_SHORT).show()
-            } else if (type != null) {
-                presenter.uploadFile(uri, type, name)
-            }
-        }
     }
 
     companion object {
