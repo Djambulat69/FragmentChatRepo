@@ -5,9 +5,7 @@ import com.djambulat69.fragmentchat.model.network.MessagesResponse
 import com.djambulat69.fragmentchat.ui.chat.BaseChatPresenter
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -32,12 +30,8 @@ class TopicChatPresenter @Inject constructor(
         this.streamId = streamId
     }
 
-    fun subscribeOnSendingMessages(sendObservable: Observable<String>) {
-        viewDisposable.add(
-            sendObservable
-                .subscribeOn(Schedulers.io())
-                .subscribe { messageText -> sendMessage(messageText) }
-        )
+    fun sendMessage(messageText: String) {
+        sendMessageSubscribe(streamId, messageText, topicTitle)
     }
 
     override fun getMessagesFlowable(): Flowable<List<Message>> =
@@ -52,8 +46,5 @@ class TopicChatPresenter @Inject constructor(
     override fun updateMessagesSingle(): Single<MessagesResponse> =
         repository.updateMessages(streamTitle, topicTitle, streamId, NEWEST_ANCHOR_MESSAGE, INITIAL_PAGE_SIZE)
 
-    private fun sendMessage(messageText: String) {
-        sendMessageSubscribe(streamId, messageText, topicTitle)
-    }
 
 }

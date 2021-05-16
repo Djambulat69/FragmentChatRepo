@@ -25,7 +25,6 @@ import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import com.google.android.material.internal.TextWatcherAdapter
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.rxjava3.core.Observable
 import moxy.ktx.moxyPresenter
 import java.util.*
 import javax.inject.Inject
@@ -95,6 +94,11 @@ class TopicChatFragment :
 
             includeChatTopicTitle.chatTopicTitle.text = getString(R.string.topic_title, topicTitle)
 
+            binding.topicSendButton.setOnClickListener {
+                presenter.sendMessage(binding.topicMessageEditText.text.toString().trim())
+                binding.topicMessageEditText.setText("")
+            }
+
             presenter.subscribeOnClicks(
                 (topicChatRecyclerView.adapter as AsyncAdapter<*>).getClicks()
             )
@@ -102,7 +106,6 @@ class TopicChatFragment :
 
         setUpAndBackNavigation()
 
-        presenter.subscribeOnSendingMessages(getSendButtonObservable())
         presenter.subscribeOnScrolling(getScrollObservable(binding.topicChatRecyclerView))
         setupTextWatcher()
     }
@@ -147,13 +150,6 @@ class TopicChatFragment :
     private fun setChatVisibility(isVisible: Boolean) {
         binding.topicChatRecyclerView.isVisible = isVisible
         binding.topicSendButton.isEnabled = isVisible
-    }
-
-    private fun getSendButtonObservable(): Observable<String> = Observable.create { emitter ->
-        binding.topicSendButton.setOnClickListener {
-            emitter.onNext(binding.topicMessageEditText.text.toString().trim())
-            binding.topicMessageEditText.setText("")
-        }
     }
 
     private fun setupTextWatcher() {

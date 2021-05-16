@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.FragmentStreamChatBinding
 import com.djambulat69.fragmentchat.model.network.Message
-import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.FragmentInteractor
 import com.djambulat69.fragmentchat.ui.chat.*
@@ -24,7 +23,6 @@ import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import com.google.android.material.internal.TextWatcherAdapter
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.rxjava3.core.Observable
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
 import javax.inject.Provider
@@ -40,9 +38,6 @@ class StreamChatFragment :
 
     private var _binding: FragmentStreamChatBinding? = null
     private val binding: FragmentStreamChatBinding get() = _binding!!
-
-    @Inject
-    lateinit var zulipServiceHelper: ZulipServiceHelper
 
     @Inject
     lateinit var presenterProvider: Provider<StreamChatPresenter>
@@ -68,8 +63,7 @@ class StreamChatFragment :
         _binding = FragmentStreamChatBinding.inflate(inflater)
 
         presenter.initParameters(
-            requireArguments().getString(ARG_STREAM_TITLE) as String,
-            requireArguments().getInt(ARG_STREAM_ID)
+            streamTitle, streamId
         )
 
         return binding.root
@@ -93,12 +87,19 @@ class StreamChatFragment :
                 fragmentInteractor?.back()
             }
 
+            streamSendButton.setOnClickListener {
+                presenter.sendMessage(
+                    streamMessageEditText.text.toString().trim(),
+                    streamTopicEditText.text.toString().trim()
+                )
+                streamMessageEditText.setText("")
+            }
+
             presenter.subscribeOnClicks(
                 (streamChatRecyclerView.adapter as AsyncAdapter<*>).getClicks()
             )
         }
 
-        presenter.subscribeOnSendingMessages(getSendButtonObservable())
         presenter.subscribeOnScrolling(getScrollObservable(binding.streamChatRecyclerView))
         setupTextWatcher()
     }
@@ -150,18 +151,6 @@ class StreamChatFragment :
     private fun setChatVisibility(isVisible: Boolean) {
         binding.streamChatRecyclerView.isVisible = isVisible
         binding.streamSendButton.isEnabled = isVisible
-    }
-
-    private fun getSendButtonObservable(): Observable<Pair<String, String>> = Observable.create { emitter ->
-        with(binding) {
-            streamSendButton.setOnClickListener {
-                emitter.onNext(
-                    streamMessageEditText.text.toString().trim() to
-                            streamTopicEditText.text.toString().trim()
-                )
-                streamMessageEditText.setText("")
-            }
-        }
     }
 
     private fun setupTextWatcher() {

@@ -7,9 +7,7 @@ import com.djambulat69.fragmentchat.ui.chat.NO_TOPIC_TITLE
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatClickTypes
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -46,15 +44,7 @@ class StreamChatPresenter @Inject constructor(
         this.streamId = streamId
     }
 
-    fun subscribeOnSendingMessages(sendObservable: Observable<Pair<String, String>>) {
-        viewDisposable.add(
-            sendObservable
-                .subscribeOn(Schedulers.io())
-                .subscribe { textAndTopic -> sendMessage(textAndTopic.first, textAndTopic.second) }
-        )
-    }
-
-    private fun sendMessage(messageText: String, _topicTitle: String) {
+    fun sendMessage(messageText: String, _topicTitle: String) {
         val topicTitle = if (_topicTitle.isBlank()) NO_TOPIC_TITLE else _topicTitle
 
         sendMessageSubscribe(streamId, messageText, topicTitle)
