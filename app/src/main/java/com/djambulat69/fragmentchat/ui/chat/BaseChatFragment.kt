@@ -38,9 +38,8 @@ abstract class BaseChatFragment<P : BaseChatPresenter<*, *>> :
     }
 
 
-    override fun showEmojiBottomSheetFromMessageOptions(messageId: Int) {
-//        showEmojiBottomSheet(messageId)
-    }
+    override fun showEmojiBottomSheetFromMessageOptions(messageId: Int) =
+        presenter.showEmojiBottomSheet(messageId)
 
     override fun showEditMessageDialog(messageId: Int, messageOldText: String) {
         EditMessageDialogFragment.newInstance(messageId, messageOldText).show(childFragmentManager, null)
@@ -53,9 +52,8 @@ abstract class BaseChatFragment<P : BaseChatPresenter<*, *>> :
         Toast.makeText(requireContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
     }
 
-    override fun deleteMessage(id: Int) {
+    override fun deleteMessage(id: Int) =
         presenter.deleteMessage(id)
-    }
 
     override fun showChangeTopicDialog(id: Int, oldTopic: String) {
         ChangeTopicDialogFragment.newInstance(id, oldTopic).show(childFragmentManager, null)

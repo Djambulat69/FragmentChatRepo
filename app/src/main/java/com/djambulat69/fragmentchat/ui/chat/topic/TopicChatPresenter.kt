@@ -3,21 +3,17 @@ package com.djambulat69.fragmentchat.ui.chat.topic
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.MessagesResponse
 import com.djambulat69.fragmentchat.ui.chat.BaseChatPresenter
-import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatClickTypes
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
 
-private const val SCROLL_EMIT_THROTTLE_MILLIS = 100L
-
+private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
+private const val INITIAL_PAGE_SIZE = 50
 
 class TopicChatPresenter @Inject constructor(
     private val repository: TopicChatRepository
@@ -25,26 +21,9 @@ class TopicChatPresenter @Inject constructor(
 
     override val diffTopics: Boolean = false
 
-    private val viewDisposable = CompositeDisposable()
-
     private lateinit var topicTitle: String
     private lateinit var streamTitle: String
     private var streamId by Delegates.notNull<Int>()
-
-
-    override fun getMessagesFlowable(): Flowable<List<Message>> =
-        repository.getMessages(topicTitle, streamId)
-
-
-    override fun getNextMessagesSingle(anchor: Long, count: Int): Single<MessagesResponse> =
-        repository.getNextPageMessages(streamTitle, topicTitle, anchor, count)
-
-
-    override fun markAsReadCompletable(): Completable =
-        repository.markTopicAsRead(streamId, topicTitle)
-
-    override fun updateMessagesSingle(newestMessageAnchor: Long, initialPageSize: Int): Single<MessagesResponse> =
-        repository.updateMessages(streamTitle, topicTitle, streamId, newestMessageAnchor, initialPageSize)
 
 
     fun initParameters(topicTitle: String, streamTitle: String, streamId: Int) {
@@ -61,52 +40,20 @@ class TopicChatPresenter @Inject constructor(
         )
     }
 
-    fun subscribeOnScrolling(scrollObservable: Observable<Long>) {
-        viewDisposable.add(
-            scrollObservable
-                .subscribeOn(Schedulers.io())
-                .debounce(SCROLL_EMIT_THROTTLE_MILLIS, TimeUnit.MILLISECONDS)
-                .observeOn(Schedulers.io())
-                .subscribe { anchor ->
-                    getNextMessages(anchor)
-                }
-        )
-    }
+    override fun getMessagesFlowable(): Flowable<List<Message>> =
+        repository.getMessages(topicTitle, streamId)
 
-    fun subscribeOnClicks(clicks: Observable<ChatClickTypes>) {
-        viewDisposable.add(
-            clicks
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    handleClick(it)
-                }
-        )
-    }
+    override fun getNextMessagesSingle(anchor: Long, count: Int): Single<MessagesResponse> =
+        repository.getNextPageMessages(streamTitle, topicTitle, anchor, count)
 
+    override fun markAsReadCompletable(): Completable =
+        repository.markTopicAsRead(streamId, topicTitle)
 
-    fun unsubscribeFromViews() = viewDisposable.clear()
+    override fun updateMessagesSingle(): Single<MessagesResponse> =
+        repository.updateMessages(streamTitle, topicTitle, streamId, NEWEST_ANCHOR_MESSAGE, INITIAL_PAGE_SIZE)
 
     private fun sendMessage(messageText: String) {
         sendMessageSubscribe(streamId, messageText, topicTitle)
-    }
-
-    private fun handleClick(click: ChatClickTypes) {
-        when (click) {
-            is ChatClickTypes.AddEmojiClick -> {
-                viewState.showEmojiBottomSheet(click.item.message.id)
-            }
-            is ChatClickTypes.ReactionClick -> {
-
-                if (click.isSelected) {
-                    addReactionInMessage(click.messageId, click.emojiName)
-                } else {
-                    removeReactionInMessage(click.messageId, click.emojiName)
-                }
-            }
-            is ChatClickTypes.MessageLongClick -> {
-                viewState.showMessageOptions(click.message)
-            }
-        }
     }
 
 }

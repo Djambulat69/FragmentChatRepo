@@ -5,9 +5,11 @@ import android.util.Log
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.MessagesResponse
 import com.djambulat69.fragmentchat.model.network.NetworkChecker
+import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatClickTypes
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.internal.functions.Functions
@@ -17,8 +19,6 @@ import java.util.concurrent.TimeUnit
 
 
 private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
-private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
-private const val INITIAL_PAGE_SIZE = 50
 private const val NEXT_PAGE_SIZE = 30
 private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 100L
 
@@ -31,13 +31,15 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
     var hasMoreMessages = true
 
     protected val compositeDisposable = CompositeDisposable()
+    protected val viewDisposable = CompositeDisposable()
+
 
     private var isNextPageLoading = false
 
-    abstract fun getMessagesFlowable(): Flowable<List<Message>>
-    abstract fun getNextMessagesSingle(anchor: Long, count: Int): Single<MessagesResponse>
-    abstract fun updateMessagesSingle(newestMessageAnchor: Long, initialPageSize: Int): Single<MessagesResponse>
-    abstract fun markAsReadCompletable(): Completable
+    protected abstract fun getMessagesFlowable(): Flowable<List<Message>>
+    protected abstract fun getNextMessagesSingle(anchor: Long, count: Int): Single<MessagesResponse>
+    protected abstract fun updateMessagesSingle(): Single<MessagesResponse>
+    protected abstract fun markAsReadCompletable(): Completable
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -49,6 +51,30 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         super.onDestroy()
         compositeDisposable.dispose()
     }
+
+    fun subscribeOnScrolling(scrollObservable: Observable<Long>) {
+        viewDisposable.add(
+            scrollObservable
+                .subscribeOn(Schedulers.io())
+                .debounce(SCROLL_EMIT_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
+                .subscribe { anchor ->
+                    getNextMessages(anchor)
+                }
+        )
+    }
+
+    fun subscribeOnClicks(clicks: Observable<ChatClickTypes>) {
+        viewDisposable.add(
+            clicks
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleClick(it)
+                }
+        )
+    }
+
+    fun unsubscribeFromViews() = viewDisposable.clear()
 
     fun addReactionInMessage(messageId: Int, emojiName: String) {
         compositeDisposable.add(
@@ -112,6 +138,8 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         )
     }
 
+    fun showEmojiBottomSheet(messageId: Int) = viewState.showEmojiBottomSheet(messageId)
+
     protected fun sendMessageSubscribe(streamId: Int, messageText: String, topicName: String) {
         compositeDisposable.add(
             repository.sendMessage(streamId, messageText, topicName)
@@ -138,9 +166,7 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
 
     protected fun updateMessages() {
         compositeDisposable.add(
-            updateMessagesSingle(
-                NEWEST_ANCHOR_MESSAGE, INITIAL_PAGE_SIZE
-            )
+            updateMessagesSingle()
                 .subscribeOn(Schedulers.io())
                 .map { messagesResponse ->
                     hasMoreMessages = !messagesResponse.foundOldest
@@ -198,6 +224,24 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         Log.d(TAG, exception.stackTraceToString())
     }
 
+    protected open fun handleClick(click: ChatClickTypes) {
+        when (click) {
+            is ChatClickTypes.AddEmojiClick -> {
+                viewState.showEmojiBottomSheet(click.item.message.id)
+            }
+            is ChatClickTypes.ReactionClick -> {
+
+                if (click.isSelected) {
+                    addReactionInMessage(click.messageId, click.emojiName)
+                } else {
+                    removeReactionInMessage(click.messageId, click.emojiName)
+                }
+            }
+            is ChatClickTypes.MessageLongClick -> {
+                viewState.showMessageOptions(click.message)
+            }
+        }
+    }
 
     companion object {
 
