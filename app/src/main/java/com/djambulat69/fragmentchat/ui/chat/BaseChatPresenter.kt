@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit
 
 
 private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
-private const val NEXT_PAGE_SIZE = 30
 private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 100L
 
 abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
@@ -37,7 +36,7 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
     private var isNextPageLoading = false
 
     protected abstract fun getMessagesFlowable(): Flowable<List<Message>>
-    protected abstract fun getNextMessagesSingle(anchor: Long, count: Int): Single<MessagesResponse>
+    protected abstract fun getNextMessagesSingle(anchor: Long): Single<MessagesResponse>
     protected abstract fun updateMessagesSingle(): Single<MessagesResponse>
     protected abstract fun markAsReadCompletable(): Completable
 
@@ -185,7 +184,7 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         if (isNextPageLoading || !hasMoreMessages) return
         isNextPageLoading = true
         compositeDisposable.add(
-            getNextMessagesSingle(anchor, NEXT_PAGE_SIZE)
+            getNextMessagesSingle(anchor)
                 .subscribeOn(Schedulers.io())
                 .map { messagesResponse ->
                     hasMoreMessages = !messagesResponse.foundOldest

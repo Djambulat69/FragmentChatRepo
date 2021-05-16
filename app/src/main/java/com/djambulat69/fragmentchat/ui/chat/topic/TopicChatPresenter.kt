@@ -12,6 +12,8 @@ import kotlin.properties.Delegates
 
 private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
 private const val INITIAL_PAGE_SIZE = 50
+private const val NEXT_PAGE_SIZE = 30
+
 
 class TopicChatPresenter @Inject constructor(
     private val repository: TopicChatRepository
@@ -37,8 +39,8 @@ class TopicChatPresenter @Inject constructor(
     override fun getMessagesFlowable(): Flowable<List<Message>> =
         repository.getMessages(topicTitle, streamId)
 
-    override fun getNextMessagesSingle(anchor: Long, count: Int): Single<MessagesResponse> =
-        repository.getNextPageMessages(streamTitle, topicTitle, anchor, count)
+    override fun getNextMessagesSingle(anchor: Long): Single<MessagesResponse> =
+        repository.getNextPageMessages(streamTitle, topicTitle, anchor, NEXT_PAGE_SIZE)
 
     override fun markAsReadCompletable(): Completable =
         repository.markTopicAsRead(streamId, topicTitle)
