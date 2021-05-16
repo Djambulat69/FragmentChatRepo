@@ -166,15 +166,15 @@ class TopicChatFragment :
             requireActivity().supportFragmentManager.findFragmentByTag(StreamChatFragment::class.simpleName) != null
 
         binding.topicChatToolbar.setNavigationOnClickListener {
-            backByCondition(openedFromStreamChat)
+            backToStreamsList(openedFromStreamChat)
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
-            backByCondition(openedFromStreamChat)
+            backToStreamsList(openedFromStreamChat)
         }
     }
 
-    private fun backByCondition(openedFromStreamChat: Boolean) {
+    private fun backToStreamsList(openedFromStreamChat: Boolean) {
         if (openedFromStreamChat) {
             fragmentInteractor?.popStream()
         } else {
