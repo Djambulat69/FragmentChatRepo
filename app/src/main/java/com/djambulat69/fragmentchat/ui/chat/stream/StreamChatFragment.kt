@@ -42,13 +42,16 @@ class StreamChatFragment :
     @Inject
     lateinit var presenterProvider: Provider<StreamChatPresenter>
 
+
+    private val streamTitle: String by lazy { requireArguments().getString(ARG_STREAM_TITLE) as String }
+    private val streamId: Int by lazy { requireArguments().getInt(ARG_STREAM_ID) }
+
+
     override val presenter: StreamChatPresenter by moxyPresenter { presenterProvider.get() }
 
     override val addFileButton: ImageButton
         get() = binding.streamAddFileButton
 
-    private val streamTitle: String by lazy { requireArguments().getString(ARG_STREAM_TITLE) as String }
-    private val streamId: Int by lazy { requireArguments().getInt(ARG_STREAM_ID) }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

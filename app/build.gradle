@@ -86,4 +86,6 @@ dependencies {
     //Dagger
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    // jsoup HTML parser
+    implementation "org.jsoup:jsoup:$jsoup_version"
 }

@@ -46,13 +46,16 @@ class TopicChatFragment :
     @Inject
     lateinit var presenterProvider: Provider<TopicChatPresenter>
 
+
+    private val topicTitle: String by lazy { requireArguments().getString(ARG_TOPIC) as String }
+    private val streamTitle: String by lazy { requireArguments().getString(ARG_STREAM_TITLE) as String }
+
+
     override val presenter: TopicChatPresenter by moxyPresenter { presenterProvider.get() }
 
     override val addFileButton: ImageButton
         get() = binding.topicAddFileButton
 
-    private val topicTitle: String by lazy { requireArguments().getString(ARG_TOPIC) as String }
-    private val streamTitle: String by lazy { requireArguments().getString(ARG_STREAM_TITLE) as String }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -162,19 +165,20 @@ class TopicChatFragment :
     }
 
     private fun setUpAndBackNavigation() {
-        val openedFromStreamChat =
-            requireActivity().supportFragmentManager.findFragmentByTag(StreamChatFragment::class.simpleName) != null
 
         binding.topicChatToolbar.setNavigationOnClickListener {
-            backToStreamsList(openedFromStreamChat)
+            backToChannels()
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
-            backToStreamsList(openedFromStreamChat)
+            backToChannels()
         }
     }
 
-    private fun backToStreamsList(openedFromStreamChat: Boolean) {
+    private fun backToChannels() {
+        val openedFromStreamChat =
+            requireActivity().supportFragmentManager.findFragmentByTag(StreamChatFragment::class.simpleName) != null
+
         if (openedFromStreamChat) {
             fragmentInteractor?.popStream()
         } else {

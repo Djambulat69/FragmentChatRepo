@@ -47,4 +47,5 @@ ext {
     rxrelay_version = '3.0.0'
     dagger_version = '2.35'
     activity_ktx_version = '1.2.3'
+    jsoup_version = '1.13.1'
 }

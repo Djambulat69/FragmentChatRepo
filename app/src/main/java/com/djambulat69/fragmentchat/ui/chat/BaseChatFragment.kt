@@ -59,6 +59,7 @@ abstract class BaseChatFragment<P : BaseChatPresenter<*, *>> :
         ChangeTopicDialogFragment.newInstance(id, oldTopic).show(childFragmentManager, null)
     }
 
+
     private fun setEmojiBottomSheetResultListener() {
         setChildFragmentResultListener(EmojiBottomSheetDialog.EMOJI_REQUEST_KEY) { _: String, bundle: Bundle ->
             val messageId = bundle.getInt(EmojiBottomSheetDialog.MESSAGE_ID_RESULT_KEY)

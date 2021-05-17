@@ -28,6 +28,17 @@ class StreamChatPresenter @Inject constructor(
     private var streamId by Delegates.notNull<Int>()
 
 
+    fun initParameters(streamTitle: String, streamId: Int) {
+        this.streamTitle = streamTitle
+        this.streamId = streamId
+    }
+
+    fun sendMessage(messageText: String, _topicTitle: String) {
+        val topicTitle = if (_topicTitle.isBlank()) NO_TOPIC_TITLE else _topicTitle
+
+        sendMessageSubscribe(streamId, messageText, topicTitle)
+    }
+
     override fun getMessagesFlowable(): Flowable<List<Message>> =
         repository.getMessages(streamId)
 
@@ -39,18 +50,6 @@ class StreamChatPresenter @Inject constructor(
 
     override fun updateMessagesSingle(): Single<MessagesResponse> =
         repository.updateMessages(streamTitle, streamId, NEWEST_ANCHOR_MESSAGE, INITIAL_PAGE_SIZE)
-
-
-    fun initParameters(streamTitle: String, streamId: Int) {
-        this.streamTitle = streamTitle
-        this.streamId = streamId
-    }
-
-    fun sendMessage(messageText: String, _topicTitle: String) {
-        val topicTitle = if (_topicTitle.isBlank()) NO_TOPIC_TITLE else _topicTitle
-
-        sendMessageSubscribe(streamId, messageText, topicTitle)
-    }
 
     override fun handleClick(click: ChatClickTypes) {
         when (click) {
