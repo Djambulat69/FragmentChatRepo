@@ -3,6 +3,7 @@ package com.djambulat69.fragmentchat.ui.chat.recyclerview
 import android.view.View
 import com.bumptech.glide.RequestManager
 import com.djambulat69.fragmentchat.databinding.IncomingMessageLayoutBinding
+import com.djambulat69.fragmentchat.utils.parseHtml
 import com.djambulat69.fragmentchat.utils.recyclerView.BaseViewHolder
 import com.djambulat69.fragmentchat.utils.recyclerView.ItemClick
 import com.jakewharton.rxrelay3.PublishRelay
@@ -27,9 +28,11 @@ class IncomingMessageViewHolder(
 
     override fun bind(item: MessageUI) {
         with(binding.messageViewgroupIncoming) {
-            text = item.message.content
+
+            text = parseHtml(item.message.content)
+
             author = item.message.senderFullName
-            setReactions(item.message.reactions.sortedBy { it.emojiName }, clickFunction, item.message.id)
+            setReactions(item.message.reactions.sortedBy { it.emojiName }, clickFunction)
             setAvatar(glide, item.message.avatarUrl)
         }
     }

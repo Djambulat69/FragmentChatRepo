@@ -9,9 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.annotation.Px
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
+import com.djambulat69.fragmentchat.di.NetworkModule
+import org.jsoup.Jsoup
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -70,4 +73,17 @@ fun secondsToDateString(timeStamp: Long): String {
         .format(
             DateTimeFormatter.ofPattern("d MMM")
         )
+}
+
+fun parseHtml(content: String): CharSequence {
+    val doc = Jsoup.parse(content, NetworkModule.BASE_URL).body()
+
+    doc.select("a")?.forEach { e ->
+        e.attr("href", e.absUrl("href"))
+    }
+
+    // to prevent HtmlCompat replacing imgS with image spans by default
+    doc.getElementsByTag("img")?.remove()
+
+    return HtmlCompat.fromHtml(doc.html(), HtmlCompat.FROM_HTML_MODE_COMPACT).trim()
 }

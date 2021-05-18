@@ -242,9 +242,14 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         }
     }
 
+
     companion object {
 
-        private val TAG = this::class.simpleName
+        protected val TAG = this::class.simpleName
+
+        const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
+        const val INITIAL_PAGE_SIZE = 50
+        const val NEXT_PAGE_SIZE = 30
 
     }
 }

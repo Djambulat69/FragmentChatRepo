@@ -40,7 +40,6 @@
             android:id="@+id/message_text_incoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autoLink="web"
             android:maxWidth="@dimen/message_text_max_width"
             android:textAlignment="viewStart"
             android:textColor="@color/white"

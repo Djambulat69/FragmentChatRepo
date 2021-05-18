@@ -12,11 +12,6 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 
-private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
-private const val INITIAL_PAGE_SIZE = 50
-private const val NEXT_PAGE_SIZE = 30
-
-
 class StreamChatPresenter @Inject constructor(
     private val repository: StreamChatRepository
 ) : BaseChatPresenter<StreamChatView, StreamChatRepository>(repository) {

@@ -10,11 +10,6 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 
-private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
-private const val INITIAL_PAGE_SIZE = 50
-private const val NEXT_PAGE_SIZE = 30
-
-
 class TopicChatPresenter @Inject constructor(
     private val repository: TopicChatRepository
 ) : BaseChatPresenter<TopicChatView, TopicChatRepository>(repository) {

@@ -23,7 +23,7 @@ interface ZulipChatService {
         @Query("num_before") numBefore: Int,
         @Query("num_after") numAfter: Int,
         @Query("narrow") narrow: String,
-        @Query("apply_markdown") applyMarkdown: Boolean = false
+        @Query("apply_markdown") applyMarkdown: Boolean = true
     ): Single<MessagesResponse>
 
     @GET("users/me")
@@ -54,7 +54,7 @@ interface ZulipChatService {
 
     @POST("users/me/subscriptions")
     fun subscribeOnStreams(
-        @Query("subscriptions") subscribtions: String,
+        @Query("subscriptions") subscriptions: String,
         @Query("inviteOnly") inviteOnly: Boolean
     ): Completable
 
@@ -62,7 +62,10 @@ interface ZulipChatService {
     fun markStreamAsRead(@Query("stream_id") id: Int): Completable
 
     @POST("mark_topic_as_read")
-    fun markTopicAsRead(@Query("stream_id") streamId: Int, @Query("topic_name") topicTitle: String): Completable
+    fun markTopicAsRead(
+        @Query("stream_id") streamId: Int,
+        @Query("topic_name") topicTitle: String
+    ): Completable
 
     @Multipart
     @POST("user_uploads")

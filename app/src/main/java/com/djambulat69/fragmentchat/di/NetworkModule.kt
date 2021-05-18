@@ -14,9 +14,6 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
-private const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/v1/"
-private const val READ_TIMEOUT_MILLIS = 0L
-
 @Module
 class NetworkModule {
 
@@ -43,5 +40,11 @@ class NetworkModule {
             .build()
             .create(ZulipChatService::class.java)
 
+
+    companion object {
+        const val BASE_URL = "https://tfs-android-2021-spring.zulipchat.com/api/v1/"
+
+        private const val READ_TIMEOUT_MILLIS = 0L
+    }
 
 }

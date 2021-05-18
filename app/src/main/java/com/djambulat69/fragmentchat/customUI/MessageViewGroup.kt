@@ -1,6 +1,7 @@
 package com.djambulat69.fragmentchat.customUI
 
 import android.content.Context
+import android.text.method.LinkMovementMethod
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -44,7 +45,9 @@ class MessageViewGroup @JvmOverloads constructor(
         avatarView = findViewById(R.id.avatar_view)
         messageLayout = findViewById(R.id.message_linear_layout)
         authorText = findViewById(R.id.profile_name_text_view)
-        messageText = findViewById(R.id.message_text_incoming)
+        messageText = findViewById<TextView>(R.id.message_text_incoming).apply {
+            movementMethod = LinkMovementMethod.getInstance()
+        }
         flexBox = findViewById(R.id.flex_box)
         addReactionButton = findViewById(R.id.add_reaction_button_incoming)
 
@@ -60,12 +63,13 @@ class MessageViewGroup @JvmOverloads constructor(
         }
     }
 
-    var text
-        get() = messageText.text.toString()
+    var text: CharSequence
+        get() = messageText.text
         set(value) {
             messageText.text = value
             requestLayout()
         }
+
     var author
         get() = authorText.text.toString()
         set(value) {
@@ -75,8 +79,7 @@ class MessageViewGroup @JvmOverloads constructor(
 
     fun setReactions(
         reactions: List<Reaction>,
-        reactionClick: (View) -> Unit,
-        messageId: Int
+        reactionClick: (View) -> Unit
     ) {
         flexBox.setReactions(reactions, reactionClick)
     }
