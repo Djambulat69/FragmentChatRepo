@@ -28,7 +28,7 @@ class MainFragment : Fragment(), FragmentInteractor {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
             childFragmentManager.commit {
-                add(R.id.main_fragment_container, ChannelsFragment.newInstance())
+                add(R.id.main_fragment_container, ChannelsFragment.newInstance(), BottomNavigationPages.CHANNELS.name)
             }
         }
     }
@@ -47,9 +47,9 @@ class MainFragment : Fragment(), FragmentInteractor {
         val bottomNavigation = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.channels_menu_item -> openFragment(ChannelsFragment.newInstance())
-                R.id.people_menu_item -> openFragment(PeopleFragment.newInstance())
-                R.id.profile_menu_item -> openFragment(ProfileFragment.newInstance())
+                R.id.channels_menu_item -> openFragment(BottomNavigationPages.CHANNELS)
+                R.id.people_menu_item -> openFragment(BottomNavigationPages.PEOPLE)
+                R.id.profile_menu_item -> openFragment(BottomNavigationPages.PROFILE)
                 else -> false
             }
         }
@@ -71,11 +71,23 @@ class MainFragment : Fragment(), FragmentInteractor {
         fragmentInteractor?.popStream()
     }
 
-    private fun openFragment(fragment: Fragment): Boolean {
+    private fun openFragment(page: BottomNavigationPages): Boolean {
+
         childFragmentManager.commit {
-            replace(R.id.main_fragment_container, fragment)
+            addToBackStack(null)
+            replace(
+                R.id.main_fragment_container,
+                childFragmentManager.findFragmentByTag(page.tag) ?: newFragmentInstance(page),
+                page.tag
+            )
         }
         return true
+    }
+
+    private fun newFragmentInstance(page: BottomNavigationPages): Fragment = when (page) {
+        BottomNavigationPages.CHANNELS -> ChannelsFragment.newInstance()
+        BottomNavigationPages.PEOPLE -> PeopleFragment.newInstance()
+        BottomNavigationPages.PROFILE -> ProfileFragment.newInstance()
     }
 
     companion object {
