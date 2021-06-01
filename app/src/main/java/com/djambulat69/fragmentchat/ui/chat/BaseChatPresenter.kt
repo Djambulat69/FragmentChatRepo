@@ -175,7 +175,7 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     Functions.EMPTY_ACTION,
-                    { exception -> showError(exception) }
+                    { e -> Log.d(TAG, e.stackTraceToString()) }
                 )
         )
     }
@@ -203,7 +203,6 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         compositeDisposable.add(
             getMessagesFlowable()
                 .subscribeOn(Schedulers.io())
-                .debounce(DB_MESSAGES_LOAD_DEBOUNCE, TimeUnit.MILLISECONDS)
                 .map { messages ->
                     messagesByDate(messages, diffTopics)
                 }
