@@ -14,6 +14,7 @@ import com.djambulat69.fragmentchat.ui.people.recyclerview.UserDiffCallback
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UserUI
 import com.djambulat69.fragmentchat.ui.people.recyclerview.UsersHolderFactory
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
+import com.djambulat69.fragmentchat.utils.viewBinding
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -21,10 +22,8 @@ import javax.inject.Provider
 
 class PeopleFragment : MvpAppCompatFragment(), PeopleView {
 
-    private var _binding: FragmentPeopleBinding? = null
-    private val binding get() = _binding!!
-    private var _errorBinding: ErrorLayoutBinding? = null
-    private val errorBinding get() = _errorBinding!!
+    private val binding by viewBinding { FragmentPeopleBinding.inflate(layoutInflater) }
+    private val errorBinding by viewBinding { ErrorLayoutBinding.bind(binding.root) }
 
     @Inject
     lateinit var presenterProvider: Provider<PeoplePresenter>
@@ -42,8 +41,6 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPeopleBinding.inflate(inflater, container, false)
-        _errorBinding = ErrorLayoutBinding.bind(binding.root)
         return binding.root
     }
 
@@ -51,12 +48,6 @@ class PeopleFragment : MvpAppCompatFragment(), PeopleView {
         super.onViewCreated(view, savedInstanceState)
 
         binding.usersRecyclerView.adapter = AsyncAdapter(UsersHolderFactory(Glide.with(this)), UserDiffCallback)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _errorBinding = null
-        _binding = null
     }
 
     override fun showUsers(userUIs: List<UserUI>) {

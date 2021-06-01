@@ -11,6 +11,7 @@ import com.djambulat69.fragmentchat.databinding.ErrorLayoutBinding
 import com.djambulat69.fragmentchat.databinding.FragmentProfileBinding
 import com.djambulat69.fragmentchat.model.network.User
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
+import com.djambulat69.fragmentchat.utils.viewBinding
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -18,10 +19,8 @@ import javax.inject.Provider
 
 class ProfileFragment : MvpAppCompatFragment(), ProfileView {
 
-    private var _binding: FragmentProfileBinding? = null
-    private val binding get() = _binding!!
-    private var _errorBinding: ErrorLayoutBinding? = null
-    private val errorBinding get() = _errorBinding!!
+    private val binding by viewBinding { FragmentProfileBinding.inflate(layoutInflater) }
+    private val errorBinding by viewBinding { ErrorLayoutBinding.bind(binding.root) }
 
     @Inject
     lateinit var presenterProvider: Provider<ProfilePresenter>
@@ -39,15 +38,7 @@ class ProfileFragment : MvpAppCompatFragment(), ProfileView {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        _errorBinding = ErrorLayoutBinding.bind(binding.root)
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _errorBinding = null
-        _binding = null
     }
 
     override fun showProfile(user: User) {

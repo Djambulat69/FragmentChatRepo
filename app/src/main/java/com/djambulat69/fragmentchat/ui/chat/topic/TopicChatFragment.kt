@@ -2,9 +2,7 @@ package com.djambulat69.fragmentchat.ui.chat.topic
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
@@ -23,6 +21,7 @@ import com.djambulat69.fragmentchat.ui.chat.stream.StreamChatFragment
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
+import com.djambulat69.fragmentchat.utils.viewBinding
 import com.google.android.material.internal.TextWatcherAdapter
 import com.google.android.material.snackbar.Snackbar
 import moxy.ktx.moxyPresenter
@@ -35,13 +34,12 @@ private const val ARG_STREAM_TITLE = "stream_title"
 private const val ARG_STREAM_ID = "stream_id"
 
 class TopicChatFragment :
-    BaseChatFragment<TopicChatPresenter>(),
+    BaseChatFragment<TopicChatPresenter, FragmentTopicChatBinding>(),
     TopicChatView {
 
     private var fragmentInteractor: FragmentInteractor? = null
 
-    private var _binding: FragmentTopicChatBinding? = null
-    private val binding get() = _binding!!
+    override val binding by viewBinding { FragmentTopicChatBinding.inflate(layoutInflater) }
 
     @Inject
     lateinit var presenterProvider: Provider<TopicChatPresenter>
@@ -66,23 +64,13 @@ class TopicChatFragment :
         FragmentChatApplication.INSTANCE.daggerAppComponent.inject(this)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentTopicChatBinding.inflate(layoutInflater, container, false)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         presenter.initParameters(
             requireArguments().getString(ARG_TOPIC) as String,
             requireArguments().getString(ARG_STREAM_TITLE) as String,
             requireArguments().getInt(ARG_STREAM_ID)
         )
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
             topicChatToolbar.title = getString(R.string.sharp_placeholder, streamTitle)
@@ -116,7 +104,6 @@ class TopicChatFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         presenter.unsubscribeFromViews()
-        _binding = null
     }
 
     override fun showMessages(uiItems: List<ViewTyped>) {

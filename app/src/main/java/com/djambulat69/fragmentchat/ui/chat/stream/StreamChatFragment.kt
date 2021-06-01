@@ -2,9 +2,7 @@ package com.djambulat69.fragmentchat.ui.chat.stream
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -21,6 +19,7 @@ import com.djambulat69.fragmentchat.ui.chat.recyclerview.*
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.SpinnerUI
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
+import com.djambulat69.fragmentchat.utils.viewBinding
 import com.google.android.material.internal.TextWatcherAdapter
 import com.google.android.material.snackbar.Snackbar
 import moxy.ktx.moxyPresenter
@@ -31,13 +30,12 @@ private const val ARG_STREAM_TITLE = "stream_title"
 private const val ARG_STREAM_ID = "stream_id"
 
 class StreamChatFragment :
-    BaseChatFragment<StreamChatPresenter>(),
+    BaseChatFragment<StreamChatPresenter, FragmentStreamChatBinding>(),
     StreamChatView {
 
     private var fragmentInteractor: FragmentInteractor? = null
 
-    private var _binding: FragmentStreamChatBinding? = null
-    private val binding: FragmentStreamChatBinding get() = _binding!!
+    override val binding: FragmentStreamChatBinding by viewBinding { FragmentStreamChatBinding.inflate(layoutInflater) }
 
     @Inject
     lateinit var presenterProvider: Provider<StreamChatPresenter>
@@ -62,18 +60,12 @@ class StreamChatFragment :
         FragmentChatApplication.INSTANCE.daggerAppComponent.inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentStreamChatBinding.inflate(inflater)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         presenter.initParameters(
             streamTitle, streamId
         )
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
             streamChatToolbar.title = getString(R.string.sharp_placeholder, streamTitle)
@@ -110,7 +102,6 @@ class StreamChatFragment :
 
     override fun onDestroyView() {
         presenter.unsubscribeFromViews()
-        _binding = null
         super.onDestroyView()
     }
 

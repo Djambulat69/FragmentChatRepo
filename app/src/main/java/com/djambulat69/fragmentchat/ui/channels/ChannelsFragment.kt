@@ -11,6 +11,7 @@ import com.djambulat69.fragmentchat.databinding.FragmentChannelsBinding
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.utils.getCurrentFragments
 import com.djambulat69.fragmentchat.utils.setChildFragmentResultListener
+import com.djambulat69.fragmentchat.utils.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import io.reactivex.rxjava3.core.Observable
@@ -21,8 +22,7 @@ import javax.inject.Provider
 
 class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
 
-    private var _binding: FragmentChannelsBinding? = null
-    private val binding get() = _binding!!
+    private val binding by viewBinding { FragmentChannelsBinding.inflate(layoutInflater) }
 
     @Inject
     lateinit var presenterProvider: Provider<ChannelsPresenter>
@@ -39,7 +39,6 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -70,7 +69,6 @@ class ChannelsFragment : MvpAppCompatFragment(), ChannelsView {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
         presenter.unsubscribeFromViews()
     }
 

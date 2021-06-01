@@ -4,11 +4,14 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.viewbinding.ViewBinding
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.ui.FragmentChatApplication
 import com.djambulat69.fragmentchat.ui.chat.bottomsheet.MessageOptionsBottomSheetDialog
@@ -17,13 +20,20 @@ import com.djambulat69.fragmentchat.utils.copyText
 import com.djambulat69.fragmentchat.utils.setChildFragmentResultListener
 import moxy.MvpAppCompatFragment
 
-abstract class BaseChatFragment<P : BaseChatPresenter<*, *>> :
+abstract class BaseChatFragment<P : BaseChatPresenter<*, *>, VB : ViewBinding> :
     MvpAppCompatFragment(),
     MessageOptionsBottomSheetDialog.MessageOptionsListener {
+
+
+    protected abstract val binding: VB
 
     abstract val presenter: P
 
     abstract val addFileButton: ImageButton
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

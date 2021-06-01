@@ -18,7 +18,6 @@ import moxy.MvpPresenter
 import java.util.concurrent.TimeUnit
 
 
-private const val DB_MESSAGES_LOAD_DEBOUNCE = 100L
 private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 100L
 
 abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(

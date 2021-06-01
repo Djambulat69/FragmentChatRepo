@@ -20,6 +20,7 @@ import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsClic
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsHolderFactory
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
+import com.djambulat69.fragmentchat.utils.viewBinding
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -36,10 +37,8 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
 
     private val presenter: StreamsPresenter by moxyPresenter { presenterProvider.get() }
 
-    private var _binding: FragmentStreamsBinding? = null
-    private val binding get() = _binding!!
-    private var _errorBinding: ErrorLayoutBinding? = null
-    private val errorBinding get() = _errorBinding!!
+    private val binding by viewBinding { FragmentStreamsBinding.inflate(layoutInflater) }
+    private val errorBinding by viewBinding { ErrorLayoutBinding.bind(binding.root) }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -55,8 +54,6 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentStreamsBinding.inflate(inflater, container, false)
-        _errorBinding = ErrorLayoutBinding.bind(binding.root)
         return binding.root
     }
 
@@ -75,8 +72,6 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     override fun onDestroyView() {
         super.onDestroyView()
         presenter.unsubscribeFromViews()
-        _binding = null
-        _errorBinding = null
     }
 
     override fun showStreams(streamUIs: List<ViewTyped>) {
