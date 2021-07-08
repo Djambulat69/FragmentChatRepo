@@ -25,7 +25,7 @@ class ChangeTopicDialogFragment : DialogFragment() {
 
         _binding = DialogChangeTopicBinding.inflate(layoutInflater)
 
-        return MaterialAlertDialogBuilder(requireParentFragment().requireContext())
+        return MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.change_topic)
             .setNegativeButton(android.R.string.cancel) { dialog: DialogInterface, _: Int ->
                 dialog.cancel()

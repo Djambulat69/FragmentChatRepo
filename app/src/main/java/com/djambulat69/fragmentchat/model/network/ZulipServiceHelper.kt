@@ -1,6 +1,7 @@
 package com.djambulat69.fragmentchat.model.network
 
 import com.djambulat69.fragmentchat.ui.channels.streams.StreamsResponseSealed
+import com.djambulat69.fragmentchat.utils.buildList
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import kotlinx.serialization.encodeToString
@@ -46,6 +47,21 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
             )
         )
 
+    fun getMessagesSingle(stream: String, topic: String?, anchor: Long, count: Int): Single<MessagesResponse> {
+
+        val narrow: List<NarrowSearchOperator> = buildList {
+            add(NarrowSearchOperator(NarrowSearchOperator.STREAM_OPERATOR, stream))
+            topic?.let { add(NarrowSearchOperator(NarrowSearchOperator.TOPIC_OPERATOR, topic)) }
+        }
+
+        return zulipService.getMessages(
+            anchor,
+            count,
+            MESSAGES_COUNT_AFTER_ANCHOR,
+            Json.encodeToString(narrow)
+        )
+    }
+
     fun getOwnUser(): Single<User> = zulipService.getOwnUser()
 
     fun getUsers(): Single<AllUsersResponse> = zulipService.getUsers()
@@ -62,7 +78,6 @@ class ZulipServiceHelper @Inject constructor(private val zulipService: ZulipChat
     fun deleteMessage(id: Int): Completable = zulipService.deleteMessage(id)
 
     fun deleteReaction(messageId: Int, emojiName: String): Completable = zulipService.deleteReaction(messageId, emojiName)
-
 
     fun markStreamAsRead(id: Int): Completable = zulipService.markStreamAsRead(id)
 

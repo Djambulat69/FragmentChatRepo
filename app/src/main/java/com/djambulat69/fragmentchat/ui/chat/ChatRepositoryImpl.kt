@@ -1,4 +1,4 @@
-package com.djambulat69.fragmentchat.ui.chat.topic
+package com.djambulat69.fragmentchat.ui.chat
 
 import android.net.Uri
 import com.djambulat69.fragmentchat.model.UriReader
@@ -7,53 +7,59 @@ import com.djambulat69.fragmentchat.model.network.FileResponse
 import com.djambulat69.fragmentchat.model.network.Message
 import com.djambulat69.fragmentchat.model.network.MessagesResponse
 import com.djambulat69.fragmentchat.model.network.ZulipServiceHelper
-import com.djambulat69.fragmentchat.ui.chat.ChatRepository
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 
-class TopicChatRepository @Inject constructor(
+class ChatRepositoryImpl @Inject constructor(
     private val messagesDao: MessagesDao,
     private val zulipService: ZulipServiceHelper,
     private val uriReader: UriReader
 ) : ChatRepository {
 
-    fun getMessages(topicTitle: String, streamId: Int): Flowable<List<Message>> =
+    override fun getTopicMessages(topicTitle: String, streamId: Int): Flowable<List<Message>> =
         messagesDao.getTopicMessages(topicTitle, streamId)
 
-    fun updateMessages(
-        streamTitle: String,
-        topicTitle: String,
-        streamId: Int,
-        anchor: Long,
-        count: Int
-    ): Single<MessagesResponse> =
-        zulipService.getTopicMessagesSingle(streamTitle, topicTitle, anchor, count)
+    override fun getStreamMessages(streamId: Int): Flowable<List<Message>> {
+        return messagesDao.getStreamMessages(streamId)
+    }
+
+    override fun updateMessages(
+        streamTitle: String, topicTitle: String?,
+        streamId: Int, anchor: Long, count: Int
+    ): Single<MessagesResponse> {
+
+        return zulipService.getMessagesSingle(streamTitle, topicTitle, anchor, count)
             .flatMap { messagesResponse ->
                 clearAndLoadNewMessages(topicTitle, streamId, messagesResponse)
             }
 
-    fun getNextPageMessages(
-        streamTitle: String,
-        topicTitle: String,
-        anchor: Long,
-        count: Int
-    ): Single<MessagesResponse> =
-        zulipService.getTopicMessagesSingle(streamTitle, topicTitle, anchor, count)
+    }
+
+    override fun getNextMessages(
+        streamTitle: String, topicTitle: String?,
+        anchor: Long, count: Int
+    ): Single<MessagesResponse> {
+        return zulipService.getMessagesSingle(streamTitle, topicTitle, anchor, count)
             .flatMap { messagesResponse ->
                 messagesDao.saveMessages(messagesResponse.messages).andThen(Single.just(messagesResponse))
             }
+    }
 
     override fun sendMessage(streamId: Int, messageText: String, topicName: String): Completable =
         zulipService.sendMessageCompletable(streamId, messageText, topicName)
 
+
     override fun addReaction(messageId: Int, emojiName: String): Completable =
         zulipService.addReaction(messageId, emojiName)
 
-    fun markTopicAsRead(streamId: Int, topicTitle: String): Completable =
+    override fun markTopicAsRead(streamId: Int, topicTitle: String): Completable =
         zulipService.markTopicAsRead(streamId, topicTitle)
+
+    override fun markStreamAsRead(streamId: Int): Completable =
+        zulipService.markStreamAsRead(streamId)
 
     override fun uploadFile(uri: Uri, type: String, name: String): Single<FileResponse> {
         return readUri(uri)
@@ -72,13 +78,19 @@ class TopicChatRepository @Inject constructor(
         zulipService.deleteReaction(messageId, emojiName)
 
     private fun clearAndLoadNewMessages(
-        topicTitle: String,
+        topicTitle: String?,
         streamId: Int,
         messagesResponse: MessagesResponse
     ) =
-        messagesDao.deleteTopicMessages(topicTitle, streamId)
+        deleteMessagesCompletable(topicTitle, streamId)
             .andThen(messagesDao.saveMessages(messagesResponse.messages))
             .andThen(Single.just(messagesResponse))
+
+    private fun deleteMessagesCompletable(topicTitle: String?, streamId: Int): Completable {
+        return topicTitle?.let {
+            messagesDao.deleteTopicMessages(it, streamId)
+        } ?: messagesDao.deleteStreamMessages(streamId)
+    }
 
     private fun readUri(uri: Uri): Single<ByteArray> {
         return Single.just(uriReader.readBytes(uri))

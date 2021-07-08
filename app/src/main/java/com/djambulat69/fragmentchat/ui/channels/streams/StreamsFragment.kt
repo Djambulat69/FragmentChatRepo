@@ -1,6 +1,7 @@
 package com.djambulat69.fragmentchat.ui.channels.streams
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import com.djambulat69.fragmentchat.ui.channels.StreamCreateListener
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamDiffCallback
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsClickMapper
 import com.djambulat69.fragmentchat.ui.channels.streams.recyclerview.StreamsHolderFactory
+import com.djambulat69.fragmentchat.ui.chat.ChatActivity
 import com.djambulat69.fragmentchat.utils.recyclerView.AsyncAdapter
 import com.djambulat69.fragmentchat.utils.recyclerView.ViewTyped
 import com.djambulat69.fragmentchat.utils.viewBinding
@@ -94,11 +96,22 @@ class StreamsFragment : MvpAppCompatFragment(), StreamsView, SearchQueryListener
     }
 
     override fun openTopicFragment(topicTitle: String, streamTitle: String, streamId: Int) {
-        fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
+        val topicChatIntent = Intent(requireContext(), ChatActivity::class.java).apply {
+            putExtra(ChatActivity.ARG_STREAM_TITLE, streamTitle)
+            putExtra(ChatActivity.ARG_STREAM_ID, streamId)
+            putExtra(ChatActivity.ARG_TOPIC, topicTitle)
+        }
+
+        requireContext().startActivity(topicChatIntent)
     }
 
     override fun openStreamFragment(streamTitle: String, streamId: Int) {
-        fragmentInteractor?.openStream(streamTitle, streamId)
+        val streamChatIntent = Intent(requireContext(), ChatActivity::class.java).apply {
+            putExtra(ChatActivity.ARG_STREAM_TITLE, streamTitle)
+            putExtra(ChatActivity.ARG_STREAM_ID, streamId)
+        }
+
+        requireContext().startActivity(streamChatIntent)
     }
 
     override fun makeSearch(query: String) {

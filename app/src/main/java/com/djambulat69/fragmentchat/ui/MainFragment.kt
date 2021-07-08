@@ -59,18 +59,6 @@ class MainFragment : Fragment(), FragmentInteractor {
         fragmentInteractor?.back()
     }
 
-    override fun openTopic(topicTitle: String, streamTitle: String, streamId: Int) {
-        fragmentInteractor?.openTopic(topicTitle, streamTitle, streamId)
-    }
-
-    override fun openStream(streamTitle: String, streamId: Int) {
-        fragmentInteractor?.openStream(streamTitle, streamId)
-    }
-
-    override fun popStream() {
-        fragmentInteractor?.popStream()
-    }
-
     private fun openFragment(page: BottomNavigationPages): Boolean {
 
         childFragmentManager.commit {

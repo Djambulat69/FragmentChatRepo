@@ -6,7 +6,7 @@ import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.OneExecution
 
-interface BaseChatView : MvpView {
+interface ChatView : MvpView {
 
     @AddToEndSingle
     fun showMessages(uiItems: List<ViewTyped>)
@@ -15,7 +15,7 @@ interface BaseChatView : MvpView {
     fun setLoading(visible: Boolean)
 
     @AddToEndSingle
-    fun setMessageLoading(visible: Boolean)
+    fun setFileLoading(visible: Boolean)
 
     @OneExecution
     fun showEmojiBottomSheet(messageId: Int)
@@ -28,5 +28,8 @@ interface BaseChatView : MvpView {
 
     @OneExecution
     fun attachUriToMessage(uri: String)
+
+    @OneExecution
+    fun openTopicChat(topicTitle: String)
 
 }

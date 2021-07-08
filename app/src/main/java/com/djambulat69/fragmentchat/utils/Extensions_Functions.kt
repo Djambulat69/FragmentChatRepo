@@ -87,3 +87,9 @@ fun parseHtml(content: String): CharSequence {
 
     return HtmlCompat.fromHtml(doc.html(), HtmlCompat.FROM_HTML_MODE_COMPACT).trim()
 }
+
+inline fun <T> buildList(buildAction: MutableList<T>.() -> Unit): List<T> {
+    val mutList = mutableListOf<T>()
+    mutList.buildAction()
+    return mutList
+}

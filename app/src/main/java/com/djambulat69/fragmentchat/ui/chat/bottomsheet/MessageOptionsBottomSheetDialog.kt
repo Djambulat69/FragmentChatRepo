@@ -24,7 +24,7 @@ class MessageOptionsBottomSheetDialog : BottomSheetDialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        listener = parentFragment as MessageOptionsListener
+        listener = activity as MessageOptionsListener
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

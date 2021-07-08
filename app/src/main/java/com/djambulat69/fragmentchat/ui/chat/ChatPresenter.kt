@@ -3,41 +3,36 @@ package com.djambulat69.fragmentchat.ui.chat
 import android.net.Uri
 import android.util.Log
 import com.djambulat69.fragmentchat.model.network.Message
-import com.djambulat69.fragmentchat.model.network.MessagesResponse
 import com.djambulat69.fragmentchat.model.network.NetworkChecker
 import com.djambulat69.fragmentchat.ui.chat.recyclerview.ChatClickTypes
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.internal.functions.Functions
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import kotlin.properties.Delegates
 
-
-private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 100L
-
-abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
-    private val repository: R
-) : MvpPresenter<V>() {
-
-    abstract val diffTopics: Boolean
+class ChatPresenter @Inject constructor(private val repository: ChatRepositoryImpl) : MvpPresenter<ChatView>() {
 
     var hasMoreMessages = true
 
-    protected val compositeDisposable = CompositeDisposable()
-    protected val viewDisposable = CompositeDisposable()
 
+    private val compositeDisposable = CompositeDisposable()
+    private val viewDisposable = CompositeDisposable()
+
+    private lateinit var streamTitle: String
+    private var streamId by Delegates.notNull<Int>()
+    private var topicTitle: String? = null
+
+    private val diffTopics get() = topicTitle == null
 
     private var isNextPageLoading = false
 
-    protected abstract fun getMessagesFlowable(): Flowable<List<Message>>
-    protected abstract fun getNextMessagesSingle(anchor: Long): Single<MessagesResponse>
-    protected abstract fun updateMessagesSingle(): Single<MessagesResponse>
-    protected abstract fun markAsReadCompletable(): Completable
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -50,6 +45,18 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         compositeDisposable.dispose()
     }
 
+    fun initParameters(streamTitle: String, streamId: Int, topicTitle: String?) {
+        this.streamTitle = streamTitle
+        this.streamId = streamId
+        this.topicTitle = topicTitle
+    }
+
+    fun sendMessage(messageText: String, _topicTitle: String) {
+        val topicTitle = if (_topicTitle.isBlank()) NO_TOPIC_TITLE else _topicTitle
+
+        sendMessageSubscribe(streamId, messageText, topicTitle)
+    }
+
     fun subscribeOnScrolling(scrollObservable: Observable<Long>) {
         viewDisposable.add(
             scrollObservable
@@ -57,7 +64,7 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
                 .debounce(SCROLL_EMIT_DEBOUNCE_MILLIS, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
                 .subscribe { anchor ->
-                    getNextMessages(anchor)
+                    loadNextMessages(anchor)
                 }
         )
     }
@@ -86,13 +93,25 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         )
     }
 
+    fun removeReactionInMessage(messageId: Int, emojiName: String) {
+        compositeDisposable.add(
+            repository.deleteReaction(messageId, emojiName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { updateMessages() },
+                    { exception -> showError(exception) }
+                )
+        )
+    }
+
     fun uploadFile(uri: Uri, type: String, name: String) {
         compositeDisposable.add(
             repository.uploadFile(uri, type, name)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { viewState.setMessageLoading(true) }
-                .doFinally { viewState.setMessageLoading(false) }
+                .doOnSubscribe { viewState.setFileLoading(true) }
+                .doFinally { viewState.setFileLoading(false) }
                 .subscribe(
                     { fileResponse -> viewState.attachUriToMessage(fileResponse.uri) },
                     { e -> showError(e) }
@@ -129,42 +148,19 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
             repository.changeMessageTopic(id, newTopic)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updateMessages() },
-                    { e -> showError(e) }
-                )
+                .subscribe(::updateMessages, ::showError)
         )
     }
 
     fun showEmojiBottomSheet(messageId: Int) = viewState.showEmojiBottomSheet(messageId)
 
-    protected fun sendMessageSubscribe(streamId: Int, messageText: String, topicName: String) {
+    private fun updateMessages() {
         compositeDisposable.add(
-            repository.sendMessage(streamId, messageText, topicName)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updateMessages() },
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-    protected fun removeReactionInMessage(messageId: Int, emojiName: String) {
-        compositeDisposable.add(
-            repository.deleteReaction(messageId, emojiName)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updateMessages() },
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-    protected fun updateMessages() {
-        compositeDisposable.add(
-            updateMessagesSingle()
+            repository.updateMessages(
+                streamTitle, topicTitle, streamId,
+                NEWEST_ANCHOR_MESSAGE,
+                INITIAL_PAGE_SIZE
+            )
                 .subscribeOn(Schedulers.io())
                 .map { messagesResponse ->
                     hasMoreMessages = !messagesResponse.foundOldest
@@ -179,26 +175,7 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         )
     }
 
-    protected fun getNextMessages(anchor: Long) {
-        if (isNextPageLoading || !hasMoreMessages) return
-        isNextPageLoading = true
-        compositeDisposable.add(
-            getNextMessagesSingle(anchor)
-                .subscribeOn(Schedulers.io())
-                .map { messagesResponse ->
-                    hasMoreMessages = !messagesResponse.foundOldest
-                    messagesResponse.messages
-                }
-                .doFinally { isNextPageLoading = false }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    Functions.emptyConsumer(),
-                    { exception -> showError(exception) }
-                )
-        )
-    }
-
-    protected fun getMessages() {
+    private fun getMessages() {
         compositeDisposable.add(
             getMessagesFlowable()
                 .subscribeOn(Schedulers.io())
@@ -216,18 +193,50 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
         )
     }
 
-    protected fun showError(exception: Throwable) {
-        viewState.showError()
-        Log.d(TAG, exception.stackTraceToString())
+    private fun loadNextMessages(anchor: Long) {
+        if (isNextPageLoading || !hasMoreMessages) return
+        isNextPageLoading = true
+        compositeDisposable.add(
+            repository.getNextMessages(streamTitle, topicTitle, anchor, NEXT_PAGE_SIZE)
+                .subscribeOn(Schedulers.io())
+                .map { messagesResponse ->
+                    hasMoreMessages = !messagesResponse.foundOldest
+                    messagesResponse.messages
+                }
+                .doFinally { isNextPageLoading = false }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    Functions.emptyConsumer(),
+                    { exception -> showError(exception) }
+                )
+        )
     }
 
-    protected open fun handleClick(click: ChatClickTypes) {
+    private fun sendMessageSubscribe(streamId: Int, messageText: String, topicName: String?) {
+        compositeDisposable.add(
+            repository.sendMessage(streamId, messageText, topicName ?: topicTitle.orEmpty())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { updateMessages() },
+                    { exception -> showError(exception) }
+                )
+        )
+    }
+
+    private fun getMessagesFlowable(): Flowable<List<Message>> =
+        topicTitle?.let { repository.getTopicMessages(it, streamId) } ?: repository.getStreamMessages(streamId)
+
+
+    private fun markAsReadCompletable(): Completable =
+        topicTitle?.let { repository.markTopicAsRead(streamId, it) } ?: repository.markStreamAsRead(streamId)
+
+    private fun handleClick(click: ChatClickTypes) {
         when (click) {
             is ChatClickTypes.AddEmojiClick -> {
                 viewState.showEmojiBottomSheet(click.item.message.id)
             }
             is ChatClickTypes.ReactionClick -> {
-
                 if (click.isSelected) {
                     addReactionInMessage(click.messageId, click.emojiName)
                 } else {
@@ -237,17 +246,28 @@ abstract class BaseChatPresenter<V : BaseChatView, R : ChatRepository>(
             is ChatClickTypes.MessageLongClick -> {
                 viewState.showMessageOptions(click.message)
             }
+            is ChatClickTypes.TopicTitleClick -> {
+                topicTitle = click.topicName
+                compositeDisposable.clear()
+                getMessages()
+            }
         }
     }
 
+    private fun showError(exception: Throwable) {
+        viewState.showError()
+        Log.d(TAG, exception.stackTraceToString())
+    }
 
     companion object {
 
-        protected val TAG = this::class.simpleName
+        private const val TAG = "ChatPresenter"
 
-        const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
-        const val INITIAL_PAGE_SIZE = 50
-        const val NEXT_PAGE_SIZE = 30
+        private const val NEXT_PAGE_SIZE = 30
+        private const val INITIAL_PAGE_SIZE = 50
+        private const val NEWEST_ANCHOR_MESSAGE = 10000000000000000
+        private const val SCROLL_EMIT_DEBOUNCE_MILLIS = 200L
 
     }
+
 }
