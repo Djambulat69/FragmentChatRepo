@@ -2,9 +2,13 @@ package com.djambulat69.fragmentchat.ui
 
 import android.os.Bundle
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.djambulat69.fragmentchat.R
 import com.djambulat69.fragmentchat.databinding.ActivityMainBinding
+import com.djambulat69.fragmentchat.ui.channels.ChannelsFragment
+import com.djambulat69.fragmentchat.ui.people.PeopleFragment
+import com.djambulat69.fragmentchat.ui.profile.ProfileFragment
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 import javax.inject.Inject
@@ -12,7 +16,7 @@ import javax.inject.Provider
 
 class MainActivity : MvpAppCompatActivity(), MainActivityView, FragmentInteractor {
 
-    private lateinit var binding: ActivityMainBinding
+    private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     @Inject
     lateinit var presenterProvider: Provider<MainActivityPresenter>
@@ -22,16 +26,27 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView, FragmentInteracto
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as FragmentChatApplication).daggerAppComponent.inject(this)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
-                add(R.id.fragment_container, MainFragment.newInstance())
+                add(R.id.main_fragment_container, ChannelsFragment.newInstance(), BottomNavigationPages.CHANNELS.name)
             }
         }
+
+        binding.bottomNavigation.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.channels_menu_item -> openFragment(BottomNavigationPages.CHANNELS)
+                R.id.people_menu_item -> openFragment(BottomNavigationPages.PEOPLE)
+                R.id.profile_menu_item -> openFragment(BottomNavigationPages.PROFILE)
+                else -> false
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 
     override fun onNetwork(isAvailable: Boolean) {
@@ -43,5 +58,24 @@ class MainActivity : MvpAppCompatActivity(), MainActivityView, FragmentInteracto
 
     override fun back() {
         supportFragmentManager.popBackStack()
+    }
+
+    private fun openFragment(page: BottomNavigationPages): Boolean {
+
+        supportFragmentManager.commit {
+            addToBackStack(null)
+            replace(
+                R.id.main_fragment_container,
+                supportFragmentManager.findFragmentByTag(page.tag) ?: newFragmentInstance(page),
+                page.tag
+            )
+        }
+        return true
+    }
+
+    private fun newFragmentInstance(page: BottomNavigationPages): Fragment = when (page) {
+        BottomNavigationPages.CHANNELS -> ChannelsFragment.newInstance()
+        BottomNavigationPages.PEOPLE -> PeopleFragment.newInstance()
+        BottomNavigationPages.PROFILE -> ProfileFragment.newInstance()
     }
 }

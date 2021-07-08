@@ -126,10 +126,6 @@ class ChatActivity :
         MessageOptionsBottomSheetDialog.newInstance(message).show(supportFragmentManager, null)
     }
 
-    override fun openTopicChat(topicTitle: String) {
-
-    }
-
     override fun attachUriToMessage(uri: String) {
         binding.streamMessageEditText.append(makeAttachFileString(uri))
     }

@@ -29,7 +29,4 @@ interface ChatView : MvpView {
     @OneExecution
     fun attachUriToMessage(uri: String)
 
-    @OneExecution
-    fun openTopicChat(topicTitle: String)
-
 }
