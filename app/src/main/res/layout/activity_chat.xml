@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/stream_chat_toolbar"
+        android:id="@+id/chat_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorSecondary"
@@ -14,38 +14,46 @@
         app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
         tools:title="#general" />
 
+    <include
+        android:id="@+id/include_topic_title"
+        layout="@layout/topic_title_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/chat_topic_title_height"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/chat_toolbar" />
+
     <View
-        android:id="@+id/stream_group"
+        android:id="@+id/group"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stream_helper_view" />
+        app:layout_constraintTop_toBottomOf="@id/helper_view" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/stream_chat_recycler_view"
+        android:id="@+id/chat_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/stream_group"
+        app:layout_constraintBottom_toTopOf="@id/group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/stream_chat_toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/include_topic_title"
         app:stackFromEnd="true"
         tools:itemCount="4"
         tools:listitem="@layout/incoming_message_layout" />
 
     <ProgressBar
-        android:id="@+id/stream_file_progress_bar"
+        android:id="@+id/file_progress_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/stream_helper_view" />
+        app:layout_constraintBottom_toTopOf="@id/helper_view" />
 
     <EditText
-        android:id="@+id/stream_topic_edit_text"
+        android:id="@+id/topic_edit_text"
         android:layout_width="0dp"
         android:layout_height="@dimen/topic_edit_text_height"
         android:layout_marginHorizontal="@dimen/margin_medium"
@@ -53,12 +61,12 @@
         android:background="@drawable/message_edit_text_bg"
         android:hint="@string/topic_hint"
         android:paddingHorizontal="@dimen/padding_medium"
-        app:layout_constraintBottom_toTopOf="@id/stream_message_edit_text"
+        app:layout_constraintBottom_toTopOf="@id/message_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/stream_message_edit_text"
+        android:id="@+id/message_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
@@ -75,7 +83,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/stream_send_button"
+        android:id="@+id/send_button"
         android:layout_width="@dimen/send_button_size"
         android:layout_height="@dimen/send_button_size"
         android:layout_marginEnd="@dimen/margin_medium"
@@ -83,38 +91,38 @@
         android:background="@drawable/send_button_bg"
         android:paddingStart="@dimen/send_button_start_offset"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/stream_message_edit_text"
+        app:layout_constraintBottom_toBottomOf="@+id/message_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_baseline_send"
         tools:visibility="visible" />
 
     <ImageButton
-        android:id="@+id/stream_add_file_button"
+        android:id="@+id/add_file_button"
         android:layout_width="@dimen/send_button_size"
         android:layout_height="@dimen/send_button_size"
         android:layout_marginEnd="@dimen/margin_medium"
         android:background="@null"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/stream_message_edit_text"
+        app:layout_constraintBottom_toBottomOf="@+id/message_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/stream_message_edit_text"
+        app:layout_constraintTop_toTopOf="@+id/message_edit_text"
         app:srcCompat="@drawable/ic_vector_add"
         tools:visibility="gone" />
 
     <View
-        android:id="@+id/stream_helper_view"
+        android:id="@+id/helper_view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginBottom="@dimen/margin_small"
-        app:layout_constraintBottom_toTopOf="@id/stream_topic_edit_text" />
+        app:layout_constraintBottom_toTopOf="@id/topic_edit_text" />
 
     <include
-        android:id="@+id/include_stream_messages_shimmer"
+        android:id="@+id/include_messages_shimmer"
         layout="@layout/shimmer_chat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/stream_group"
-        app:layout_constraintTop_toBottomOf="@id/stream_chat_toolbar" />
+        app:layout_constraintBottom_toTopOf="@id/group"
+        app:layout_constraintTop_toBottomOf="@id/chat_toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

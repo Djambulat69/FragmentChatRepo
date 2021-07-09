@@ -17,6 +17,9 @@ interface ChatView : MvpView {
     @AddToEndSingle
     fun setFileLoading(visible: Boolean)
 
+    @AddToEndSingle
+    fun setTopic(topic: String?)
+
     @OneExecution
     fun showEmojiBottomSheet(messageId: Int)
 

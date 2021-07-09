@@ -49,6 +49,7 @@ class ChatPresenter @Inject constructor(private val repository: ChatRepositoryIm
         this.streamTitle = streamTitle
         this.streamId = streamId
         this.topicTitle = topicTitle
+        viewState.setTopic(topicTitle)
     }
 
     fun sendMessage(messageText: String, _topicTitle: String) {
@@ -250,6 +251,7 @@ class ChatPresenter @Inject constructor(private val repository: ChatRepositoryIm
                 topicTitle = click.topicName
                 compositeDisposable.clear()
                 getMessages()
+                viewState.setTopic(topicTitle)
             }
         }
     }

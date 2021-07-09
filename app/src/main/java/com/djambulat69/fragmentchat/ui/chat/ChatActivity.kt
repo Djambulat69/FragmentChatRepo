@@ -54,7 +54,9 @@ class ChatActivity :
 
         setContentView(binding.root)
 
-        presenter.initParameters(streamTitle, streamId, topicTitle)
+        if (savedInstanceState == null) {
+            presenter.initParameters(streamTitle, streamId, topicTitle)
+        }
 
         setChangeMessageTopicResultListener()
         setEditMessageTextResultListener()
@@ -63,32 +65,32 @@ class ChatActivity :
         val getContentLauncher = registerUploadFileActivityLauncher()
 
         with(binding) {
-            streamChatToolbar.title = getString(R.string.sharp_placeholder, streamTitle)
-            streamChatRecyclerView.adapter =
+            chatToolbar.title = getString(R.string.sharp_placeholder, streamTitle)
+            chatRecyclerView.adapter =
                 AsyncAdapter(
                     ChatHolderFactory(Glide.with(this@ChatActivity)),
                     ChatDiffCallback,
                     ChatClickMapper()
                 ).apply {
-                    registerAutoScrollAdapterDataObserver(binding.streamChatRecyclerView)
+                    registerAutoScrollAdapterDataObserver(binding.chatRecyclerView)
                 }
 
-            streamChatToolbar.setNavigationOnClickListener { finish() }
+            chatToolbar.setNavigationOnClickListener { finish() }
 
-            streamSendButton.setOnClickListener {
+            sendButton.setOnClickListener {
                 presenter.sendMessage(
-                    streamMessageEditText.text.toString().trim(),
-                    streamTopicEditText.text.toString().trim()
+                    messageEditText.text.toString().trim(),
+                    topicEditText.text.toString().trim()
                 )
-                streamMessageEditText.setText("")
+                messageEditText.setText("")
             }
 
-            streamAddFileButton.setOnClickListener { getContentLauncher.launch(ALL_FILES_TYPE) }
+            addFileButton.setOnClickListener { getContentLauncher.launch(ALL_FILES_TYPE) }
 
-            presenter.subscribeOnClicks((streamChatRecyclerView.adapter as AsyncAdapter<*>).getClicks())
+            presenter.subscribeOnClicks((chatRecyclerView.adapter as AsyncAdapter<*>).getClicks())
         }
 
-        presenter.subscribeOnScrolling(getScrollObservable(binding.streamChatRecyclerView))
+        presenter.subscribeOnScrolling(getScrollObservable(binding.chatRecyclerView))
         setupTextWatcher()
     }
 
@@ -99,19 +101,29 @@ class ChatActivity :
 
     override fun showMessages(uiItems: List<ViewTyped>) {
 
-        (binding.streamChatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items =
+        (binding.chatRecyclerView.adapter as AsyncAdapter<ViewTyped>).items =
             if (presenter.hasMoreMessages) listOf(SpinnerUI()) + uiItems
             else uiItems
 
     }
 
     override fun setLoading(visible: Boolean) {
-        binding.includeStreamMessagesShimmer.messagesShimmer.isVisible = visible
+        binding.includeMessagesShimmer.messagesShimmer.isVisible = visible
         setChatVisibility(!visible)
     }
 
     override fun setFileLoading(visible: Boolean) {
-        binding.streamFileProgressBar.isVisible = visible
+        binding.fileProgressBar.isVisible = visible
+    }
+
+    override fun setTopic(topic: String?) {
+        with(binding) {
+            val hasTopic = topic != null
+            topicEditText.isVisible = !hasTopic
+            includeTopicTitle.chatTopicTitle.isVisible = hasTopic
+            includeTopicTitle.chatTopicTitle.text = getString(R.string.topic_title, topic)
+        }
+
     }
 
     override fun showEmojiBottomSheet(messageId: Int) {
@@ -127,7 +139,7 @@ class ChatActivity :
     }
 
     override fun attachUriToMessage(uri: String) {
-        binding.streamMessageEditText.append(makeAttachFileString(uri))
+        binding.messageEditText.append(makeAttachFileString(uri))
     }
 
     override fun showEmojiBottomSheetFromMessageOptions(messageId: Int) =
@@ -153,15 +165,15 @@ class ChatActivity :
     }
 
     private fun setChatVisibility(isVisible: Boolean) {
-        binding.streamChatRecyclerView.isVisible = isVisible
-        binding.streamSendButton.isEnabled = isVisible
+        binding.chatRecyclerView.isVisible = isVisible
+        binding.sendButton.isEnabled = isVisible
     }
 
     private fun setupTextWatcher() {
-        binding.streamMessageEditText.addTextChangedListener(object : TextWatcherAdapter() {
+        binding.messageEditText.addTextChangedListener(object : TextWatcherAdapter() {
             override fun onTextChanged(text: CharSequence, start: Int, before: Int, count: Int) {
-                binding.streamSendButton.isVisible = text.isNotBlank()
-                binding.streamAddFileButton.isVisible = text.isBlank()
+                binding.sendButton.isVisible = text.isNotBlank()
+                binding.addFileButton.isVisible = text.isBlank()
             }
         })
     }
