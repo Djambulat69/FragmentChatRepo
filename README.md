@@ -14,7 +14,7 @@ Screenshots
 In this project:
 ----------------
 
-* [MVVM][0]
+* [MVP][0]
 * [AppCompat][1]
 * [Android KTX][2]
 * [Room][3]
@@ -29,7 +29,7 @@ In this project:
 * [Glide][12]
 * [EmojiCompat][13]
 
-[0]: https://ru.wikipedia.org/wiki/Model-View-ViewModel
+[0]: https://ru.wikipedia.org/wiki/Model-View-Presenter
 [1]: https://developer.android.com/topic/libraries/support-library/packages#v7-appcompat
 [2]: https://developer.android.com/kotlin/ktx
 [3]: https://developer.android.com/topic/libraries/architecture/room
