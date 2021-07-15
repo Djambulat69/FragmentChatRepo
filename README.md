@@ -28,6 +28,7 @@ In this project:
 * [RxRelay][11]
 * [Glide][12]
 * [EmojiCompat][13]
+* [Dagger][14]
 
 [0]: https://ru.wikipedia.org/wiki/Model-View-Presenter
 [1]: https://developer.android.com/topic/libraries/support-library/packages#v7-appcompat
@@ -43,3 +44,4 @@ In this project:
 [11]: https://github.com/JakeWharton/RxRelay
 [12]: https://github.com/bumptech/glide
 [13]: https://developer.android.com/reference/androidx/emoji/text/EmojiCompat
+[14]: https://github.com/google/dagger
